@@ -22,7 +22,6 @@ var rankerCtrl = function rankerCtrl() {
   self.mergedList = [];
 
   self.mergeSort = function mergeSort() {
-    self.displayedTab = 'sort';
     var splitList = self.listContents.split('\n');
     for (var i = 0; i < splitList.length; i++) {
       if (splitList[i]) {
@@ -33,7 +32,8 @@ var rankerCtrl = function rankerCtrl() {
     if (self.itemList.length == 1) {
       self.results = "1. " + self.itemList[0];
       self.displayedTab = 'results';
-    } else {
+    } else if (self.itemList.length > 1) {
+      self.displayedTab = 'sort';
       self.initMerge();
     }
   };
