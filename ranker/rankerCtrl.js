@@ -74,14 +74,12 @@ var rankerCtrl = function rankerCtrl() {
       self.mergedList = self.mergedList.concat(self.firstList);
       self.pushMergedList();
     } else {
-      console.log(self.mergedList);
       self.promptUser();
     }
   };
 
   self.pushMergedList = function pushMergedList() {
     self.tempMergeContents.push(self.mergedList);
-    console.log(self.tempMergeContents);
     self.mergedList = [];
     self.nextLists();
   };
