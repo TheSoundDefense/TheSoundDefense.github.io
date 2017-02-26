@@ -4,8 +4,29 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
   <script src="rankerCtrl.js"></script>
   <script src="index.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body ng-app="rankerApp" ng-controller="rankerCtrl">
-  Supply a list of things you want to rank by preference, and answer the questions to generate your list!
+<body ng-app="rankerApp" ng-controller="rankerCtrl as ctrl">
+  <h1>List Ranker</h1>
+
+  <div ng-show="ctrl.displayedTab == 'list'">
+    <p><textarea class="listTextArea" cols="50" rows="30" ng-model="ctrl.listContents"></textarea></p>
+    <p><button ng-click="ctrl.mergeSort()">Begin Ranking</button></p>
+  </div>
+
+  <div ng-show="ctrl.displayedTab == 'sort'">
+    <p>Which comes out on top?</p>
+    <div class="itemBox" ng-click="ctrl.itemChosen(0)">{{ctrl.firstItem}}</div>
+    <p>OR</p>
+    <div class="itemBox" ng-click="ctrl.itemChosen(1)">{{ctrl.secondItem}}</div>
+  </div>
+
+  <div ng-show="ctrl.displayedTab == 'results'">
+    <ol>
+      <li ng-repeat="item in ctrl.results">
+        {{item}}
+      </li>
+    </ol>
+  </div>
 </body>
 </html>
