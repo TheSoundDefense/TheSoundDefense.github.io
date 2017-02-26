@@ -5,6 +5,10 @@ var rankerCtrl = function rankerCtrl() {
   self.listContents = '';
   self.itemList = [];
 
+  // Do we truncate the list or rank the entire thing?
+  self.truncate = "f";
+  self.listLength = 10;
+
   // The final displayed list.
   self.results = [];
 
@@ -67,7 +71,9 @@ var rankerCtrl = function rankerCtrl() {
       self.mergedList.push(self.secondList.shift());
     }
 
-    if (self.firstList.length == 0) {
+    if (self.truncate == 't' && self.mergedList.length >= self.listLength) {
+      self.pushMergedList();
+    } else if (self.firstList.length == 0) {
       self.mergedList = self.mergedList.concat(self.secondList);
       self.pushMergedList();
     } else if (self.secondList.length == 0) {

@@ -15,6 +15,10 @@
 Second item
 Third item
 Etc." ng-model="ctrl.listContents"></textarea></p>
+    <div>
+      <input type="radio" name="length" value="f" ng-model="ctrl.truncate" checked>Rank entire list<br>
+      <input type="radio" name="length" value="t" ng-model="ctrl.truncate">Rank only top <input type="number" min="1" max="9999" ng-model="ctrl.listLength" ng-disabled="ctrl.truncate == 'f'"> items
+    </div>
     <p><button ng-click="ctrl.mergeSort()">Begin Ranking</button></p>
   </div>
 
