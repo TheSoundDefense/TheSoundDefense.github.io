@@ -30,7 +30,7 @@ var rankerCtrl = function rankerCtrl() {
     }
 
     if (self.itemList.length == 1) {
-      self.results = "1. " + self.itemList[0];
+      self.results = [self.itemList[0]];
       self.displayedTab = 'results';
     } else if (self.itemList.length > 1) {
       self.displayedTab = 'sort';

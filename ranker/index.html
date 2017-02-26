@@ -24,7 +24,7 @@
 
   <div ng-show="ctrl.displayedTab == 'results'">
     <ol>
-      <li ng-repeat="item in ctrl.results">
+      <li ng-repeat="item in ctrl.results track by $index">
         {{item}}
       </li>
     </ol>
