@@ -11,7 +11,10 @@
 
   <p>Enter a list of things you want to rank, separated by the Enter key.</p>
   <div ng-show="ctrl.displayedTab == 'list'">
-    <p><textarea class="listTextArea" cols="50" rows="30" ng-model="ctrl.listContents"></textarea></p>
+    <p><textarea class="listTextArea" cols="50" rows="30" placeholder="First item
+Second item
+Third item
+Etc." ng-model="ctrl.listContents"></textarea></p>
     <p><button ng-click="ctrl.mergeSort()">Begin Ranking</button></p>
   </div>
 
