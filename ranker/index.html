@@ -33,7 +33,7 @@ Etc." ng-model="ctrl.listContents"></textarea></p>
     </div>
 
     <div class="results-tab" ng-show="ctrl.displayedTab == 'results'">
-      <div>
+      <div class="flex-column">
         <h3>Final results:</h3>
         <ol>
           <li ng-repeat="item in ctrl.results track by $index">

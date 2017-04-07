@@ -41,6 +41,13 @@
 	align-items: center;
 }
 
+.flex-column {
+  display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
 .itemBox {
   border: 1px solid black;
   border-radius: 10px;
