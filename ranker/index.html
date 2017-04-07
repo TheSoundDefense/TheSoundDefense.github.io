@@ -6,35 +6,45 @@
   <script src="index.js"></script>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body ng-app="rankerApp" ng-controller="rankerCtrl as ctrl">
-  <h1>List Ranker</h1>
+<body class="body-class" ng-app="rankerApp" ng-controller="rankerCtrl as ctrl">
+  <div>
+    <h1 align="center">List Ranker</h1>
 
-  <div ng-show="ctrl.displayedTab == 'list'">
-    <p>Enter a list of things you want to rank, separated by the Enter key.</p>
-    <p><textarea class="listTextArea" cols="50" rows="30" placeholder="First item
-Second item
-Third item
-Etc." ng-model="ctrl.listContents"></textarea></p>
-    <div>
-      <input type="radio" name="length" value="f" ng-model="ctrl.truncate" checked>Rank entire list<br>
-      <input type="radio" name="length" value="t" ng-model="ctrl.truncate">Rank only top <input type="number" min="1" max="9999" ng-model="ctrl.listLength" ng-disabled="ctrl.truncate == 'f'"> items
+    <div class="list-tab" ng-show="ctrl.displayedTab == 'list'">
+      <p>This online tool is designed to help you rank a list of objects by preference, by breaking the process down into a series of one-on-one comparisons.</p>
+      <p>Enter a list of things you want to rank, separated by the Enter key.</p>
+      <p><textarea class="listTextArea" cols="50" rows="30" placeholder="First item
+  Second item
+  Third item
+  Etc." ng-model="ctrl.listContents"></textarea></p>
+      <div>
+        <input type="radio" name="length" value="f" ng-model="ctrl.truncate" checked>Rank entire list<br>
+        <input type="radio" name="length" value="t" ng-model="ctrl.truncate">Rank only top <input type="number" min="1" max="9999" ng-model="ctrl.listLength" ng-disabled="ctrl.truncate == 'f'"> items
+      </div>
+      <p><button ng-click="ctrl.mergeSort()">Begin Ranking</button></p>
     </div>
-    <p><button ng-click="ctrl.mergeSort()">Begin Ranking</button></p>
+
+    <div class="sort-tab" ng-show="ctrl.displayedTab == 'sort'">
+      <p>Which comes out on top?</p>
+      <div class="itemBox" ng-click="ctrl.itemChosen(0)">{{ctrl.firstItem}}</div>
+      <p>OR</p>
+      <div class="itemBox" ng-click="ctrl.itemChosen(1)">{{ctrl.secondItem}}</div>
+    </div>
+
+    <div class="results-tab" ng-show="ctrl.displayedTab == 'results'">
+      <div>
+        <p>Final results:</p>
+        <ol>
+          <li ng-repeat="item in ctrl.results track by $index">
+            {{item}}
+          </li>
+        </ol>
+      </div>
+    </div>
   </div>
 
-  <div ng-show="ctrl.displayedTab == 'sort'">
-    <p>Which comes out on top?</p>
-    <div class="itemBox" ng-click="ctrl.itemChosen(0)">{{ctrl.firstItem}}</div>
-    <p>OR</p>
-    <div class="itemBox" ng-click="ctrl.itemChosen(1)">{{ctrl.secondItem}}</div>
-  </div>
-
-  <div ng-show="ctrl.displayedTab == 'results'">
-    <ol>
-      <li ng-repeat="item in ctrl.results track by $index">
-        {{item}}
-      </li>
-    </ol>
+  <div>
+    <p>Created by <a href="https://twitter.com/j_l_avery" target="_blank">Jim Avery</a>.</p>
   </div>
 </body>
 </html>
