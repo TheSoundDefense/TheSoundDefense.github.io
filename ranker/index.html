@@ -9,14 +9,15 @@
 <body class="body-class" ng-app="rankerApp" ng-controller="rankerCtrl as ctrl">
   <div>
     <h1 align="center">List Ranker</h1>
+    <hr />
 
     <div class="list-tab" ng-show="ctrl.displayedTab == 'list'">
       <p>This online tool is designed to help you rank a list of objects by preference, by breaking the process down into a series of one-on-one comparisons.</p>
       <p>Enter a list of things you want to rank, separated by the Enter key.</p>
       <p><textarea class="listTextArea" cols="50" rows="30" placeholder="First item
-  Second item
-  Third item
-  Etc." ng-model="ctrl.listContents"></textarea></p>
+Second item
+Third item
+Etc." ng-model="ctrl.listContents"></textarea></p>
       <div>
         <input type="radio" name="length" value="f" ng-model="ctrl.truncate" checked>Rank entire list<br>
         <input type="radio" name="length" value="t" ng-model="ctrl.truncate">Rank only top <input type="number" min="1" max="9999" ng-model="ctrl.listLength" ng-disabled="ctrl.truncate == 'f'"> items
@@ -33,12 +34,15 @@
 
     <div class="results-tab" ng-show="ctrl.displayedTab == 'results'">
       <div>
-        <p>Final results:</p>
+        <h3>Final results:</h3>
         <ol>
           <li ng-repeat="item in ctrl.results track by $index">
             {{item}}
           </li>
         </ol>
+      </div>
+      <div class="reset-link" ng-click="ctrl.reset()">
+        Rank another list!
       </div>
     </div>
   </div>

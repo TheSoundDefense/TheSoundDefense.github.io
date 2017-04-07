@@ -119,4 +119,21 @@ var rankerCtrl = function rankerCtrl() {
     self.results = self.fullMergeContents[0];
     self.displayedTab = 'results';
   };
+
+  self.reset = function reset() {
+    self.displayedTab = 'list';
+    self.listContents = '';
+    self.itemList = [];
+    self.truncate = "f";
+    self.listLength = 10;
+    self.results = [];
+    self.fullMergeContents = [];
+    self.tempMergeContents = [];
+    self.mergeIndex = 0;
+    self.firstList = [];
+    self.secondList = [];
+    self.firstItem = '';
+    self.secondItem = '';
+    self.mergedList = [];
+  };
 };
