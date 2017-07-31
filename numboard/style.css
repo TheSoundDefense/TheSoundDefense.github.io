@@ -1,0 +1,32 @@
+.body-class {
+  display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 14px;
+  background-color: #bfffe0;
+}
+
+.body-class hr {
+  border: 0;
+  height: 1px;
+  width: 600px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0));
+}
+
+.button {
+  width: 50px;
+  margin: 0 5px;
+}
+
+.button-off {
+  background-color: #99f;
+}
+
+.flex-column {
+  display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
