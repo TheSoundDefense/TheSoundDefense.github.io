@@ -24,6 +24,10 @@
   background-color: #99f;
 }
 
+.button-on {
+  background-color: #ff9;
+}
+
 .flex-column {
   display: flex;
 	flex-direction: column;
