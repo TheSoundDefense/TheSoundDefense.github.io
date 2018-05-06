@@ -106,7 +106,7 @@ bingoList[14] = [
   {name: "Get 4 keys (Abandoned Factory)", types: ["Get_Keys"]}
 ];
 bingoList[15] = [
-  {name: "Kill 4 bosses without advance Risky items", types: ["Boss_Restriction","Risky_Item"]},
+  {name: "Kill 2 pre-Frostbite bosses without advance Risky items", types: ["Boss_Restriction","Risky_Item"]},
   {name: "No Bubble Shield (Pirate Master)", types: ["Item_Restriction","Master_Restriction"]},
   {name: "Complete 2 gauntlets (Oubliette of Suffering)", types: ["Gauntlets"]},
   {name: "4 Dark Magic", types: ["Dark_Magic"]},
@@ -155,7 +155,7 @@ bingoList[21] = [
   {name: "(Super) Pike Ball damage only (Pirate Master)", types: ["Boss_Restriction","Master_Restriction"]},
   {name: "Complete 3 gauntlets (Cackle tower)", types: ["Gauntlets"]},
   {name: "1 Pirate Master trial", types: ["Trials"]},
-  {name: "Kill 5 bosses without advance Risky items", types: ["Boss_Restriction","Risky_Item"]},
+  {name: "Kill 3 pre-Frostbite bosses without advance Risky items", types: ["Boss_Restriction","Risky_Item"]},
   {name: "Get 3 keys (Tan Line Temple)", types: ["Get_Keys"]},
   {name: "Complete 6 gauntlets", types: ["Gauntlets"]}
 ];
