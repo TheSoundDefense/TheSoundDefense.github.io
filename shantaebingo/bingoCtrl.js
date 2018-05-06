@@ -387,8 +387,6 @@ var bingoCtrl = function bingoCtrl($location) {
 
   self.checkTypes = function checkTypes(types1, types2) {
     for (var k = 0; k < types2.length; k++) {
-      console.log(types1);
-      console.log(types2[k]);
       if (types1.includes(types2[k])) {
         return false;
       }
@@ -401,8 +399,6 @@ var bingoCtrl = function bingoCtrl($location) {
     if (currentTypes.length === 0) {
       return true;
     }
-
-    console.log(i + " " + j);
 
     // Row.
     var currentCol = j - 1;
@@ -471,8 +467,6 @@ var bingoCtrl = function bingoCtrl($location) {
     while (currentItems.length > 0) {
       var goalIndex = self.randInt(currentItems.length);
       var tentativeGoal = currentItems.splice(goalIndex, 1)[0];
-      console.log(goalIndex);
-      console.log(tentativeGoal);
 
       if (self.validTypes(tentativeGoal.types, goals, i, j)) {
         return tentativeGoal;
@@ -515,7 +509,6 @@ var bingoCtrl = function bingoCtrl($location) {
     for (i = 0; i < 5; i++) {
       for (j = 0; j < 5; j++) {
         var currentGoalString = goals[i][j].index.toString(16);
-        console.log(currentGoalString);
         if (currentGoalString.length === 1) {
           currentGoalString = "0" + currentGoalString;
         }
