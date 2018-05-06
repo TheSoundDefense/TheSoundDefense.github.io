@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>Shantae Bingo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.min.js"></script>
+  <script src="bingoCtrl.js"></script>
+  <script src="index.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="body-class" ng-app="bingoApp" ng-controller="bingoCtrl as ctrl">
+  <div>
+    <h1 align="center">Shantae Bingo</h1>
+    <hr />
+    <p align="center">An interactive bingo card for Shantae and the Pirate's Curse (for testing).</p>
+  </div>
+
+  <div>
+    <div ng-repeat="i in [0,1,2,3,4]">
+      <div ng-repeat="j in [0,1,2,3,4]" ng-click="ctrl.toggleGoal(i,j)">
+        {{ctrl.cards[i][j]}} + {{ctrl.board}}
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p>Created by <a href="https://twitter.com/j_l_avery" target="_blank">Jim Avery</a>.</p>
+  </div>
+</body>
+</html>
