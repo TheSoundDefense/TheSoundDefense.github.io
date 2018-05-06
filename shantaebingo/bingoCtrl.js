@@ -1,4 +1,4 @@
-var bingoCtrl = function bingoCtrl($location, goalDifficultyList, goalList) {
+var bingoCtrl = function bingoCtrl($location, bingoList) {
   var self = this;
 
   // ****
@@ -23,6 +23,22 @@ var bingoCtrl = function bingoCtrl($location, goalDifficultyList, goalList) {
   self.toggleGoal = function toggleGoal(i,j) {
     self.toggled[i][j] = !self.toggled[i][j];
   };
+
+  // Here we generate an additional list and add indices to it, so we can
+  // generate a board from a URL.
+  var goalList = [];
+  var goalIndex = 0;
+  // We start from one, because that's the first index that has an actual list
+  // of goals in the master bingoList.
+  for (var i = 1; i < bingoList.length; i++) {
+    var difficultyList = bingoList[i];
+    for (var j = 0; j < difficultyList.length; j++) {
+      var goal = difficultyList[j];
+      goalList.push(goal.name);
+      goal["index"] = goalIndex;
+      goalIndex = goalIndex + 1;
+    }
+  }
 
   // **************************
   // BOARD GENERATION FUNCTIONS
@@ -154,7 +170,7 @@ var bingoCtrl = function bingoCtrl($location, goalDifficultyList, goalList) {
 
   // Generate a bingo card from scratch.
   self.generateBoard = function(fullGoalList) {
-    var listsRemaining = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
+    var listsRemaining = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
     var goals = [
       [undefined,undefined,undefined,undefined,undefined],
       [undefined,undefined,undefined,undefined,undefined],
@@ -229,6 +245,6 @@ var bingoCtrl = function bingoCtrl($location, goalDifficultyList, goalList) {
   if (self.board) {
     self.renderBoardFromUrl(self.board, goalList);
   } else {
-    self.generateBoard(goalDifficultyList);
+    self.generateBoard(bingoList);
   }
 };
