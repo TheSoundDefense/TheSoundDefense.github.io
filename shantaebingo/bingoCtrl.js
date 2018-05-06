@@ -368,10 +368,20 @@ var bingoCtrl = function bingoCtrl($location) {
   // BOARD GENERATION FUNCTIONS
   // **************************
 
-  self.randInt = function(ceiling) {
+  self.randInt = function randInt(ceiling) {
     return Math.floor(Math.random() * ceiling);
   };
 
+  self.spliceRandomListElement = function spliceRandomListElement(list) {
+    var randomIndex = self.randInt(list.length);
+    return list.splice(randomIndex, 1)[0];
+  };
+
+  // The query parameter representing the board is basically a list of all 25
+  // goals. Each goal is represented by its index in the goalList array,
+  // converted to hex. This function converts each value back to decimal, looks
+  // that value up in the goalList array, and assigns that string to the right
+  // card.
   self.renderBoardFromUrl = function(boardString, goalList) {
     var currentString = boardString;
     for (var i = 0; i < 5; i++) {
@@ -385,6 +395,8 @@ var bingoCtrl = function bingoCtrl($location) {
     }
   };
 
+  // Types1 has already been checked to ensure it has at least one element, so
+  // we can take it for granted here.
   self.checkTypes = function checkTypes(types1, types2) {
     for (var k = 0; k < types2.length; k++) {
       if (types1.includes(types2[k])) {
@@ -395,6 +407,8 @@ var bingoCtrl = function bingoCtrl($location) {
     return true;
   };
 
+  // Check the current row, column, and diagonals (if applicable) to ensure that
+  // there are no conflicting types.
   self.validTypes = function validTypes(currentTypes, currentGoals, i, j) {
     if (currentTypes.length === 0) {
       return true;
@@ -463,10 +477,12 @@ var bingoCtrl = function bingoCtrl($location) {
     return true;
   };
 
+  // Go through a list of goals for a given difficulty and find one that has no
+  // type conflicts, if possible.
   self.getGoalFromList = function getGoalFromList(currentItems, goals, i, j) {
-    while (currentItems.length > 0) {
-      var goalIndex = self.randInt(currentItems.length);
-      var tentativeGoal = currentItems.splice(goalIndex, 1)[0];
+    var currentItemsCopy = JSON.parse(JSON.stringify(currentItems));
+    while (currentItemsCopy.length > 0) {
+      var tentativeGoal = self.spliceRandomListElement(currentItemsCopy);
 
       if (self.validTypes(tentativeGoal.types, goals, i, j)) {
         return tentativeGoal;
@@ -476,8 +492,8 @@ var bingoCtrl = function bingoCtrl($location) {
     return undefined;
   };
 
+  // Generate a bingo card from scratch.
   self.generateBoard = function(fullGoalList) {
-    var goalListCopy = JSON.parse(JSON.stringify(fullGoalList));
     var listsRemaining = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
     var goals = [
       [undefined,undefined,undefined,undefined,undefined],
@@ -487,24 +503,46 @@ var bingoCtrl = function bingoCtrl($location) {
       [undefined,undefined,undefined,undefined,undefined]
     ];
 
+    // Go row by row, assigning goals.
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
-        var currentIndex = self.randInt(listsRemaining.length);
-        var currentList = listsRemaining.splice(currentIndex, 1)[0];
+        var suitableGoalFound = false;
+        // It's possible that we will need to try again with another difficulty
+        // level, as none of the goals for a given difficulty level will be
+        // suitable. That's why we do a deep copy of the list, so we can
+        // preserve it.
+        var listsRemainingCopy = JSON.parse(JSON.stringify(listsRemaining));
+        // I know JavaScript isn't that tightly scoped but I don't care, I'm
+        // declaring this outside the loop.
+        var currentListInd = -1;
+        while (!suitableGoalFound && listsRemainingCopy.length > 0) {
+          currentListInd = self.spliceRandomListElement(listsRemainingCopy);
+          var currentGoalList = fullGoalList[currentListInd];
 
-        var currentItems = fullGoalList[currentList];
+          var chosenGoal = self.getGoalFromList(currentGoalList, goals, i, j);
+          if (chosenGoal !== undefined) {
+            goals[i][j] = chosenGoal;
+            suitableGoalFound = true;
+            break;
+          }
+        }
 
-        var chosenGoal = self.getGoalFromList(currentItems, goals, i, j);
-        if (chosenGoal === undefined) {
-          console.log("Failure");
-          self.generateBoard(goalListCopy);
+        // If we never found a suitable goal, then we've completely failed and
+        // have to start over from scratch.
+        if (!suitableGoalFound) {
+          console.log("Failed to create a board. Trying again.");
+          self.generateBoard(fullGoalList);
           return;
         }
 
-        goals[i][j] = chosenGoal;
+        // If we did find a suitable goal, pluck that difficulty from the list
+        // so we don't try to grab it again.
+        listsRemaining.splice(listsRemaining.indexOf(currentListInd), 1);
       }
     }
 
+    // Now that we have a full board, we need to create a string representation
+    // of it so that it can be shared.
     var newBoardString = "";
     for (i = 0; i < 5; i++) {
       for (j = 0; j < 5; j++) {
@@ -515,9 +553,14 @@ var bingoCtrl = function bingoCtrl($location) {
         newBoardString += currentGoalString;
       }
     }
-
     self.board = newBoardString;
-    self.renderBoardFromUrl(self.board, self.goalList);
+
+    // And now, actually place the goals onto the board.
+    for (i = 0; i < 5; i++) {
+      for (j = 0; j < 5; j++) {
+        self.cards[i][j] = goals[i][j].name;
+      }
+    }
   };
 
   // *******************
