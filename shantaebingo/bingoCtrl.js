@@ -13,6 +13,16 @@ var bingoCtrl = function bingoCtrl($location) {
     ["","","","",""]
   ];
   self.board = $location.search().board;
+  self.toggled = [
+    [false,false,false,false,false],
+    [false,false,false,false,false],
+    [false,false,false,false,false],
+    [false,false,false,false,false],
+    [false,false,false,false,false]
+  ];
+  self.toggleGoal = function toggleGoal(i,j) {
+    self.toggled[i][j] = !self.toggled[i][j];
+  };
 
   // ****************
   // LIST DEFINITIONS
@@ -358,6 +368,11 @@ var bingoCtrl = function bingoCtrl($location) {
   // **************************
   // BOARD GENERATION FUNCTIONS
   // **************************
+
+  self.randInt = function(ceiling) {
+    return Math.floor(Math.random() * ceiling);
+  };
+
   self.renderBoardFromUrl = function(boardString, goalList) {
     var currentString = boardString;
     for (var i = 0; i < 5; i++) {
@@ -371,8 +386,151 @@ var bingoCtrl = function bingoCtrl($location) {
     }
   };
 
-  self.generateBoard = function(fullGoalList) {
+  self.checkTypes = function checkTypes(types1, types2) {
+    for (var k = 0; k < types2.length; k++) {
+      if (types1.includes(types2[k])) {
+        return false;
+      }
+    }
 
+    return true;
+  };
+
+  self.validTypes = function validTypes(currentTypes, currentGoals, i, j) {
+    if (currentTypes.length === 0) {
+      return true;
+    }
+
+    // Row.
+    var currentCol = j - 1;
+    while (currentCol >= 0) {
+      var checkGoal = currentGoals[i][currentCol];
+      var checkTypes = checkGoal.types;
+
+      if (!self.checkTypes(currentTypes, checkTypes)) {
+        return false;
+      }
+
+      currentCol = currentCol - 1;
+    }
+
+    // Column.
+    var currentRow = i - 1;
+    while (currentRow >= 0) {
+      var checkGoal = currentGoals[currentRow][j];
+      var checkTypes = checkGoal.types;
+
+      if (!self.checkTypes(currentTypes, checkTypes)) {
+        return false;
+      }
+
+      currentRow = currentRow - 1;
+    }
+
+    // Diagonal 1.
+    if (i === j) {
+      var currentRow = i - 1;
+      var currentCol = j - 1;
+      while (currentRow >= 0 && currentCol >= 0) {
+        var checkGoal = currentGoals[currentRow][currentCol];
+        var checkTypes = checkGoal.types;
+
+        if (!self.checkTypes(currentTypes, checkTypes)) {
+          return false;
+        }
+
+        currentRow = currentRow - 1;
+        currentCol = currentCol - 1;
+      }
+    }
+
+    // Diagonal 2.
+    if (i + j === 4) {
+      var currentRow = i - 1;
+      var currentCol = j + 1;
+      while (currentRow >= 0 && currentCol <= 4) {
+        var checkGoal = currentGoals[currentRow][currentCol];
+        var checkTypes = checkGoal.types;
+
+        if (!self.checkTypes(currentTypes, checkTypes)) {
+          return false;
+        }
+
+        currentRow = currentRow - 1;
+        currentCol = currentCol + 1;
+      }
+    }
+
+    return true;
+  };
+
+  self.getGoalFromList = function getGoalFromList(currentItems, goals, i, j) {
+    while (currentItems.length > 0) {
+      var goalIndex = self.randInt(currentItems.length);
+      var tentativeGoal = currentItems.splice(goalIndex, 1)[0];
+
+      if (self.validTypes(tentativeGoal.types, goals, i, j)) {
+        return {
+          goal: tentativeGoal,
+          ind: goalIndex
+        };
+      }
+    }
+
+    return undefined;
+  };
+
+  self.generateBoard = function(fullGoalList) {
+    var goalListCopy = JSON.parse(JSON.stringify(fullGoalList));
+    var listsRemaining = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
+    var goals = [
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined]
+    ];
+    var goalIndices = [
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined],
+      [undefined,undefined,undefined,undefined,undefined]
+    ];
+
+    for (var i = 0; i < 5; i++) {
+      for (var j = 0; j < 5; j++) {
+        var currentIndex = self.randInt(listsRemaining.length);
+        var currentList = listsRemaining.splice(currentIndex, 1)[0];
+
+        var currentOffset = self.offsetList[currentList];
+        var currentItems = fullGoalList[currentList];
+
+        var chosenGoal = self.getGoalFromList(currentItems, goals, i, j);
+        if (chosenGoal === undefined) {
+          console.log("Failure");
+          self.generateBoard(goalListCopy);
+          return;
+        }
+
+        goals[i][j] = chosenGoal.goal;
+        goalIndices[i][j] = chosenGoal.ind + currentOffset;
+      }
+    }
+
+    var newBoardString = "";
+    for (i = 0; i < 5; i++) {
+      for (j = 0; j < 5; j++) {
+        var currentGoalString = goalIndices[i][j].toString(16);
+        if (currentGoalString.length === 1) {
+          currentGoalString = "0" + currentGoalString;
+        }
+        newBoardString += currentGoalString;
+      }
+    }
+
+    self.board = newBoardString;
+    self.renderBoardFromUrl(self.board, self.goalList);
   };
 
   // *******************
@@ -380,5 +538,7 @@ var bingoCtrl = function bingoCtrl($location) {
   // *******************
   if (self.board) {
     self.renderBoardFromUrl(self.board, self.goalList);
+  } else {
+    self.generateBoard(self.bingoList);
   }
 };

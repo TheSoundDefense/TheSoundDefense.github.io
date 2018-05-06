@@ -14,3 +14,29 @@
   width: 600px;
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0));
 }
+
+.card {
+  width: 140px;
+  height: 140px;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #888888;
+}
+
+.cardRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardOn {
+  background-color: #1111ff;
+}
+
+.cardOff {
+  background-color: #000000;
+}
