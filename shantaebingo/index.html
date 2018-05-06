@@ -1,8 +1,7 @@
 <html>
 <head>
   <title>Shantae Bingo</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
   <script src="bingoCtrl.js"></script>
   <script src="index.js"></script>
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -17,9 +16,15 @@
   <div>
     <div ng-repeat="i in [0,1,2,3,4]">
       <div ng-repeat="j in [0,1,2,3,4]" ng-click="ctrl.toggleGoal(i,j)">
-        {{ctrl.cards[i][j]}} + {{ctrl.board}}
+        {{ctrl.cards[i][j]}}
       </div>
     </div>
+  </div>
+
+  <div>
+    Share this board: <a href="https://thesounddefense.github.io/shantaebingo/#/?board={{ctrl.board}}">
+      https://thesounddefense.github.io/shantaebingo/#/?board={{ctrl.board}}
+    </a>
   </div>
 
   <div>
