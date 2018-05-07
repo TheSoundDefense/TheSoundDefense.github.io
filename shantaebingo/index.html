@@ -18,7 +18,8 @@
     <div ng-repeat="i in [0,1,2,3,4]">
       <div class="cardRow">
         <div ng-repeat="j in [0,1,2,3,4]" ng-click="ctrl.toggleGoal(i,j)">
-          <div class="card" ng-class="ctrl.toggled[i][j] ? 'cardOn' : 'cardOff'">
+          <div class="card"
+               ng-class="{'cardOff': ctrl.toggled[i][j] == 0, 'cardPlanned': ctrl.toggled[i][j] == 1, 'cardOn': ctrl.toggled[i][j] == 2, 'cardFailed': ctrl.toggled[i][j] == 3}">
             {{ctrl.cards[i][j]}}
           </div>
         </div>

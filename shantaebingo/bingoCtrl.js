@@ -14,14 +14,17 @@ var bingoCtrl = function bingoCtrl($location, bingoList) {
   ];
   self.board = $location.search().board;
   self.toggled = [
-    [false,false,false,false,false],
-    [false,false,false,false,false],
-    [false,false,false,false,false],
-    [false,false,false,false,false],
-    [false,false,false,false,false]
+    [0,0,0,0,0],
+    [0,0,0,0,0],
+    [0,0,0,0,0],
+    [0,0,0,0,0],
+    [0,0,0,0,0]
   ];
   self.toggleGoal = function toggleGoal(i,j) {
-    self.toggled[i][j] = !self.toggled[i][j];
+    self.toggled[i][j] = self.toggled[i][j] + 1;
+    if (self.toggled[i][j] >= 4) {
+      self.toggled[i][j] = 0;
+    }
   };
 
   // Here we generate an additional list and add indices to it, so we can

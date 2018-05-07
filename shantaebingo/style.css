@@ -18,7 +18,6 @@
 .card {
   width: 100px;
   height: 100px;
-  color: white;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -33,10 +32,22 @@
   align-items: center;
 }
 
-.cardOn {
-  background-color: #1111ff;
-}
-
 .cardOff {
   background-color: #000000;
+  color: white;
+}
+
+.cardPlanned {
+  background-color: #ffff11;
+  color: black;
+}
+
+.cardOn {
+  background-color: #1111ff;
+  color: white;
+}
+
+.cardFailed {
+  background-color: #ff1111;
+  color: black;
 }
