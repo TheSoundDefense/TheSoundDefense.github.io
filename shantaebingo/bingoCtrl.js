@@ -43,6 +43,94 @@ var bingoCtrl = function bingoCtrl($location, bingoList) {
     }
   }
 
+  // **********************
+  // MAGIC SQUARE FUNCTIONS
+  // **********************
+
+  // This function generates half of a magic square.
+  self.generateLatinSquare = function generateLatinSquare() {
+    var latinSquare = [
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0]
+    ];
+    var seeds = [0,5,10,15,20];
+
+    // Determine the arrangement of the seeds.
+    var columns = [
+      [0,3,1,4,2],
+      [1,4,2,0,3],
+      [2,0,3,1,4],
+      [3,1,4,2,0],
+      [4,2,0,3,1]
+    ];
+    var currentCol = self.randInt(4);
+    for (i = 0; i < 5; i++) {
+      for (var j = 0; j < 5; j++) {
+        latinSquare[j][i] = seeds[columns[currentCol][j]];
+      }
+      currentCol = currentCol + 1;
+      if (currentCol >= 5) { currentCol = 0; }
+    }
+
+    return latinSquare;
+};
+
+  // This function generates the other half of a magic square.
+  self.generateOrthoSquare = function generateOrthoSquare() {
+    var orthoSquare = [
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0]
+    ];
+    var seeds = [1,2,3,4,5];
+
+    // Determine the arrangement of the seeds.
+    var rows = [
+      [0,3,1,4,2],
+      [1,4,2,0,3],
+      [2,0,3,1,4],
+      [3,1,4,2,0],
+      [4,2,0,3,1]
+    ];
+    var currentRow = self.randInt(4);
+    for (i = 0; i < 5; i++) {
+      for (var j = 0; j < 5; j++) {
+        orthoSquare[i][j] = seeds[rows[currentRow][j]];
+      }
+      currentRow = currentRow + 1;
+      if (currentRow >= 5) { currentRow = 0; }
+    }
+
+    return orthoSquare;
+  };
+
+  // This function generates a magic square.
+  // http://www.grogono.com/magic/5x5.php
+  self.generateMagicSquare = function generateMagicSquare() {
+    var latin = self.generateLatinSquare();
+    var ortho = self.generateOrthoSquare();
+    var magic = [
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0],
+      [0,0,0,0,0]
+    ];
+
+    for (var i = 0; i < 5; i++) {
+      for (var j = 0; j < 5; j++) {
+        magic[i][j] = latin[i][j] + ortho[i][j];
+      }
+    }
+
+    return magic;
+  };
+
   // **************************
   // BOARD GENERATION FUNCTIONS
   // **************************
@@ -173,7 +261,6 @@ var bingoCtrl = function bingoCtrl($location, bingoList) {
 
   // Generate a bingo card from scratch.
   self.generateBoard = function(fullGoalList) {
-    var listsRemaining = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
     var goals = [
       [undefined,undefined,undefined,undefined,undefined],
       [undefined,undefined,undefined,undefined,undefined],
@@ -181,42 +268,24 @@ var bingoCtrl = function bingoCtrl($location, bingoList) {
       [undefined,undefined,undefined,undefined,undefined],
       [undefined,undefined,undefined,undefined,undefined]
     ];
+    var difficulties = self.generateMagicSquare();
 
     // Go row by row, assigning goals.
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
-        var suitableGoalFound = false;
-        // It's possible that we will need to try again with another difficulty
-        // level, as none of the goals for a given difficulty level will be
-        // suitable. That's why we do a deep copy of the list, so we can
-        // preserve it.
-        var listsRemainingCopy = JSON.parse(JSON.stringify(listsRemaining));
-        // I know JavaScript isn't that tightly scoped but I don't care, I'm
-        // declaring this outside the loop.
-        var currentListInd = -1;
-        while (!suitableGoalFound && listsRemainingCopy.length > 0) {
-          currentListInd = self.spliceRandomListElement(listsRemainingCopy);
-          var currentGoalList = fullGoalList[currentListInd];
+        var currentDiff = difficulties[i][j];
+        var currentGoalList = fullGoalList[currentDiff];
 
-          var chosenGoal = self.getGoalFromList(currentGoalList, goals, i, j);
-          if (chosenGoal !== undefined) {
-            goals[i][j] = chosenGoal;
-            suitableGoalFound = true;
-            break;
-          }
-        }
-
+        var chosenGoal = self.getGoalFromList(currentGoalList, goals, i, j);
         // If we never found a suitable goal, then we've completely failed and
         // have to start over from scratch.
-        if (!suitableGoalFound) {
+        if (chosenGoal === undefined) {
           console.log("Failed to create a board. Trying again.");
           self.generateBoard(fullGoalList);
           return;
         }
 
-        // If we did find a suitable goal, pluck that difficulty from the list
-        // so we don't try to grab it again.
-        listsRemaining.splice(listsRemaining.indexOf(currentListInd), 1);
+        goals[i][j] = chosenGoal;
       }
     }
 
