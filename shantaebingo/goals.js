@@ -55,14 +55,14 @@ bingoList[7] = [
 bingoList[8] = [
   {name: "Kill 15 skeletons (Cackle Tower)", types: ["Kill_Quest"]},
   {name: "Kill 20 zombie bodies (Spiderweb Island)", types: ["Kill_Quest"]},
-  {name: "First-level hair upgrades", types: ["Upgrade"]},
+  {name: "First-level hair upgrades", types: ["Upgrade","Shop"]},
   {name: "Complete 1 gauntlet (Oubliette of Suffering)", types: ["Gauntlets"]},
   {name: "3 Heart Squids (Mud Bog Island)", types: ["Heart_Squid"]}
 ];
 bingoList[9] = [
   {name: "Kill 5 Scorpion Girls (Tan Line Island)", types: ["Kill_Quest"]},
-  {name: "Learn Backdash", types: ["Upgrade"]},
-  {name: "1 Pistol Tune-Up", types: ["Upgrade"]},
+  {name: "Learn Backdash", types: ["Upgrade","Shop"]},
+  {name: "1 Pistol Tune-Up", types: ["Upgrade","Shop"]},
   {name: "2 Cacklebats (Frostbite Island)", types: ["Cacklebats"]},
   {name: "Kill 6 Mermaids (Saliva Island)", types: ["Kill_Quest"]}
 ];
@@ -77,7 +77,7 @@ bingoList[10] = [
 bingoList[11] = [
   {name: "No Risky's Scimitar (Cyclops Plant)", types: ["Boss_Restriction","Cyclops_Restriction"]},
   {name: "8 distinct save men", types: ["Save_Man"]},
-  {name: "Learn Recover", types: ["Upgrade"]},
+  {name: "Learn Recover", types: ["Upgrade","Shop"]},
   {name: "2 Cacklebats (Tan Line Island)", types: ["Cacklebats"]},
   {name: "2 Cacklebats (Mud Bog Island)", types: ["Cacklebats"]},
   {name: "3 Cacklebats (Scuttle Town)", types: ["Cacklebats"]}
@@ -95,7 +95,7 @@ bingoList[13] = [
   {name: "Pirate Flare out (Lonely Grave)", types: []},
   {name: "No Risky Shuffle (Mud Bog Island)", types: ["Move_Restriction"]},
   {name: "Heal 5 full hearts in the bath house", types: ["Heal_Hearts"]},
-  {name: "Scimitar Polish", types: ["Upgrade"]}
+  {name: "Scimitar Polish", types: ["Upgrade","Shop"]}
 ];
 bingoList[14] = [
   {name: "1 trade with the Mayor", types: ["Mayor_Trade"]},
@@ -124,7 +124,7 @@ bingoList[17] = [
   {name: "Kill 10 Nagas (Village of Lost Souls)", types: ["Kill_Quest"]},
   {name: "12 distinct save men", types: ["Save_Man"]},
   {name: "Get 3 keys (Lost Catacombs)", types: ["Get_Keys"]},
-  {name: "Second-level hair upgrades", types: ["Upgrade"]},
+  {name: "Second-level hair upgrades", types: ["Upgrade","Shop"]},
   {name: "No Risky Shuffle (Propeller Town)", types: ["Move_Restriction"]},
   {name: "No Risky Shuffle (Village of Lost Souls)", types: ["Move_Restriction"]}
 ];
