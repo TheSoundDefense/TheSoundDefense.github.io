@@ -1,0 +1,100 @@
+<html>
+<head>
+  <title>Trying CSS Grid Out</title>
+  <style>
+.wrapper {
+      display: grid;
+      grid-template-columns: 250px 650px 1fr 1fr 60px;
+      grid-template-rows: 100px 50px 50px;
+  }
+
+  .col1 {
+    grid-column: 1 / span 1;
+    background-color: red;
+  }
+  .col2 {
+    grid-column: 2 / span 1;
+    background-color: orange;
+  }
+  .col3 {
+    grid-column: 3 / span 1;
+    background-color: yellow;
+  }
+  .col4 {
+    grid-column: 4 / span 1;
+    background-color: green;
+  }
+  .col5 {
+    grid-column: 5 / span 1;
+    background-color: blue;
+  }
+  .bigcol {
+    grid-column: 3 / span 2;
+    background-color: purple;
+  }
+
+  .row1 {
+    grid-row: 1 / span 1;
+  }
+  .row2 {
+    grid-row: 2 / span 2;
+  }
+
+  .above {
+    z-index: 20;
+  }
+  .below {
+    z-index: 10;
+  }
+  .middle {
+    z-index: 15;
+  }
+
+  .box {
+    border-radius: 5px;
+    padding: 20px;
+  }
+
+  @media only screen and (max-width: 1100px) {
+    .sidebarT {
+      grid-column: 3 / span 2;
+      grid-row: 2 / span 1;
+      background-color: #bbbbbb;
+    }
+    .sidebarB {
+      grid-column: 3 / span 2;
+      grid-row: 3 / span 1;
+      background-color: #eeeeee;
+    }
+  }
+
+  @media only screen and (min-width: 1101px) {
+    .sidebarL {
+      grid-column: 3 / span 1;
+      grid-row: 2 / span 2;
+      background-color: #777777;
+    }
+
+    .sidebarR {
+      grid-column: 4 / span 1;
+      grid-row: 2 / span 2;
+      background-color: #999999;
+    }
+  }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="col1 row1">A</div>
+    <div class="col2 row1">B</div>
+    <div class="col3 row1">C</div>
+    <div class="col4 row1">D</div>
+    <div class="col5 row1">E</div>
+    <div class="col1 row2">F</div>
+    <div class="col2 row2">G</div>
+    <div class="sidebarT sidebarL">H</div>
+    <div class="sidebarB sidebarR">I</div>
+    <div class="col5 row2">J</div>
+  </div>
+</body>
+</html>
