@@ -25,7 +25,7 @@ bingoList[4] = [
   {name: "1 Cacklebat (Saliva Island)", types: ["Cacklebats"]},
   {name: "2 Heart Squids (Spittle Maze)", types: ["Heart_Squid"]},
   {name: "Map (Cackle Tower)", types: ["Map"]},
-  {name: "1 Cacklebat (Frostbite/Propeller Town)", types: ["Cacklebats"]},
+  {name: "1 Cacklebat (Frostbite/ Propeller Town)", types: ["Cacklebats"]},
   {name: "No Risky Shuffle (Mud Bog Island)", types: ["Move_Restriction"]},
 ];
 bingoList[5] = [
@@ -67,7 +67,7 @@ bingoList[9] = [
 bingoList[10] = [
   {name: "Complete 4 gauntlets", types: ["Gauntlets","Low_Gauntlets"]},
   {name: "End with 200 gems", types: ["Gem_Count"]},
-  {name: "2 Cacklebats (Frostbite/Propeller Town)", types: ["Cacklebats"]},
+  {name: "2 Cacklebats (Frostbite/ Propeller Town)", types: ["Cacklebats"]},
   {name: "Cannon maze Heart Squid (Propeller Town)", types: ["Heart_Squid"]},
   {name: "2 Cacklebats (Scuttle Town)", types: ["Cacklebats"]},
   {name: "No Pirate Flares (Spiderweb Island)", types: ["Item_Restriction"]},
@@ -134,7 +134,7 @@ bingoList[19] = [
   {name: "Learn Power Kick", types: ["Upgrade","Shop"]},
   {name: "No Super Pike Ball (Empress Spider)", types: ["Boss_Restriction","Spider_Restriction"]},
   {name: "Complete 2 gauntlets (Cackle Tower)", types: ["Gauntlets","Cackle_Gauntlets","Low_Gauntlets"]},
-  {name: "No Pirate Flares (Frostbite/Propeller Town)", types: ["Item_Restriction"]},
+  {name: "No Pirate Flares (Frostbite/ Propeller Town)", types: ["Item_Restriction"]},
 ];
 bingoList[20] = [
   {name: "Get 3 keys (Cackle Tower)", types: ["Get_Keys","Cackle_Gauntlets"]},
