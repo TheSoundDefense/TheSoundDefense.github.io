@@ -30,6 +30,8 @@ Etc." ng-model="ctrl.listContents"></textarea></p>
       <div class="itemBox" ng-click="ctrl.itemChosen(0)">{{ctrl.firstItem}}</div>
       <p>OR</p>
       <div class="itemBox" ng-click="ctrl.itemChosen(1)">{{ctrl.secondItem}}</div>
+      <hr />
+      <div class="itemBox" ng-click="ctrl.reset()">Start over</div>
     </div>
 
     <div class="results-tab" ng-show="ctrl.displayedTab == 'results'">

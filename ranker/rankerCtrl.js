@@ -25,6 +25,41 @@ var rankerCtrl = function rankerCtrl() {
   self.secondItem = '';
   self.mergedList = [];
 
+  self.saveState = function saveState() {
+    localStorage.setItem('truncate', self.truncate);
+    localStorage.setItem('listLength', JSON.stringify(self.listLength));
+    localStorage.setItem('firstList', JSON.stringify(self.firstList));
+    localStorage.setItem('secondList', JSON.stringify(self.secondList));
+    localStorage.setItem('mergedList', JSON.stringify(self.mergedList));
+    localStorage.setItem('mergeIndex', JSON.stringify(self.mergeIndex));
+    localStorage.setItem('fullMergeContents', JSON.stringify(self.fullMergeContents));
+    localStorage.setItem('tempMergeContents', JSON.stringify(self.tempMergeContents));
+  }
+
+  self.restoreState = function restoreState() {
+    if (localStorage.getItem('truncate') === null) {
+      return;
+    }
+
+    self.truncate = localStorage.getItem('truncate');
+    self.listLength = JSON.parse(localStorage.getItem('listLength'));
+
+    self.firstList = JSON.parse(localStorage.getItem('firstList'));
+    self.secondList = JSON.parse(localStorage.getItem('secondList'));
+    self.mergedList = JSON.parse(localStorage.getItem('mergedList'));
+    self.mergeIndex = JSON.parse(localStorage.getItem('mergeIndex'));
+
+    self.fullMergeContents = JSON.parse(localStorage.getItem('fullMergeContents'));
+    self.tempMergeContents = JSON.parse(localStorage.getItem('tempMergeContents'));
+
+    self.displayedTab = 'sort';
+    self.promptUser();
+  }
+
+  self.deleteState = function deleteState() {
+    localStorage.clear();
+  }
+
   self.mergeSort = function mergeSort() {
     var splitList = self.listContents.split('\n');
     for (var i = 0; i < splitList.length; i++) {
@@ -47,7 +82,6 @@ var rankerCtrl = function rankerCtrl() {
       self.fullMergeContents.push([self.itemList[i]]);
     }
 
-    self.displayedTab = 'sort';
     self.startMergeRound();
   };
 
@@ -62,6 +96,7 @@ var rankerCtrl = function rankerCtrl() {
   self.promptUser = function promptUser() {
     self.firstItem = self.firstList[0];
     self.secondItem = self.secondList[0];
+    self.saveState();
   };
 
   self.itemChosen = function itemChosen(index) {
@@ -118,6 +153,7 @@ var rankerCtrl = function rankerCtrl() {
   self.displayResults = function displayResults() {
     self.results = self.fullMergeContents[0];
     self.displayedTab = 'results';
+    self.deleteState();
   };
 
   self.reset = function reset() {
@@ -135,5 +171,9 @@ var rankerCtrl = function rankerCtrl() {
     self.firstItem = '';
     self.secondItem = '';
     self.mergedList = [];
+    self.deleteState();
   };
+
+  // If we have a stored state, restore it and restart the sort.
+  self.restoreState();
 };
