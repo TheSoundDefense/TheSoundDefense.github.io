@@ -116,7 +116,6 @@ var rankerCtrl = function rankerCtrl() {
   self.promptUser = function promptUser() {
     self.firstItem = self.firstList[0];
     self.secondItem = self.secondList[0];
-    self.saveState();
 
     // If we're re-sorting, and neither of the current options are on
     // our re-sort list, just pick the first option to preseve the
@@ -126,6 +125,9 @@ var rankerCtrl = function rankerCtrl() {
       && !self.resortList.includes(self.secondItem)) {
         self.itemChosen(0);
       }
+    } else {
+      // Otherwise, save the state.
+      self.saveState();
     }
   };
 
