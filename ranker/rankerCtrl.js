@@ -9,6 +9,11 @@ var rankerCtrl = function rankerCtrl() {
   self.truncate = "f";
   self.listLength = 10;
 
+  // Are we re-sorting specific elements in a sorted list?
+  self.resort = false;
+  self.resortListContents = '';
+  self.resortList = [];
+
   // The final displayed list.
   self.results = [];
 
@@ -34,6 +39,8 @@ var rankerCtrl = function rankerCtrl() {
     localStorage.setItem('mergeIndex', JSON.stringify(self.mergeIndex));
     localStorage.setItem('fullMergeContents', JSON.stringify(self.fullMergeContents));
     localStorage.setItem('tempMergeContents', JSON.stringify(self.tempMergeContents));
+    localStorage.setItem('resort', JSON.stringify(self.resort));
+    localStorage.setItem('resortList', JSON.stringify(self.resortList));
   }
 
   self.restoreState = function restoreState() {
@@ -52,6 +59,9 @@ var rankerCtrl = function rankerCtrl() {
     self.fullMergeContents = JSON.parse(localStorage.getItem('fullMergeContents'));
     self.tempMergeContents = JSON.parse(localStorage.getItem('tempMergeContents'));
 
+    self.resort = JSON.parse(localStorage.getItem('resort'));
+    self.resortList = JSON.parse(localStorage.getItem('resortList'));
+
     self.displayedTab = 'sort';
     self.promptUser();
   }
@@ -65,6 +75,16 @@ var rankerCtrl = function rankerCtrl() {
     for (var i = 0; i < splitList.length; i++) {
       if (splitList[i]) {
         self.itemList.push(splitList[i]);
+      }
+    }
+
+    var splitResortList = self.resortListContents.split('\n');
+    for (i = 0; i < splitResortList.length; i++) {
+      if (splitResortList[i]) {
+        self.resortList.push(splitResortList[i]);
+        if (!self.itemList.includes(splitResortList[i])) {
+          self.itemList.push(splitResortList[i]);
+        }
       }
     }
 
@@ -97,6 +117,16 @@ var rankerCtrl = function rankerCtrl() {
     self.firstItem = self.firstList[0];
     self.secondItem = self.secondList[0];
     self.saveState();
+
+    // If we're re-sorting, and neither of the current options are on
+    // our re-sort list, just pick the first option to preseve the
+    // existing sorting.
+    if (self.resort) {
+      if (!self.resortList.includes(self.firstItem)
+      && !self.resortList.includes(self.secondItem)) {
+        self.itemChosen(0);
+      }
+    }
   };
 
   self.itemChosen = function itemChosen(index) {
@@ -165,6 +195,8 @@ var rankerCtrl = function rankerCtrl() {
     self.results = [];
     self.fullMergeContents = [];
     self.tempMergeContents = [];
+    self.resort = false;
+    self.resortList = [];
     self.mergeIndex = 0;
     self.firstList = [];
     self.secondList = [];
