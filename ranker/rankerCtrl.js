@@ -124,6 +124,8 @@ var rankerCtrl = function rankerCtrl() {
       if (!self.resortList.includes(self.firstItem)
       && !self.resortList.includes(self.secondItem)) {
         self.itemChosen(0);
+      } else {
+        self.saveState();
       }
     } else {
       // Otherwise, save the state.
