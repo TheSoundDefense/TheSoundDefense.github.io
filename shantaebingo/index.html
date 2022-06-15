@@ -1,0 +1,40 @@
+<html>
+<head>
+  <title>Shantae Bingo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>
+  <script src="bingoCtrl.js"></script>
+  <script src="goals.js"></script>
+  <script src="index.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="body-class" ng-app="bingoApp" ng-controller="bingoCtrl as ctrl">
+  <div>
+    <h1 align="center">Shantae Bingo Development Tool</h1>
+    <hr />
+    <p align="center">An interactive bingo card for Shantae and the Pirate's Curse, for testing and development.</p>
+  </div>
+
+  <div>
+    <div ng-repeat="i in [0,1,2,3,4]">
+      <div class="cardRow">
+        <div ng-repeat="j in [0,1,2,3,4]" ng-click="ctrl.toggleGoal(i,j)">
+          <div class="card"
+               ng-class="{'cardOff': ctrl.toggled[i][j] == 0, 'cardPlanned': ctrl.toggled[i][j] == 1, 'cardOn': ctrl.toggled[i][j] == 2, 'cardFailed': ctrl.toggled[i][j] == 3}">
+            {{ctrl.cards[i][j]}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 20px">
+    Share this board: <a href="https://thesounddefense.github.io/shantaebingo/#/?board={{ctrl.board}}">
+      https://thesounddefense.github.io/shantaebingo/#/?board={{ctrl.board}}
+    </a>
+  </div>
+
+  <div>
+    <p>Created by <a href="https://twitter.com/j_l_avery" target="_blank">Jim Avery</a>.</p>
+  </div>
+</body>
+</html>

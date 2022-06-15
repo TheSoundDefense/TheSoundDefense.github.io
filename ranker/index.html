@@ -20,7 +20,12 @@ Third item
 Etc." ng-model="ctrl.listContents"></textarea></p>
       <div>
         <input type="radio" name="length" value="f" ng-model="ctrl.truncate" checked>Rank entire list<br>
-        <input type="radio" name="length" value="t" ng-model="ctrl.truncate">Rank only top <input type="number" min="1" max="9999" ng-model="ctrl.listLength" ng-disabled="ctrl.truncate == 'f'"> items
+        <input type="radio" name="length" value="t" ng-model="ctrl.truncate">Rank only top <input type="number" min="1" max="9999" ng-model="ctrl.listLength" ng-disabled="ctrl.truncate == 'f'"> items<br>
+        <input type="checkbox" name="resort" ng-model="ctrl.resort">Re-sort elements in list<br>
+        <textarea class="listTextArea" cols="50" rows="10" ng-show="ctrl.resort == true" placeholder="First item
+Second item
+Third item
+Etc." ng-model="ctrl.resortListContents"></textarea>
       </div>
       <p><button ng-click="ctrl.mergeSort()">Begin Ranking</button></p>
     </div>
@@ -30,6 +35,8 @@ Etc." ng-model="ctrl.listContents"></textarea></p>
       <div class="itemBox" ng-click="ctrl.itemChosen(0)">{{ctrl.firstItem}}</div>
       <p>OR</p>
       <div class="itemBox" ng-click="ctrl.itemChosen(1)">{{ctrl.secondItem}}</div>
+      <hr />
+      <div class="itemBox" ng-click="ctrl.reset()">Start over</div>
     </div>
 
     <div class="results-tab" ng-show="ctrl.displayedTab == 'results'">

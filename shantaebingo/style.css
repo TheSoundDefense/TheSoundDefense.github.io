@@ -1,0 +1,53 @@
+.body-class {
+  display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 14px;
+  background-color: #bfffe0;
+}
+
+.body-class hr {
+  border: 0;
+  height: 1px;
+  width: 600px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0));
+}
+
+.card {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #888888;
+}
+
+.cardRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardOff {
+  background-color: #000000;
+  color: white;
+}
+
+.cardPlanned {
+  background-color: #ffff11;
+  color: black;
+}
+
+.cardOn {
+  background-color: #1111ff;
+  color: white;
+}
+
+.cardFailed {
+  background-color: #ff1111;
+  color: black;
+}
