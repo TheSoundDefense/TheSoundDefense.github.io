@@ -1,0 +1,97 @@
+<html>
+<head>
+    <title>Speedrun Comparator</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="comparatorCtrl.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="body-class" ng-app="comparatorApp" ng-controller="comparatorCtrl as ctrl">
+    <h1 align="center">Speedrun Comparator</h1>
+    <hr />
+    
+    <div class="tab splits-tab" ng-show="ctrl.displayedTab == 'splits'">
+        <p class="infoText">This online tool is designed to make it easier to compare two current speedruns. By entering times for certain splits for each runner, the tool will determine how far apart the two runners are, based on the last split both of them have completed.</p>
+        <p class="infoText">Enter a list of splits below, separated by the Enter key.</p>
+        <p><textarea class="listTextArea" cols="50" rows="30" placeholder="First split
+Second split
+Third split
+Etc." ng-model="ctrl.splitTextContents"></textarea></p>
+        <p>
+            <span class="nameEntry">Runner 1 name: <input ng-model="ctrl.firstRunnerName"></span>
+            <span class="nameEntry">Runner 2 name: <input ng-model="ctrl.secondRunnerName"></span>
+        </p>
+        <p><button ng-click="ctrl.begin()">Begin</button></p>
+    </div>
+
+    <div class="tab data-entry-tab" ng-show="ctrl.displayedTab == 'data-entry'">
+        <div class="displayTimes">
+            <div class="runnerTimes">
+                <table>
+                    <tr>
+                        <th colspan="2">{{ctrl.firstRunnerName}}</th>
+                    </tr>
+                    <tr ng-repeat="split in ctrl.firstRunnerSplits track by $index">
+                        <td>{{split.name}}</td>
+                        <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time) : '-'}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="runnerTimes">
+                <table>
+                    <tr>
+                        <th colspan="2">{{ctrl.secondRunnerName}}</th>
+                    </tr>
+                    <tr ng-repeat="split in ctrl.secondRunnerSplits track by $index">
+                        <td>{{split.name}}</td>
+                        <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time) : '-'}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="timeResults infoText">
+            <div ng-show="ctrl.leadingRunner < 0">
+                Both runners are <span class="timeKeyInfo">tied</span>
+            </div>
+            <div ng-show="ctrl.leadingRunner >= 0">
+                <span class="timeKeyInfo">
+                    {{ctrl.leadingRunner == 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
+                </span>
+                is ahead by
+                <span class="timeKeyInfo">
+                    {{ctrl.timeDifferenceString}}
+                </span>
+            </div>
+            <div ng-show="ctrl.latestCommonSplit >= 0">
+                as of {{ctrl.splitsList[ctrl.latestCommonSplit]}}
+            </div>
+        </div>
+        <div class="timeEntries">
+            <div class="runnerTimeEntry">
+                <div class="addSplitText">Add split for {{ctrl.firstRunnerName}}</div>
+                <select name="firstSplitSelect" ng-model="ctrl.firstSplitSelect">
+                    <option ng-repeat="split in ctrl.splitsList" value="{{$index}}">{{split}}</option>
+                </select>
+                <input placeholder="12:34.56" ng-model="ctrl.firstRunnerNewSplitTime">
+                <button ng-click="ctrl.addSplitTime(0)">Add split time</button>
+            </div>
+            <div class="runnerTimeEntry">
+                <div class="addSplitText">Add split for {{ctrl.secondRunnerName}}</div>
+                <select name="secondSplitSelect" ng-model="ctrl.secondSplitSelect">
+                    <option ng-repeat="split in ctrl.splitsList" value="{{$index}}">{{split}}</option>
+                </select>
+                <input placeholder="12:34.56" ng-model="ctrl.secondRunnerNewSplitTime">
+                <button ng-click="ctrl.addSplitTime(1)">Add split time</button>
+            </div>
+        </div>
+        <div class="newRaceButton">
+            <button ng-click="ctrl.restart()">New Race</button>
+        </div>
+    </div>
+
+    <hr />
+    <div class="credits">
+        <p>Created by <a href="https://github.com/TheSoundDefense" target="_blank">The Sound Defense</a>.</p>
+    </div>
+</body>
+</html>
