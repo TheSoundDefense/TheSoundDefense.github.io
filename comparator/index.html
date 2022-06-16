@@ -50,6 +50,18 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimes">
                 <table>
                     <tr>
+                        <th>Leader</th>
+                        <th>Time Difference</th>
+                    </tr>
+                    <tr ng-repeat="delta in ctrl.deltas track by $index">
+                        <td>{{ctrl.getRunnerName(delta.leader)}}</td>
+                        <td>{{delta.timeDelta !== undefined ? ctrl.timeToStringTime(delta.timeDelta) : '-'}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="runnerTimes">
+                <table>
+                    <tr>
                         <th colspan="2">{{ctrl.secondRunnerName}}</th>
                     </tr>
                     <tr ng-repeat="split in ctrl.secondRunnerSplits track by $index">

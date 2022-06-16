@@ -17,6 +17,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.latestCommonSplit = -1;
     self.leadingRunner = -1;
+    self.deltas = [];
     self.timeDifference = -1;
     self.timeDifferenceString = '';
 
@@ -58,6 +59,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 self.splitsList.push(parsedSplit);
                 self.firstRunnerSplits.push(self.newSplitItem(parsedSplit));
                 self.secondRunnerSplits.push(self.newSplitItem(parsedSplit));
+                self.deltas.push({
+                    leader: undefined,
+                    timeDelta: undefined
+                });
             }
         }
 
@@ -87,30 +92,33 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.recalculateLead = function recalculateLead() {
-        var firstLatestCommonTime = -1;
-        var secondLatestCommonTime = -1;
         self.latestCommonSplit = -1;
         for (var i = 0; i < this.splitsList.length; i++) {
             var firstTime = self.firstRunnerSplits[i].time;
             var secondTime = self.secondRunnerSplits[i].time;
             if (firstTime !== undefined && secondTime !== undefined) {
-                firstLatestCommonTime = firstTime;
-                secondLatestCommonTime = secondTime;
                 self.latestCommonSplit = i;
+
+                var diffTime = Math.abs(firstTime - secondTime);
+                self.timeDifference = diffTime;
+                self.timeDifferenceString = self.timeToStringTime(diffTime);
+                var leadingRunner = -1;
+                if (firstTime < secondTime) {
+                    leadingRunner = 0;
+                } else if (secondTime < firstTime) {
+                    leadingRunner = 1;
+                }
+                self.leadingRunner = leadingRunner;
+
+                self.deltas[i] = {
+                    leader: leadingRunner,
+                    timeDelta: diffTime
+                };
             }
         }
 
-        var diffTime = Math.abs(firstLatestCommonTime - secondLatestCommonTime);
-        self.timeDifference = diffTime;
-        self.timeDifferenceString = self.timeToStringTime(diffTime);
-
-        if (firstLatestCommonTime < secondLatestCommonTime) {
-            self.leadingRunner = 0;
-        } else if (secondLatestCommonTime < firstLatestCommonTime) {
-            self.leadingRunner = 1;
-        } else {
-            self.leadingRunner = -1;
-        }
+        // At the end of this, timeDifference, timeDifferenceString, and leadingRunner
+        // will all be set appropriately.
     };
 
     self.stringTimeToTime = function stringTimeToTime(strTime) {
@@ -157,11 +165,26 @@ var comparatorCtrl = function comparatorCtrl($http) {
         }
         return `${hours.toString()}:${minutesStr}:${secondsStr}`;
     };
+
+    self.getRunnerName = function getRunnerName(runner) {
+        if (runner === 0) {
+            return self.firstRunnerName;
+        }
+        if (runner === 1) {
+            return self.secondRunnerName;
+        }
+        return '-';
+    }
     
     self.restart = function restart() {
         self.splitsList = [];
         self.firstRunnerSplits = [];
         self.secondRunnerSplits = [];
+        self.latestCommonSplit = -1;
+        self.leadingRunner = -1;
+        self.deltas = [];
+        self.timeDifference = -1;
+        self.timeDifferenceString = '';
         self.displayedTab = 'splits';
     };
 };
