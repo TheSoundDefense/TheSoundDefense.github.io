@@ -13,11 +13,20 @@
     <div class="tab splits-tab" ng-show="ctrl.displayedTab == 'splits'">
         <p class="infoText">This online tool is designed to make it easier to compare two current speedruns. By entering times for certain splits for each runner, the tool will determine how far apart the two runners are, based on the last split both of them have completed.</p>
         <p class="infoText">Enter a list of splits below, separated by the Enter key.</p>
-        <p>{{ctrl.splitDefinitions}}</p>
         <p><textarea class="listTextArea" cols="50" rows="30" placeholder="First split
 Second split
 Third split
 Etc." ng-model="ctrl.splitTextContents"></textarea></p>
+        <p>Use a predefined set of splits:
+            <select name="predefinedSplitSelect"
+                    ng-model="ctrl.predefinedSplitSelect"
+                    ng-change="ctrl.selectSplits()">
+                <option value="-1">-- Choose game and category --</option>
+                <option ng-repeat="category in ctrl.predefinedSplits track by $index" value="{{$index}}">
+                    {{category.name}}
+                </option>
+            </select>
+        </p>
         <p>
             <span class="nameEntry">Runner 1 name: <input ng-model="ctrl.firstRunnerName"></span>
             <span class="nameEntry">Runner 2 name: <input ng-model="ctrl.secondRunnerName"></span>

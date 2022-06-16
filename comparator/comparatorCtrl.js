@@ -20,11 +20,35 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.timeDifference = -1;
     self.timeDifferenceString = '';
 
+    self.predefinedSplits = [];
+    self.predefinedSplitSelect = '-1';
     $http.get('splits.json').then(function(response) {
-        self.splitDefinitions = response;
+        const games = response.data;
+        for (var game of games) {
+            for (var category of game.categories) {
+                self.predefinedSplits.push({
+                    name: `${game.name} (${category.name})`,
+                    splits: category.splits
+                });
+            }
+        }
     });
 
     self.precision = 2;
+
+    self.selectSplits = function selectSplits() {
+        if (self.predefinedSplitSelect == '-1') {
+            self.splitTextContents = '';
+            return;
+        }
+
+        var selectedSplits = self.predefinedSplits[parseInt(self.predefinedSplitSelect)];
+        var splitString = '';
+        for (var split of selectedSplits.splits) {
+            splitString += `${split}\n`;
+        }
+        self.splitTextContents = splitString;
+    };
 
     self.begin = function begin() {
         var parsedList = self.splitTextContents.split('\n');
