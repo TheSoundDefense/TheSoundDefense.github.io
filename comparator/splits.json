@@ -30,6 +30,33 @@
                     "Final Rush",
                     "Shadow 2"
                 ]
+            },
+            {
+                "name": "Dark Story",
+                "splits": [
+                    "Iron Gate",
+                    "Hot Shot",
+                    "Dry Lagoon",
+                    "Sand Ocean",
+                    "Radical Highway",
+                    "Egg Quarters",
+                    "Lost Colony",
+                    "Weapons Bed",
+                    "Tails 1",
+                    "Security Hall",
+                    "Flying Dog",
+                    "White Jungle",
+                    "Sonic 1",
+                    "Route 280",
+                    "Sky Rail",
+                    "Egg Golem",
+                    "Mad Space",
+                    "Knuckles",
+                    "Cosmic Wall",
+                    "Tails 2",
+                    "Final Chase",
+                    "Sonic 2"
+                ]
             }
         ]
     }
