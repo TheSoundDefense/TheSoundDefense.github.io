@@ -20,6 +20,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.deltas = [];
     self.timeDifference = -1;
     self.timeDifferenceString = '';
+    self.raceComplete = false;
 
     self.predefinedSplits = [];
     self.predefinedSplitSelect = '-1';
@@ -119,6 +120,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
         // At the end of this, timeDifference, timeDifferenceString, and leadingRunner
         // will all be set appropriately.
+        if (self.latestCommonSplit >= self.splitsList.length - 1) {
+            self.raceComplete = true;
+        }
     };
 
     self.stringTimeToTime = function stringTimeToTime(strTime) {
@@ -185,6 +189,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.deltas = [];
         self.timeDifference = -1;
         self.timeDifferenceString = '';
+        self.raceComplete = false;
         self.displayedTab = 'splits';
     };
 };

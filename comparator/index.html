@@ -79,12 +79,12 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 <span class="timeKeyInfo">
                     {{ctrl.leadingRunner == 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
                 </span>
-                is ahead by
+                {{ctrl.raceComplete ? "wins by" : "is ahead by"}}
                 <span class="timeKeyInfo">
                     {{ctrl.timeDifferenceString}}
                 </span>
             </div>
-            <div ng-show="ctrl.latestCommonSplit >= 0">
+            <div ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">
                 as of {{ctrl.splitsList[ctrl.latestCommonSplit]}}
             </div>
         </div>
