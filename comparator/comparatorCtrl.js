@@ -1,4 +1,4 @@
-var comparatorCtrl = function comparatorCtrl() {
+var comparatorCtrl = function comparatorCtrl($http) {
     var self = this;
 
     self.displayedTab = 'splits';
@@ -19,6 +19,10 @@ var comparatorCtrl = function comparatorCtrl() {
     self.leadingRunner = -1;
     self.timeDifference = -1;
     self.timeDifferenceString = '';
+
+    $http.get('splits.json').then(function(response) {
+        self.splitDefinitions = response;
+    });
 
     self.precision = 2;
 

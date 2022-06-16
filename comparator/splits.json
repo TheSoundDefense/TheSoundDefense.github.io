@@ -1,0 +1,36 @@
+[
+    {
+        "name": "Sonic Adventure 2",
+        "categories": [
+            {
+                "name": "Hero Story",
+                "splits": [
+                    "City Escape",
+                    "Big Foot",
+                    "Wild Canyon",
+                    "Eggman 1",
+                    "Prison Lane",
+                    "Metal Harbor",
+                    "Shadow 1",
+                    "Green Forest",
+                    "Pumpkin Hill",
+                    "Mission Street",
+                    "Aquatic Mine",
+                    "Route 101",
+                    "Hidden Base",
+                    "Pyramid Cave",
+                    "Death Chamber",
+                    "King Boom Boo",
+                    "Egg Golem",
+                    "Eternal Engine",
+                    "Meteor Herd",
+                    "Rouge",
+                    "Crazy Gadget",
+                    "Eggman 2",
+                    "Final Rush",
+                    "Shadow 2"
+                ]
+            }
+        ]
+    }
+]
