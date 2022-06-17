@@ -87,7 +87,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             var chosenSplit = parseInt(self.firstSplitSelect);
             self.firstRunnerSplits[chosenSplit].time = newTime;
             // Update the select box, and erase the input.
-            if (chosenSplit < self.splitsList - 1) {
+            if (chosenSplit < self.splitsList.length - 1) {
                 self.firstSplitSelect = (chosenSplit + 1).toString();
             }
             self.firstRunnerNewSplitTime = '';
@@ -96,7 +96,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             var chosenSplit = parseInt(self.secondSplitSelect);
             self.secondRunnerSplits[chosenSplit].time = newTime;
             // Update the select box, and erase the input.
-            if (chosenSplit < self.splitsList - 1) {
+            if (chosenSplit < self.splitsList.length - 1) {
                 self.secondSplitSelect = (chosenSplit + 1).toString();
             }
             self.secondRunnerNewSplitTime = '';
