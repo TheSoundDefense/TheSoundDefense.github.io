@@ -62,7 +62,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 self.secondRunnerSplits.push(self.newSplitItem(parsedSplit));
                 self.deltas.push({
                     leader: undefined,
-                    timeDelta: undefined
+                    timeDelta: undefined,
+                    gain: undefined,
+                    gainingRunner: undefined
                 });
             }
         }
@@ -94,13 +96,32 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.recalculateLead = function recalculateLead() {
         self.latestCommonSplit = -1;
+        var previousDelta = 0;
         for (var i = 0; i < this.splitsList.length; i++) {
             var firstTime = self.firstRunnerSplits[i].time;
             var secondTime = self.secondRunnerSplits[i].time;
             if (firstTime !== undefined && secondTime !== undefined) {
                 self.latestCommonSplit = i;
 
-                var diffTime = Math.abs(firstTime - secondTime);
+                var diffTime = firstTime - secondTime;
+                var gain = diffTime - previousDelta;
+                // If the gain is positive, then the delta has become larger,
+                // and runner 2 has gained time. A negative delta favors
+                // player 1 (as smaller times are better).
+                var gainingRunner = -1;
+                if (gain > 0) {
+                    gainingRunner = 1;
+                } else if (gain < 0) {
+                    gainingRunner = 0;
+                }
+                // We save this as a non-absolute value, in order to make sure the
+                // gains are correct.
+                previousDelta = diffTime;
+                // For display purposes, we want these to be absolute values from
+                // here on out.
+                diffTime = Math.abs(diffTime);
+                gain = Math.abs(gain);
+
                 self.timeDifference = diffTime;
                 self.timeDifferenceString = self.timeToStringTime(diffTime);
                 var leadingRunner = -1;
@@ -113,7 +134,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
                 self.deltas[i] = {
                     leader: leadingRunner,
-                    timeDelta: diffTime
+                    timeDelta: diffTime,
+                    gain: gain,
+                    gainingRunner: gainingRunner
                 };
             }
         }
@@ -189,6 +212,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.deltas = [];
         self.timeDifference = -1;
         self.timeDifferenceString = '';
+        self.firstSplitSelect = '0';
+        self.secondSplitSelect = '0';
+        self.firstRunnerNewSplitTime = '';
+        self.secondRunnerNewSplitTime = '';
         self.raceComplete = false;
         self.displayedTab = 'splits';
     };
