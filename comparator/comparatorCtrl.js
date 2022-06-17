@@ -86,10 +86,20 @@ var comparatorCtrl = function comparatorCtrl($http) {
             var newTime = self.stringTimeToTime(self.firstRunnerNewSplitTime);
             var chosenSplit = parseInt(self.firstSplitSelect);
             self.firstRunnerSplits[chosenSplit].time = newTime;
+            // Update the select box, and erase the input.
+            if (chosenSplit < self.splitsList - 1) {
+                self.firstSplitSelect = (chosenSplit + 1).toString();
+            }
+            self.firstRunnerNewSplitTime = '';
         } else {
             var newTime = self.stringTimeToTime(self.secondRunnerNewSplitTime);
             var chosenSplit = parseInt(self.secondSplitSelect);
             self.secondRunnerSplits[chosenSplit].time = newTime;
+            // Update the select box, and erase the input.
+            if (chosenSplit < self.splitsList - 1) {
+                self.secondSplitSelect = (chosenSplit + 1).toString();
+            }
+            self.secondRunnerNewSplitTime = '';
         }
         self.recalculateLead();
     };
