@@ -59,5 +59,56 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "Sonic Adventure DX",
+        "categories": [
+            {
+                "name": "Sonic Story",
+                "splits": [
+                    "Chaos 0",
+                    "Emerald Coast",
+                    "Egg Hornet",
+                    "Windy Valley",
+                    "Casinopolis",
+                    "Ice Cap",
+                    "Chaos 4",
+                    "Sky Chase (Act 1)",
+                    "Twinkle Park",
+                    "Speed Highway",
+                    "Red Mountain",
+                    "Sky Chase (Act 2)",
+                    "Sky Deck",
+                    "Chaos 6",
+                    "Lost World",
+                    "Final Egg",
+                    "Egg Viper"
+                ]
+            },
+            {
+                "name": "Small Stories (KAG)",
+                "splits": [
+                    "(K) Speed Highway",
+                    "(K) Casinopolis",
+                    "(K) Chaos 2",
+                    "(K) Red Mountain",
+                    "(K) Chaos 4",
+                    "(K) Lost World",
+                    "(K) Sky Deck",
+                    "(K) Chaos 6",
+                    "(A) Twinkle Park",
+                    "(A) Hot Shelter",
+                    "(A) Final Egg",
+                    "(A) Zero",
+                    "(G) Final Egg",
+                    "(G) E-101 Beta",
+                    "(G) Emerald Coast",
+                    "(G) Hot Shelter",
+                    "(G) Red Mountain",
+                    "(G) Windy Valley",
+                    "(G) E-101 mk. II"
+                ]
+            }
+        ]
     }
 ]
