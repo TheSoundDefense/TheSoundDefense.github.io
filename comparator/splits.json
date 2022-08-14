@@ -110,5 +110,38 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "Shadow the Hedgehog",
+        "categories": [
+            {
+                "name": "Expert Mode",
+                "splits": [
+                    "Westopolis",
+                    "Digital Circuit",
+                    "Glyphic Canyon",
+                    "Lethal Highway",
+                    "Cryptic Castle",
+                    "Prison Island",
+                    "Circus Park",
+                    "Central City",
+                    "The Doom",
+                    "Sky Troops",
+                    "Mad Matrix",
+                    "Death Ruins",
+                    "The ARK",
+                    "Air Fleet",
+                    "Iron Jungle",
+                    "Space Gadget",
+                    "Lost Impact",
+                    "GUN Fortress",
+                    "Black Comet",
+                    "Lava Shelter",
+                    "Cosmic Fall",
+                    "Final Haunt",
+                    "The Last Way"
+                ]
+            }
+        ]
     }
 ]
