@@ -1,117 +1,5 @@
 [
     {
-        "name": "Sonic Adventure 2",
-        "categories": [
-            {
-                "name": "Hero Story",
-                "splits": [
-                    "City Escape",
-                    "Big Foot",
-                    "Wild Canyon",
-                    "Eggman 1",
-                    "Prison Lane",
-                    "Metal Harbor",
-                    "Shadow 1",
-                    "Green Forest",
-                    "Pumpkin Hill",
-                    "Mission Street",
-                    "Aquatic Mine",
-                    "Route 101",
-                    "Hidden Base",
-                    "Pyramid Cave",
-                    "Death Chamber",
-                    "King Boom Boo",
-                    "Egg Golem",
-                    "Eternal Engine",
-                    "Meteor Herd",
-                    "Rouge",
-                    "Crazy Gadget",
-                    "Eggman 2",
-                    "Final Rush",
-                    "Shadow 2"
-                ]
-            },
-            {
-                "name": "Dark Story",
-                "splits": [
-                    "Iron Gate",
-                    "Hot Shot",
-                    "Dry Lagoon",
-                    "Sand Ocean",
-                    "Radical Highway",
-                    "Egg Quarters",
-                    "Lost Colony",
-                    "Weapons Bed",
-                    "Tails 1",
-                    "Security Hall",
-                    "Flying Dog",
-                    "White Jungle",
-                    "Sonic 1",
-                    "Route 280",
-                    "Sky Rail",
-                    "Egg Golem",
-                    "Mad Space",
-                    "Knuckles",
-                    "Cosmic Wall",
-                    "Tails 2",
-                    "Final Chase",
-                    "Sonic 2"
-                ]
-            }
-        ]
-    },
-    {
-        "name": "Sonic Adventure DX",
-        "categories": [
-            {
-                "name": "Sonic Story",
-                "splits": [
-                    "Chaos 0",
-                    "Emerald Coast",
-                    "Egg Hornet",
-                    "Windy Valley",
-                    "Casinopolis",
-                    "Ice Cap",
-                    "Chaos 4",
-                    "Sky Chase (Act 1)",
-                    "Twinkle Park",
-                    "Speed Highway",
-                    "Red Mountain",
-                    "Sky Chase (Act 2)",
-                    "Sky Deck",
-                    "Chaos 6",
-                    "Lost World",
-                    "Final Egg",
-                    "Egg Viper"
-                ]
-            },
-            {
-                "name": "Small Stories (KAG)",
-                "splits": [
-                    "Speed Highway (Knuckles)",
-                    "Casinopolis (Knuckles)",
-                    "Chaos 2 (Knuckles)",
-                    "Red Mountain (Knuckles)",
-                    "Chaos 4 (Knuckles)",
-                    "Lost World (Knuckles)",
-                    "Sky Deck (Knuckles)",
-                    "Chaos 6 (Knuckles)",
-                    "Twinkle Park (Amy)",
-                    "Hot Shelter (Amy)",
-                    "Final Egg (Amy)",
-                    "Zero (Amy)",
-                    "Final Egg (Gamma)",
-                    "E-101 Beta (Gamma)",
-                    "Emerald Coast (Gamma)",
-                    "Hot Shelter (Gamma)",
-                    "Red Mountain (Gamma)",
-                    "Windy Valley (Gamma)",
-                    "E-101 mk. II (Gamma)"
-                ]
-            }
-        ]
-    },
-    {
         "name": "Shadow the Hedgehog",
         "categories": [
             {
@@ -140,6 +28,118 @@
                     "Cosmic Fall",
                     "Final Haunt",
                     "The Last Way"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Sonic Adventure DX",
+        "categories": [
+            {
+                "name": "Small Stories (KAG)",
+                "splits": [
+                    "Speed Highway (Knuckles)",
+                    "Casinopolis (Knuckles)",
+                    "Chaos 2 (Knuckles)",
+                    "Red Mountain (Knuckles)",
+                    "Chaos 4 (Knuckles)",
+                    "Lost World (Knuckles)",
+                    "Sky Deck (Knuckles)",
+                    "Chaos 6 (Knuckles)",
+                    "Twinkle Park (Amy)",
+                    "Hot Shelter (Amy)",
+                    "Final Egg (Amy)",
+                    "Zero (Amy)",
+                    "Final Egg (Gamma)",
+                    "E-101 Beta (Gamma)",
+                    "Emerald Coast (Gamma)",
+                    "Hot Shelter (Gamma)",
+                    "Red Mountain (Gamma)",
+                    "Windy Valley (Gamma)",
+                    "E-101 mk. II (Gamma)"
+                ]
+            },
+            {
+                "name": "Sonic's Story",
+                "splits": [
+                    "Chaos 0",
+                    "Emerald Coast",
+                    "Egg Hornet",
+                    "Windy Valley",
+                    "Casinopolis",
+                    "Ice Cap",
+                    "Chaos 4",
+                    "Sky Chase (Act 1)",
+                    "Twinkle Park",
+                    "Speed Highway",
+                    "Red Mountain",
+                    "Sky Chase (Act 2)",
+                    "Sky Deck",
+                    "Chaos 6",
+                    "Lost World",
+                    "Final Egg",
+                    "Egg Viper"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "Sonic Adventure 2",
+        "categories": [
+            {
+                "name": "Dark Story",
+                "splits": [
+                    "Iron Gate",
+                    "Hot Shot",
+                    "Dry Lagoon",
+                    "Sand Ocean",
+                    "Radical Highway",
+                    "Egg Quarters",
+                    "Lost Colony",
+                    "Weapons Bed",
+                    "Tails 1",
+                    "Security Hall",
+                    "Flying Dog",
+                    "White Jungle",
+                    "Sonic 1",
+                    "Route 280",
+                    "Sky Rail",
+                    "Egg Golem",
+                    "Mad Space",
+                    "Knuckles",
+                    "Cosmic Wall",
+                    "Tails 2",
+                    "Final Chase",
+                    "Sonic 2"
+                ]
+            },
+            {
+                "name": "Hero Story",
+                "splits": [
+                    "City Escape",
+                    "Big Foot",
+                    "Wild Canyon",
+                    "Eggman 1",
+                    "Prison Lane",
+                    "Metal Harbor",
+                    "Shadow 1",
+                    "Green Forest",
+                    "Pumpkin Hill",
+                    "Mission Street",
+                    "Aquatic Mine",
+                    "Route 101",
+                    "Hidden Base",
+                    "Pyramid Cave",
+                    "Death Chamber",
+                    "King Boom Boo",
+                    "Egg Golem",
+                    "Eternal Engine",
+                    "Meteor Herd",
+                    "Rouge",
+                    "Crazy Gadget",
+                    "Eggman 2",
+                    "Final Rush",
+                    "Shadow 2"
                 ]
             }
         ]
