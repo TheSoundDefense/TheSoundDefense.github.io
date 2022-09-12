@@ -143,5 +143,37 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "Sonic Heroes",
+        "categories": [
+            {
+                "name": "Team Rose",
+                "splits": [
+                    "Sea Gate",
+                    "Seaside Hill",
+                    "Ocean Palace",
+                    "Egg Hawk",
+                    "Grand Metropolis",
+                    "Power Plant",
+                    "Team Sonic",
+                    "Casino Park",
+                    "BINGO Highway",
+                    "Robot Carnival",
+                    "Rail Canyon",
+                    "Bullet Station",
+                    "Egg Albatross",
+                    "Frog Forest",
+                    "Lost Jungle",
+                    "Team Chaotix",
+                    "Hang Castle",
+                    "Mystic Mansion",
+                    "Robot Storm",
+                    "Egg Fleet",
+                    "Final Fortress",
+                    "Egg Emperor"
+                ]
+            }
+        ]
     }
 ]
