@@ -43,7 +43,10 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                     </tr>
                     <tr ng-repeat="split in ctrl.firstRunnerSplits track by $index">
                         <td>{{split.name}}</td>
-                        <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time) : '-'}}</td>
+                        <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time + ctrl.firstRunnerAdjustments) : '-'}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Total adjustments: {{ctrl.timeToStringTime(ctrl.firstRunnerAdjustments)}}</td>
                     </tr>
                 </table>
             </div>
@@ -73,7 +76,10 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                     </tr>
                     <tr ng-repeat="split in ctrl.secondRunnerSplits track by $index">
                         <td>{{split.name}}</td>
-                        <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time) : '-'}}</td>
+                        <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time + ctrl.secondRunnerAdjustments) : '-'}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Total adjustments: {{ctrl.timeToStringTime(ctrl.secondRunnerAdjustments)}}</td>
                     </tr>
                 </table>
             </div>
@@ -111,6 +117,26 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 </select>
                 <input placeholder="12:34.56" ng-model="ctrl.secondRunnerNewSplitTime">
                 <button ng-click="ctrl.addSplitTime(1)">Add split time</button>
+            </div>
+        </div>
+        <div class="timeEntries">
+            <div class="runnerTimeEntry">
+                <div class="addSplitText">Time adjustment for {{ctrl.firstRunnerName}}</div>
+                <select name="firstAdjustmentSelect" ng-model="ctrl.firstRunnerAdjustmentDirection">
+                    <option value="add">Add</option>
+                    <option value="remove">Subtract</option>
+                </select>
+                <input placeholder="12:34.56" ng-model="ctrl.firstRunnerNewAdjustment">
+                <button ng-click="ctrl.addAdjustment(0)">Add split time</button>
+            </div>
+            <div class="runnerTimeEntry">
+                <div class="addSplitText">Time adjustment for {{ctrl.secondRunnerName}}</div>
+                <select name="secondAdjustmentSelect" ng-model="ctrl.secondRunnerAdjustmentDirection">
+                    <option value="add">Add</option>
+                    <option value="remove">Subtract</option>
+                </select>
+                <input placeholder="12:34.56" ng-model="ctrl.secondRunnerNewAdjustment">
+                <button ng-click="ctrl.addAdjustment(1)">Add split time</button>
             </div>
         </div>
         <div class="newRaceButton">

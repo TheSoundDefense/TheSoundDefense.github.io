@@ -15,6 +15,13 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.firstRunnerNewSplitTime = '';
     self.secondRunnerNewSplitTime = '';
 
+    self.firstRunnerAdjustments = 0;
+    self.secondRunnerAdjustments = 0;
+    self.firstRunnerAdjustmentDirection = 'add';
+    self.secondRunnerAdjustmentDirection = 'add';
+    self.firstRunnerNewAdjustment = '';
+    self.secondRunnerNewAdjustment = '';
+
     self.latestCommonSplit = -1;
     self.leadingRunner = -1;
     self.deltas = [];
@@ -104,6 +111,31 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.recalculateLead();
     };
 
+    self.addAdjustment = function addAdjustment(index) {
+        if (index == 0) {
+            var newAdjustment = self.stringTimeToTime(self.firstRunnerNewAdjustment);
+            if (self.firstRunnerAdjustmentDirection === 'remove') {
+                newAdjustment = Math.abs(newAdjustment) * -1;
+            } else {
+                newAdjustment = Math.abs(newAdjustment);
+            }
+            // Update the total adjustments.
+            self.firstRunnerAdjustments += newAdjustment;
+            self.firstRunnerNewAdjustment = '';
+        } else {
+            var newAdjustment = self.stringTimeToTime(self.secondRunnerNewAdjustment);
+            if (self.secondRunnerAdjustmentDirection === 'remove') {
+                newAdjustment = Math.abs(newAdjustment) * -1;
+            } else {
+                newAdjustment = Math.abs(newAdjustment);
+            }
+            // Update the total adjustments.
+            self.secondRunnerAdjustments += newAdjustment;
+            self.secondRunnerNewAdjustment = '';
+        }
+        self.recalculateLead();
+    }
+
     self.recalculateLead = function recalculateLead() {
         self.latestCommonSplit = -1;
         var previousDelta = 0;
@@ -111,6 +143,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
             var firstTime = self.firstRunnerSplits[i].time;
             var secondTime = self.secondRunnerSplits[i].time;
             if (firstTime !== undefined && secondTime !== undefined) {
+                // This is the point where we add time adjustments.
+                firstTime += self.firstRunnerAdjustments;
+                secondTime += self.secondRunnerAdjustments;
+
                 self.latestCommonSplit = i;
 
                 var diffTime = firstTime - secondTime;
@@ -175,7 +211,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
         return (hours * 3600) + (minutes * 60) + seconds;
     };
 
-    self.timeToStringTime = function timeToStringTime(numTime) {
+    self.timeToStringTime = function timeToStringTime(numTimeRaw) {
+        var isNegative = numTimeRaw < 0;
+        var negativeSign = isNegative ? '-' : '';
+        numTime = Math.abs(numTimeRaw);
+
         var hours = 0;
         var timeWithoutHours = numTime;
         if (numTime >= 3600) {
@@ -187,20 +227,21 @@ var comparatorCtrl = function comparatorCtrl($http) {
         var seconds = timeWithoutHours % 60;
         var secondsStr = seconds.toFixed(self.precision);
         if (hours == 0 && minutes == 0) {
-            return secondsStr;
+            return `${negativeSign}${secondsStr}`;
         }
 
         if (secondsStr.indexOf('.') <= 1) {
             secondsStr = `0${secondsStr}`;
         }
         if (hours == 0) {
-            return `${minutes.toString()}:${secondsStr}`;
+            return `${negativeSign}${minutes.toString()}:${secondsStr}`;
         }
 
         if (minutes < 10) {
             minutesStr = `0${minutesStr}`;
         }
-        return `${hours.toString()}:${minutesStr}:${secondsStr}`;
+
+        return `${negativeSign}${hours.toString()}:${minutesStr}:${secondsStr}`;
     };
 
     self.getRunnerName = function getRunnerName(runner) {
@@ -226,6 +267,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.secondSplitSelect = '0';
         self.firstRunnerNewSplitTime = '';
         self.secondRunnerNewSplitTime = '';
+        self.firstRunnerAdjustments = 0;
+        self.secondRunnerAdjustments = 0;
+        self.firstRunnerAdjustmentDirection = 'add';
+        self.secondRunnerAdjustmentDirection = 'add';
+        self.firstRunnerNewAdjustment = '';
+        self.secondRunnerNewAdjustment = '';
         self.raceComplete = false;
         self.displayedTab = 'splits';
     };
