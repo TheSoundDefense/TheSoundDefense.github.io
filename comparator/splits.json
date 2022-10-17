@@ -253,5 +253,36 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "Sonic the Hedgehog CD",
+        "categories": [
+            {
+                "name": "Any%",
+                "splits": [
+                    "Palmtree Panic Zone Act 1",
+                    "Palmtree Panic Zone Act 2",
+                    "Palmtree Panic Zone Act 3",
+                    "Collision Chaos Zone Act 1",
+                    "Collision Chaos Zone Act 2",
+                    "Collision Chaos Zone Act 3",
+                    "Tidal Tempest Zone Act 1",
+                    "Tidal Tempest Zone Act 2",
+                    "Tidal Tempest Zone Act 3",
+                    "Quartz Quadrant Zone Act 1",
+                    "Quartz Quadrant Zone Act 2",
+                    "Quartz Quadrant Zone Act 3",
+                    "Wacky Workbench Zone Act 1",
+                    "Wacky Workbench Zone Act 2",
+                    "Wacky Workbench Zone Act 3",
+                    "Stardust Speedway Zone Act 1",
+                    "Stardust Speedway Zone Act 2",
+                    "Stardust Speedway Zone Act 3",
+                    "Metallic Madness Zone Act 1",
+                    "Metallic Madness Zone Act 2",
+                    "Metallic Madness Zone Act 3"
+                ]
+            }
+        ]
     }
 ]
