@@ -169,7 +169,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 gain = Math.abs(gain);
 
                 self.timeDifference = diffTime;
-                self.timeDifferenceString = self.timeToStringTime(diffTime);
+                self.timeDifferenceString = self.timeToStringTimeWithFullText(diffTime);
                 var leadingRunner = -1;
                 if (firstTime < secondTime) {
                     leadingRunner = 0;
@@ -243,6 +243,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
         return `${negativeSign}${hours.toString()}:${minutesStr}:${secondsStr}`;
     };
+
+    self.timeToStringTimeWithFullText = function timeToStringTimeWithFullText(numTimeRaw) {
+        var baseStringTime = this.timeToStringTime(numTimeRaw);
+        return baseStringTime.indexOf(':') >= 0 ? baseStringTime : `${baseStringTime} seconds`;
+    }
 
     self.getRunnerName = function getRunnerName(runner) {
         if (runner === 0) {
