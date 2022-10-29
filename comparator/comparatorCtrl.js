@@ -4,6 +4,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.displayedTab = 'splits';
     self.splitTextContents = '';
     self.splitsList = [];
+    self.timingMethod = 'igt_cumulative';
 
     self.firstRunnerName = '';
     self.secondRunnerName = '';
@@ -23,8 +24,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.secondRunnerAdjustmentDirection = 'add';
     self.firstRunnerNewAdjustment = '';
     self.secondRunnerNewAdjustment = '';
-
-    self.timingMethod = 'igt_cumulative';
 
     self.latestCommonSplit = -1;
     self.leadingRunner = -1;
