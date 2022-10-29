@@ -27,6 +27,17 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 </option>
             </select>
         </p>
+        <p>Timing method:
+            <select name="timingMethodSelect"
+                    ng-model="ctrl.timingMethod">
+                <option value="igt_cumulative">In-game time, cumulative</option>
+                <option value="igt_il">In-game time, individual levels</option>
+                <option value="rta">Real time</option>
+            </select>
+        </p>
+        <p ng-if="ctrl.timingMethod === 'igt_il'">
+            <b>Important:</b> this timing method will not work correctly if any splits are missing.
+        </p>
         <p>
             <span class="nameEntry">Runner 1 name: <input ng-model="ctrl.firstRunnerName"></span>
             <span class="nameEntry">Runner 2 name: <input ng-model="ctrl.secondRunnerName"></span>
@@ -39,14 +50,22 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimes">
                 <table>
                     <tr>
-                        <th colspan="2">{{ctrl.firstRunnerName}}</th>
+                        <th colspan="{{ctrl.timingMethod === 'igt_il' ? '3' : '2'}}">
+                            {{ctrl.firstRunnerName}}
+                        </th>
                     </tr>
-                    <tr ng-repeat="split in ctrl.firstRunnerSplits track by $index">
+                    <tr ng-repeat="split in ctrl.firstRunnerCumulativeTimes track by $index">
                         <td>{{split.name}}</td>
+                        <td ng-if="ctrl.timingMethod === 'igt_il'"
+                            ng-init="levelSplit = ctrl.firstRunnerSplits[$index]">
+                            {{levelSplit.time !== undefined ? ctrl.timeToStringTime(levelSplit.time) : '-'}}
+                        </td>
                         <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time + ctrl.firstRunnerAdjustments) : '-'}}</td>
                     </tr>
                     <tr>
-                        <td colspan="2">Total adjustments: {{ctrl.timeToStringTime(ctrl.firstRunnerAdjustments)}}</td>
+                        <td colspan="{{ctrl.timingMethod === 'igt_il' ? '3' : '2'}}">
+                            Total adjustments: {{ctrl.timeToStringTime(ctrl.firstRunnerAdjustments)}}
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -72,27 +91,36 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimes">
                 <table>
                     <tr>
-                        <th colspan="2">{{ctrl.secondRunnerName}}</th>
+                        <th colspan="{{ctrl.timingMethod === 'igt_il' ? '3' : '2'}}">
+                            {{ctrl.secondRunnerName}}
+                        </th>
                     </tr>
-                    <tr ng-repeat="split in ctrl.secondRunnerSplits track by $index">
+                    <tr ng-repeat="split in ctrl.secondRunnerCumulativeTimes track by $index">
                         <td>{{split.name}}</td>
+                        <td ng-if="ctrl.timingMethod === 'igt_il'"
+                            ng-init="levelSplit = ctrl.secondRunnerSplits[$index]">
+                            {{levelSplit.time !== undefined ? ctrl.timeToStringTime(levelSplit.time) : '-'}}
+                        </td>
                         <td>{{split.time !== undefined ? ctrl.timeToStringTime(split.time + ctrl.secondRunnerAdjustments) : '-'}}</td>
                     </tr>
                     <tr>
-                        <td colspan="2">Total adjustments: {{ctrl.timeToStringTime(ctrl.secondRunnerAdjustments)}}</td>
+                        <td colspan="{{ctrl.timingMethod === 'igt_il' ? '3' : '2'}}">
+                            Total adjustments: {{ctrl.timeToStringTime(ctrl.secondRunnerAdjustments)}}
+                        </td>
                     </tr>
                 </table>
             </div>
         </div>
         <div class="timeResults infoText">
             <div ng-show="ctrl.leadingRunner < 0">
-                Both runners are <span class="timeKeyInfo">tied</span>
+                Both runners are {{ctrl.timingMethod === 'rta' ? "approximately " : ""}} <span class="timeKeyInfo">tied</span>
             </div>
             <div ng-show="ctrl.leadingRunner >= 0">
                 <span class="timeKeyInfo">
-                    {{ctrl.leadingRunner == 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
+                    {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
                 </span>
                 {{ctrl.raceComplete ? "wins by" : "is ahead by"}}
+                {{ctrl.timingMethod === 'rta' ? "approximately" : ""}}
                 <span class="timeKeyInfo">
                     {{ctrl.timeDifferenceString}}
                 </span>

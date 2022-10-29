@@ -9,6 +9,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.secondRunnerName = '';
     self.firstRunnerSplits = [];
     self.secondRunnerSplits = [];
+    self.firstRunnerCumulativeTimes = [];
+    self.secondRunnerCumulativeTimes = [];
 
     self.firstSplitSelect = '0';
     self.secondSplitSelect = '0';
@@ -21,6 +23,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.secondRunnerAdjustmentDirection = 'add';
     self.firstRunnerNewAdjustment = '';
     self.secondRunnerNewAdjustment = '';
+
+    self.timingMethod = 'igt_cumulative';
 
     self.latestCommonSplit = -1;
     self.leadingRunner = -1;
@@ -67,6 +71,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 self.splitsList.push(parsedSplit);
                 self.firstRunnerSplits.push(self.newSplitItem(parsedSplit));
                 self.secondRunnerSplits.push(self.newSplitItem(parsedSplit));
+                self.firstRunnerCumulativeTimes.push(self.newSplitItem(parsedSplit));
+                self.secondRunnerCumulativeTimes.push(self.newSplitItem(parsedSplit));
                 self.deltas.push({
                     leader: undefined,
                     timeDelta: undefined,
@@ -139,17 +145,58 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.recalculateLead = function recalculateLead() {
         self.latestCommonSplit = -1;
         var previousDelta = 0;
+        var firstRunnerTime = 0;
+        var secondRunnerTime = 0;
+        var firstRunnerRecordForIl = true;
+        var secondRunnerRecordForIl = true;
         for (var i = 0; i < this.splitsList.length; i++) {
             var firstTime = self.firstRunnerSplits[i].time;
             var secondTime = self.secondRunnerSplits[i].time;
-            if (firstTime !== undefined && secondTime !== undefined) {
+            // We set the current cumulative time. If we're timing by using
+            // individual level times, this is the sum of all times so far.
+            // Otherwise, it's exactly the same as the splits.
+            //
+            // Also, if we are in the IL timing method, as soon as we see an
+            // unpopulated split, stop adding up cumulative times. These will
+            // not work with any missing splits.
+            if (this.timingMethod === 'igt_il') {
+                if (firstTime !== undefined) {
+                    firstRunnerTime += firstTime;
+                    if (firstRunnerRecordForIl) {
+                        this.firstRunnerCumulativeTimes[i].time = firstRunnerTime;
+                    }
+                } else {
+                    firstRunnerRecordForIl = false;
+                }
+                if (secondTime !== undefined) {
+                    secondRunnerTime += secondTime;
+                    if (secondRunnerRecordForIl) {
+                        this.secondRunnerCumulativeTimes[i].time = secondRunnerTime;
+                    }
+                } else {
+                    secondRunnerRecordForIl = false;
+                }
+            } else {
+                firstRunnerTime = self.firstRunnerSplits[i].time;
+                secondRunnerTime = self.secondRunnerSplits[i].time;
+                this.firstRunnerCumulativeTimes[i].time = firstRunnerTime;
+                this.secondRunnerCumulativeTimes[i].time = secondRunnerTime;
+            }
+
+            // Only calculate a difference for this split if both runners have
+            // populated data for this split.
+            if (this.firstRunnerCumulativeTimes[i].time !== undefined
+                && this.secondRunnerCumulativeTimes[i].time !== undefined) {
+                var firstSplitTime = firstRunnerTime;
+                var secondSplitTime = secondRunnerTime;
+
                 // This is the point where we add time adjustments.
-                firstTime += self.firstRunnerAdjustments;
-                secondTime += self.secondRunnerAdjustments;
+                firstSplitTime += self.firstRunnerAdjustments;
+                secondSplitTime += self.secondRunnerAdjustments;
 
                 self.latestCommonSplit = i;
 
-                var diffTime = firstTime - secondTime;
+                var diffTime = firstSplitTime - secondSplitTime;
                 var gain = diffTime - previousDelta;
                 // If the gain is positive, then the delta has become larger,
                 // and runner 2 has gained time. A negative delta favors
@@ -171,9 +218,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 self.timeDifference = diffTime;
                 self.timeDifferenceString = self.timeToStringTimeWithFullText(diffTime);
                 var leadingRunner = -1;
-                if (firstTime < secondTime) {
+                if (firstSplitTime < secondSplitTime) {
                     leadingRunner = 0;
-                } else if (secondTime < firstTime) {
+                } else if (secondSplitTime < firstSplitTime) {
                     leadingRunner = 1;
                 }
                 self.leadingRunner = leadingRunner;
@@ -246,7 +293,20 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.timeToStringTimeWithFullText = function timeToStringTimeWithFullText(numTimeRaw) {
         var baseStringTime = this.timeToStringTime(numTimeRaw);
-        return baseStringTime.indexOf(':') >= 0 ? baseStringTime : `${baseStringTime} seconds`;
+
+        // If we're doing approximate times, remove trailing zeroes from the decimal part.
+        if (this.timingMethod === 'rta') {
+            while (baseStringTime.charAt(baseStringTime.length - 1) === '0') {
+                baseStringTime = baseStringTime.slice(0, -1);
+            }
+            // If we removed the entire decimal part, remove the decimal point.
+            if (baseStringTime.charAt(baseStringTime.length - 1) === '.') {
+                baseStringTime = baseStringTime.slice(0, -1);
+            }
+        }
+
+        var secondsText = baseStringTime === '1' ? 'second' : 'seconds';
+        return baseStringTime.indexOf(':') >= 0 ? baseStringTime : `${baseStringTime} ${secondsText}`;
     }
 
     self.getRunnerName = function getRunnerName(runner) {
@@ -263,6 +323,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.splitsList = [];
         self.firstRunnerSplits = [];
         self.secondRunnerSplits = [];
+        self.firstRunnerCumulativeTimes = [];
+        self.secondRunnerCumulativeTimes = [];
+        self.timingMethod = 'igt_cumulative';
         self.latestCommonSplit = -1;
         self.leadingRunner = -1;
         self.deltas = [];
