@@ -255,6 +255,37 @@
         ]
     },
     {
+        "name": "Sonic Robo Blast 2",
+        "categories": [
+            {
+                "name": "Any%",
+                "splits": [
+                    "Greenflower Zone Act 1",
+                    "Greenflower Zone Act 2",
+                    "Greenflower Zone Act 3",
+                    "Techno Hill Zone Act 1",
+                    "Techno Hill Zone Act 2",
+                    "Techno Hill Zone Act 3",
+                    "Deep Sea Zone Act 1",
+                    "Deep Sea Zone Act 2",
+                    "Deep Sea Zone Act 3",
+                    "Castle Eggman Zone Act 1",
+                    "Castle Eggman Zone Act 2",
+                    "Castle Eggman Zone Act 3",
+                    "Arid Canyon Zone Act 1",
+                    "Arid Canyon Zone Act 2",
+                    "Arid Canyon Zone Act 3",
+                    "Red Volcano Zone Act 1",
+                    "Egg Rock Zone Act 1",
+                    "Egg Rock Zone Act 2",
+                    "Black Core Zone Act 1",
+                    "Black Core Zone Act 2",
+                    "Black Core Zone Act 3"
+                ]
+            }
+        ]
+    },
+    {
         "name": "Sonic the Hedgehog CD",
         "categories": [
             {

@@ -1,17 +1,16 @@
 var comparatorCtrl = function comparatorCtrl($http) {
-    var self = this;
+    let self = this;
 
     self.displayedTab = 'splits';
     self.splitTextContents = '';
     self.splitsList = [];
-    self.timingMethod = 'igt_cumulative';
+    self.timingMethod = 'cumulative';
+    self.approximate = false;
 
     self.firstRunnerName = '';
     self.secondRunnerName = '';
     self.firstRunnerSplits = [];
     self.secondRunnerSplits = [];
-    self.firstRunnerCumulativeTimes = [];
-    self.secondRunnerCumulativeTimes = [];
 
     self.firstSplitSelect = '0';
     self.secondSplitSelect = '0';
@@ -36,8 +35,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.predefinedSplitSelect = '-1';
     $http.get('splits.json').then(function(response) {
         const games = response.data;
-        for (var game of games) {
-            for (var category of game.categories) {
+        for (let game of games) {
+            for (let category of game.categories) {
                 self.predefinedSplits.push({
                     name: `${game.name} (${category.name})`,
                     splits: category.splits
@@ -54,24 +53,22 @@ var comparatorCtrl = function comparatorCtrl($http) {
             return;
         }
 
-        var selectedSplits = self.predefinedSplits[parseInt(self.predefinedSplitSelect)];
-        var splitString = '';
-        for (var split of selectedSplits.splits) {
+        let selectedSplits = self.predefinedSplits[parseInt(self.predefinedSplitSelect)];
+        let splitString = '';
+        for (let split of selectedSplits.splits) {
             splitString += `${split}\n`;
         }
         self.splitTextContents = splitString;
     };
 
     self.begin = function begin() {
-        var parsedList = self.splitTextContents.split('\n');
+        let parsedList = self.splitTextContents.split('\n');
         // Create a list of split names, and also initialize the splits arrays.
-        for (var parsedSplit of parsedList) {
+        for (let parsedSplit of parsedList) {
             if (parsedSplit) {
                 self.splitsList.push(parsedSplit);
                 self.firstRunnerSplits.push(self.newSplitItem(parsedSplit));
                 self.secondRunnerSplits.push(self.newSplitItem(parsedSplit));
-                self.firstRunnerCumulativeTimes.push(self.newSplitItem(parsedSplit));
-                self.secondRunnerCumulativeTimes.push(self.newSplitItem(parsedSplit));
                 self.deltas.push({
                     leader: undefined,
                     timeDelta: undefined,
@@ -89,36 +86,45 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.newSplitItem = function newSplitItem(splitName) {
         return {
             name: splitName,
-            time: undefined
+            splitTime: undefined,
+            cumulativeTime: undefined
         };
     };
 
     self.addSplitTime = function addSplitTime(index) {
         if (index == 0) {
-            var newTime = self.stringTimeToTime(self.firstRunnerNewSplitTime);
-            var chosenSplit = parseInt(self.firstSplitSelect);
-            self.firstRunnerSplits[chosenSplit].time = newTime;
+            let newTime = self.stringTimeToTime(self.firstRunnerNewSplitTime);
+            let chosenSplit = parseInt(self.firstSplitSelect);
+            if (self.timingMethod === 'cumulative') {
+                self.firstRunnerSplits[chosenSplit].cumulativeTime = newTime;
+            } else {
+                self.firstRunnerSplits[chosenSplit].splitTime = newTime;
+            }
             // Update the select box, and erase the input.
             if (chosenSplit < self.splitsList.length - 1) {
                 self.firstSplitSelect = (chosenSplit + 1).toString();
             }
             self.firstRunnerNewSplitTime = '';
         } else {
-            var newTime = self.stringTimeToTime(self.secondRunnerNewSplitTime);
-            var chosenSplit = parseInt(self.secondSplitSelect);
-            self.secondRunnerSplits[chosenSplit].time = newTime;
+            let newTime = self.stringTimeToTime(self.secondRunnerNewSplitTime);
+            let chosenSplit = parseInt(self.secondSplitSelect);
+            if (self.timingMethod === 'cumulative') {
+                self.secondRunnerSplits[chosenSplit].cumulativeTime = newTime;
+            } else {
+                self.secondRunnerSplits[chosenSplit].splitTime = newTime;
+            }
             // Update the select box, and erase the input.
             if (chosenSplit < self.splitsList.length - 1) {
                 self.secondSplitSelect = (chosenSplit + 1).toString();
             }
             self.secondRunnerNewSplitTime = '';
         }
-        self.recalculateLead();
+        self.recalculateTimes();
     };
 
     self.addAdjustment = function addAdjustment(index) {
         if (index == 0) {
-            var newAdjustment = self.stringTimeToTime(self.firstRunnerNewAdjustment);
+            let newAdjustment = self.stringTimeToTime(self.firstRunnerNewAdjustment);
             if (self.firstRunnerAdjustmentDirection === 'remove') {
                 newAdjustment = Math.abs(newAdjustment) * -1;
             } else {
@@ -128,7 +134,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             self.firstRunnerAdjustments += newAdjustment;
             self.firstRunnerNewAdjustment = '';
         } else {
-            var newAdjustment = self.stringTimeToTime(self.secondRunnerNewAdjustment);
+            let newAdjustment = self.stringTimeToTime(self.secondRunnerNewAdjustment);
             if (self.secondRunnerAdjustmentDirection === 'remove') {
                 newAdjustment = Math.abs(newAdjustment) * -1;
             } else {
@@ -138,56 +144,90 @@ var comparatorCtrl = function comparatorCtrl($http) {
             self.secondRunnerAdjustments += newAdjustment;
             self.secondRunnerNewAdjustment = '';
         }
+        self.recalculateTimes();
+    }
+
+    self.recalculateTimes = function recalculateTimes() {
+        let firstRunnerCumulative = 0;
+        let secondRunnerCumulative = 0;
+        let firstRunnerRecordForIl = true;
+        let secondRunnerRecordForIl = true;
+        for (let i = 0; i < this.splitsList.length; i++) {
+            // The timing method we use determines what splits need to be
+            // calculated and which are hard data.
+            if (self.timingMethod === 'cumulative') {
+                let firstSplit = self.firstRunnerSplits[i];
+                let secondSplit = self.secondRunnerSplits[i];
+                // For the first split, the split time and cumulative time
+                // are the same.
+                if (i === 0) {
+                    firstSplit.splitTime = firstSplit.cumulativeTime;
+                    secondSplit.splitTime = secondSplit.cumulativeTime;
+                } else {
+                    let firstPreviousSplit = self.firstRunnerSplits[i-1];
+                    let secondPreviousSplit = self.secondRunnerSplits[i-1];
+                    // If this split is present, and the last split is present,
+                    // calculate the individual split time. We can do this
+                    // throughout the whole set of splits, no matter how many
+                    // cumulative times are present.
+                    if (firstSplit.cumulativeTime !== undefined
+                        && firstPreviousSplit.cumulativeTime !== undefined) {
+                        firstSplit.splitTime = firstSplit.cumulativeTime - firstPreviousSplit.cumulativeTime;
+                    }
+                    if (secondSplit.cumulativeTime !== undefined
+                        && secondPreviousSplit.cumulativeTime !== undefined) {
+                        secondSplit.splitTime = secondSplit.cumulativeTime - secondPreviousSplit.cumulativeTime;
+                    }
+                }
+            } else {
+                let firstSplit = self.firstRunnerSplits[i];
+                let secondSplit = self.secondRunnerSplits[i];
+                // For the first split, the split time and cumulative time
+                // are the same.
+                if (i === 0) {
+                    firstSplit.cumulativeTime = firstSplit.splitTime;
+                    firstRunnerCumulative = firstSplit.cumulativeTime !== undefined
+                        ? firstSplit.cumulativeTime
+                        : 0;
+                    secondSplit.cumulativeTime = secondSplit.splitTime;
+                    secondRunnerCumulative = secondSplit.cumulativeTime !== undefined
+                        ? secondSplit.cumulativeTime
+                        : 0;
+                } else {
+                    // We determine cumulative times up until we find a single
+                    // unpopulated split. At that point, we stop.
+                    if (firstSplit.splitTime !== undefined) {
+                        firstRunnerCumulative += firstSplit.splitTime;
+                        if (firstRunnerRecordForIl) {
+                            firstSplit.cumulativeTime = firstRunnerCumulative;
+                        }
+                    } else {
+                        firstRunnerRecordForIl = false;
+                    }
+                    if (secondSplit.splitTime !== undefined) {
+                        secondRunnerCumulative += secondSplit.splitTime;
+                        if (secondRunnerRecordForIl) {
+                            secondSplit.cumulativeTime = secondRunnerCumulative;
+                        }
+                    } else {
+                        secondRunnerRecordForIl = false;
+                    }
+                }
+            }
+        }
         self.recalculateLead();
     }
 
     self.recalculateLead = function recalculateLead() {
         self.latestCommonSplit = -1;
-        var previousDelta = 0;
-        var firstRunnerTime = 0;
-        var secondRunnerTime = 0;
-        var firstRunnerRecordForIl = true;
-        var secondRunnerRecordForIl = true;
-        for (var i = 0; i < this.splitsList.length; i++) {
-            var firstTime = self.firstRunnerSplits[i].time;
-            var secondTime = self.secondRunnerSplits[i].time;
-            // We set the current cumulative time. If we're timing by using
-            // individual level times, this is the sum of all times so far.
-            // Otherwise, it's exactly the same as the splits.
-            //
-            // Also, if we are in the IL timing method, as soon as we see an
-            // unpopulated split, stop adding up cumulative times. These will
-            // not work with any missing splits.
-            if (this.timingMethod === 'igt_il') {
-                if (firstTime !== undefined) {
-                    firstRunnerTime += firstTime;
-                    if (firstRunnerRecordForIl) {
-                        this.firstRunnerCumulativeTimes[i].time = firstRunnerTime;
-                    }
-                } else {
-                    firstRunnerRecordForIl = false;
-                }
-                if (secondTime !== undefined) {
-                    secondRunnerTime += secondTime;
-                    if (secondRunnerRecordForIl) {
-                        this.secondRunnerCumulativeTimes[i].time = secondRunnerTime;
-                    }
-                } else {
-                    secondRunnerRecordForIl = false;
-                }
-            } else {
-                firstRunnerTime = self.firstRunnerSplits[i].time;
-                secondRunnerTime = self.secondRunnerSplits[i].time;
-                this.firstRunnerCumulativeTimes[i].time = firstRunnerTime;
-                this.secondRunnerCumulativeTimes[i].time = secondRunnerTime;
-            }
-
+        let previousDelta = 0;
+        for (let i = 0; i < this.splitsList.length; i++) {
             // Only calculate a difference for this split if both runners have
             // populated data for this split.
-            if (this.firstRunnerCumulativeTimes[i].time !== undefined
-                && this.secondRunnerCumulativeTimes[i].time !== undefined) {
-                var firstSplitTime = firstRunnerTime;
-                var secondSplitTime = secondRunnerTime;
+            if (this.firstRunnerSplits[i].cumulativeTime !== undefined
+                && this.secondRunnerSplits[i].cumulativeTime !== undefined) {
+                let firstSplitTime = this.firstRunnerSplits[i].cumulativeTime;
+                let secondSplitTime = this.secondRunnerSplits[i].cumulativeTime;
 
                 // This is the point where we add time adjustments.
                 firstSplitTime += self.firstRunnerAdjustments;
@@ -195,12 +235,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
                 self.latestCommonSplit = i;
 
-                var diffTime = firstSplitTime - secondSplitTime;
-                var gain = diffTime - previousDelta;
+                let diffTime = firstSplitTime - secondSplitTime;
+                let gain = diffTime - previousDelta;
                 // If the gain is positive, then the delta has become larger,
                 // and runner 2 has gained time. A negative delta favors
                 // player 1 (as smaller times are better).
-                var gainingRunner = -1;
+                let gainingRunner = -1;
                 if (gain > 0) {
                     gainingRunner = 1;
                 } else if (gain < 0) {
@@ -216,7 +256,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
                 self.timeDifference = diffTime;
                 self.timeDifferenceString = self.timeToStringTimeWithFullText(diffTime);
-                var leadingRunner = -1;
+                let leadingRunner = -1;
                 if (firstSplitTime < secondSplitTime) {
                     leadingRunner = 0;
                 } else if (secondSplitTime < firstSplitTime) {
@@ -241,37 +281,37 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.stringTimeToTime = function stringTimeToTime(strTime) {
-        var parsedTime = strTime.split(':');
+        let parsedTime = strTime.split(':');
         if (parsedTime.length == 1) {
             return parseFloat(parsedTime[0]);
         }
         if (parsedTime.length == 2) {
-            var minutes = parseInt(parsedTime[0]);
-            var seconds = parseFloat(parsedTime[1]);
+            let minutes = parseInt(parsedTime[0]);
+            let seconds = parseFloat(parsedTime[1]);
             return (minutes * 60) + seconds;
         }
         // We stop at hours.
-        var hours = parseInt(parsedTime[0]);
-        var minutes = parseInt(parsedTime[1]);
-        var seconds = parseFloat(parsedTime[2]);
+        let hours = parseInt(parsedTime[0]);
+        let minutes = parseInt(parsedTime[1]);
+        let seconds = parseFloat(parsedTime[2]);
         return (hours * 3600) + (minutes * 60) + seconds;
     };
 
     self.timeToStringTime = function timeToStringTime(numTimeRaw) {
-        var isNegative = numTimeRaw < 0;
-        var negativeSign = isNegative ? '-' : '';
+        let isNegative = numTimeRaw < 0;
+        let negativeSign = isNegative ? '-' : '';
         numTime = Math.abs(numTimeRaw);
 
-        var hours = 0;
-        var timeWithoutHours = numTime;
+        let hours = 0;
+        let timeWithoutHours = numTime;
         if (numTime >= 3600) {
             hours = Math.floor(numTime / 3600);
             timeWithoutHours = timeWithoutHours % 3600;
         }
-        var minutes = Math.floor(timeWithoutHours / 60);
-        var minutesStr = minutes.toString();
-        var seconds = timeWithoutHours % 60;
-        var secondsStr = seconds.toFixed(self.precision);
+        let minutes = Math.floor(timeWithoutHours / 60);
+        let minutesStr = minutes.toString();
+        let seconds = timeWithoutHours % 60;
+        let secondsStr = seconds.toFixed(self.precision);
         if (hours == 0 && minutes == 0) {
             return `${negativeSign}${secondsStr}`;
         }
@@ -291,10 +331,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.timeToStringTimeWithFullText = function timeToStringTimeWithFullText(numTimeRaw) {
-        var baseStringTime = this.timeToStringTime(numTimeRaw);
+        let baseStringTime = this.timeToStringTime(numTimeRaw);
 
         // If we're doing approximate times, remove trailing zeroes from the decimal part.
-        if (this.timingMethod === 'rta') {
+        if (this.approximate) {
             while (baseStringTime.charAt(baseStringTime.length - 1) === '0') {
                 baseStringTime = baseStringTime.slice(0, -1);
             }
@@ -304,7 +344,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             }
         }
 
-        var secondsText = baseStringTime === '1' ? 'second' : 'seconds';
+        let secondsText = baseStringTime === '1' ? 'second' : 'seconds';
         return baseStringTime.indexOf(':') >= 0 ? baseStringTime : `${baseStringTime} ${secondsText}`;
     }
 
@@ -322,9 +362,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.splitsList = [];
         self.firstRunnerSplits = [];
         self.secondRunnerSplits = [];
-        self.firstRunnerCumulativeTimes = [];
-        self.secondRunnerCumulativeTimes = [];
-        self.timingMethod = 'igt_cumulative';
+        self.timingMethod = 'cumulative';
+        self.approximate = false;
         self.latestCommonSplit = -1;
         self.leadingRunner = -1;
         self.deltas = [];
