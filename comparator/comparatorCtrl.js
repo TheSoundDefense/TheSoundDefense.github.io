@@ -63,6 +63,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.begin = function begin() {
         let parsedList = self.splitTextContents.split('\n');
+
+        if (parsedList.length <= 0 || !self.firstRunnerName || !self.secondRunnerName) {
+            return;
+        }
+
         // Create a list of split names, and also initialize the splits arrays.
         for (let parsedSplit of parsedList) {
             if (parsedSplit) {
@@ -78,9 +83,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             }
         }
 
-        if (self.splitsList.length > 0 && self.firstRunnerName && self.secondRunnerName) {
-            self.displayedTab = 'data-entry';
-        }
+        self.displayedTab = 'data-entry';
     };
 
     self.newSplitItem = function newSplitItem(splitName) {
