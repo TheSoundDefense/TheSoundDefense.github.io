@@ -52,7 +52,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimes">
                 <table>
                     <tr>
-                        <th colspan="3">
+                        <th colspan="4">
                             {{ctrl.firstRunnerName}}
                         </th>
                     </tr>
@@ -61,12 +61,8 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                         <td>
                             {{split.splitTime !== undefined ? ctrl.timeToStringTime(split.splitTime) : '-'}}
                         </td>
-                        <td>{{split.cumulativeTime !== undefined ? ctrl.timeToStringTime(split.cumulativeTime + ctrl.firstRunnerAdjustments) : '-'}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            Total adjustments: {{ctrl.timeToStringTime(ctrl.firstRunnerAdjustments)}}
-                        </td>
+                        <td>{{ctrl.timeToStringTime(split.adjustment)}}</td>
+                        <td>{{split.cumulativeTime !== undefined ? ctrl.timeToStringTime(split.cumulativeTime + split.cumulativeAdjustment) : '-'}}</td>
                     </tr>
                 </table>
             </div>
@@ -92,7 +88,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimes">
                 <table>
                     <tr>
-                        <th colspan="3">
+                        <th colspan="4">
                             {{ctrl.secondRunnerName}}
                         </th>
                     </tr>
@@ -101,12 +97,8 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                         <td>
                             {{split.splitTime !== undefined ? ctrl.timeToStringTime(split.splitTime) : '-'}}
                         </td>
-                        <td>{{split.cumulativeTime !== undefined ? ctrl.timeToStringTime(split.cumulativeTime + ctrl.secondRunnerAdjustments) : '-'}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            Total adjustments: {{ctrl.timeToStringTime(ctrl.secondRunnerAdjustments)}}
-                        </td>
+                        <td>{{ctrl.timeToStringTime(split.adjustment)}}</td>
+                        <td>{{split.cumulativeTime !== undefined ? ctrl.timeToStringTime(split.cumulativeTime + split.cumulativeAdjustment) : '-'}}</td>
                     </tr>
                 </table>
             </div>
@@ -149,7 +141,9 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
         </div>
         <div class="timeEntries">
             <div class="runnerTimeEntry">
-                <div class="addSplitText">Time adjustment for {{ctrl.firstRunnerName}}</div>
+                <div class="addSplitText">
+                    Time adjustment for {{ctrl.firstRunnerName}} on {{ctrl.getRunnerSplit(0)}}
+                </div>
                 <select name="firstAdjustmentSelect" ng-model="ctrl.firstRunnerAdjustmentDirection">
                     <option value="add">Add</option>
                     <option value="remove">Subtract</option>
@@ -158,7 +152,9 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 <button ng-click="ctrl.addAdjustment(0)">Add split time</button>
             </div>
             <div class="runnerTimeEntry">
-                <div class="addSplitText">Time adjustment for {{ctrl.secondRunnerName}}</div>
+                <div class="addSplitText">
+                    Time adjustment for {{ctrl.secondRunnerName}} on {{ctrl.getRunnerSplit(1)}}
+                </div>
                 <select name="secondAdjustmentSelect" ng-model="ctrl.secondRunnerAdjustmentDirection">
                     <option value="add">Add</option>
                     <option value="remove">Subtract</option>

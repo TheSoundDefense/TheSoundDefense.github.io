@@ -17,8 +17,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.firstRunnerNewSplitTime = '';
     self.secondRunnerNewSplitTime = '';
 
-    self.firstRunnerAdjustments = 0;
-    self.secondRunnerAdjustments = 0;
     self.firstRunnerAdjustmentDirection = 'add';
     self.secondRunnerAdjustmentDirection = 'add';
     self.firstRunnerNewAdjustment = '';
@@ -90,7 +88,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
         return {
             name: splitName,
             splitTime: undefined,
-            cumulativeTime: undefined
+            cumulativeTime: undefined,
+            adjustment: 0,
+            cumulativeAdjustment: 0
         };
     };
 
@@ -133,8 +133,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
             } else {
                 newAdjustment = Math.abs(newAdjustment);
             }
-            // Update the total adjustments.
-            self.firstRunnerAdjustments += newAdjustment;
+            // Update the adjustment for this split.
+            let currentSplit = parseInt(self.firstSplitSelect);
+            self.firstRunnerSplits[currentSplit].adjustment += newAdjustment;
             self.firstRunnerNewAdjustment = '';
         } else {
             let newAdjustment = self.stringTimeToTime(self.secondRunnerNewAdjustment);
@@ -143,8 +144,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
             } else {
                 newAdjustment = Math.abs(newAdjustment);
             }
-            // Update the total adjustments.
-            self.secondRunnerAdjustments += newAdjustment;
+            // Update the adjustment for this split.
+            let currentSplit = parseInt(self.secondSplitSelect);
+            self.secondRunnerSplits[currentSplit].adjustment += newAdjustment;
             self.secondRunnerNewAdjustment = '';
         }
         self.recalculateTimes();
@@ -155,12 +157,15 @@ var comparatorCtrl = function comparatorCtrl($http) {
         let secondRunnerCumulative = 0;
         let firstRunnerRecordForIl = true;
         let secondRunnerRecordForIl = true;
+        let firstRunnerCumulativeAdjustments = 0;
+        let secondRunnerCumulativeAdjustments = 0;
         for (let i = 0; i < this.splitsList.length; i++) {
+            let firstSplit = self.firstRunnerSplits[i];
+            let secondSplit = self.secondRunnerSplits[i];
+
             // The timing method we use determines what splits need to be
             // calculated and which are hard data.
             if (self.timingMethod === 'cumulative') {
-                let firstSplit = self.firstRunnerSplits[i];
-                let secondSplit = self.secondRunnerSplits[i];
                 // For the first split, the split time and cumulative time
                 // are the same.
                 if (i === 0) {
@@ -183,8 +188,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
                     }
                 }
             } else {
-                let firstSplit = self.firstRunnerSplits[i];
-                let secondSplit = self.secondRunnerSplits[i];
                 // For the first split, the split time and cumulative time
                 // are the same.
                 if (i === 0) {
@@ -217,6 +220,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
                     }
                 }
             }
+            
+            // Lastly, determine cumulative adjustments.
+            firstRunnerCumulativeAdjustments += firstSplit.adjustment;
+            firstSplit.cumulativeAdjustment = firstRunnerCumulativeAdjustments;
+            secondRunnerCumulativeAdjustments += secondSplit.adjustment;
+            secondSplit.cumulativeAdjustment = secondRunnerCumulativeAdjustments;
         }
         self.recalculateLead();
     }
@@ -233,8 +242,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 let secondSplitTime = this.secondRunnerSplits[i].cumulativeTime;
 
                 // This is the point where we add time adjustments.
-                firstSplitTime += self.firstRunnerAdjustments;
-                secondSplitTime += self.secondRunnerAdjustments;
+                firstSplitTime += this.firstRunnerSplits[i].cumulativeAdjustment;
+                secondSplitTime += this.secondRunnerSplits[i].cumulativeAdjustment;
 
                 self.latestCommonSplit = i;
 
@@ -360,6 +369,16 @@ var comparatorCtrl = function comparatorCtrl($http) {
         }
         return '-';
     }
+
+    self.getRunnerSplit = function getRunnerSplit(runner) {
+        if (runner === 0) {
+            return self.splitsList[parseInt(self.firstSplitSelect)];
+        }
+        if (runner === 1) {
+            return self.splitsList[parseInt(self.secondSplitSelect)];
+        }
+        return '-';
+    }
     
     self.restart = function restart() {
         self.splitsList = [];
@@ -374,8 +393,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.secondSplitSelect = '0';
         self.firstRunnerNewSplitTime = '';
         self.secondRunnerNewSplitTime = '';
-        self.firstRunnerAdjustments = 0;
-        self.secondRunnerAdjustments = 0;
         self.firstRunnerAdjustmentDirection = 'add';
         self.secondRunnerAdjustmentDirection = 'add';
         self.firstRunnerNewAdjustment = '';
