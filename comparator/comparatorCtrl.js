@@ -44,6 +44,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     });
 
     self.precision = 2;
+    self.timeRegex = /^(?:(?<hour>\d+):(?<hmin>[0-5]\d):(?<hsec>[0-5]\d(?:\.\d+)?)|(?<min>[0-5]?\d):(?<msec>[0-5]\d(?:\.\d+)?)|(?<sec>[0-5]?\d(?:\.\d+)?))$/g;
 
     self.selectSplits = function selectSplits() {
         if (self.predefinedSplitSelect == '-1') {
@@ -96,7 +97,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.addSplitTime = function addSplitTime(index) {
         if (index == 0) {
-            let newTime = self.stringTimeToTime(self.firstRunnerNewSplitTime);
+            let newTime = self.stringTimeToTimeRegex(self.firstRunnerNewSplitTime);
+            if (newTime === null) {
+                self.firstRunnerNewSplitTime = '';
+                return;
+            }
             let chosenSplit = parseInt(self.firstSplitSelect);
             if (self.timingMethod === 'cumulative') {
                 self.firstRunnerSplits[chosenSplit].cumulativeTime = newTime;
@@ -109,7 +114,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
             }
             self.firstRunnerNewSplitTime = '';
         } else {
-            let newTime = self.stringTimeToTime(self.secondRunnerNewSplitTime);
+            let newTime = self.stringTimeToTimeRegex(self.secondRunnerNewSplitTime);
+            if (newTime === null) {
+                self.secondRunnerNewSplitTime = '';
+                return;
+            }
             let chosenSplit = parseInt(self.secondSplitSelect);
             if (self.timingMethod === 'cumulative') {
                 self.secondRunnerSplits[chosenSplit].cumulativeTime = newTime;
@@ -127,7 +136,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.addAdjustment = function addAdjustment(index) {
         if (index == 0) {
-            let newAdjustment = self.stringTimeToTime(self.firstRunnerNewAdjustment);
+            let newAdjustment = self.stringTimeToTimeRegex(self.firstRunnerNewAdjustment);
+            if (newAdjustment === null) {
+                self.firstRunnerNewAdjustment = '';
+                return;
+            }
             if (self.firstRunnerAdjustmentDirection === 'remove') {
                 newAdjustment = Math.abs(newAdjustment) * -1;
             } else {
@@ -138,7 +151,11 @@ var comparatorCtrl = function comparatorCtrl($http) {
             self.firstRunnerSplits[currentSplit].adjustment += newAdjustment;
             self.firstRunnerNewAdjustment = '';
         } else {
-            let newAdjustment = self.stringTimeToTime(self.secondRunnerNewAdjustment);
+            let newAdjustment = self.stringTimeToTimeRegex(self.secondRunnerNewAdjustment);
+            if (newAdjustment === null) {
+                self.secondRunnerNewAdjustment = '';
+                return;
+            }
             if (self.secondRunnerAdjustmentDirection === 'remove') {
                 newAdjustment = Math.abs(newAdjustment) * -1;
             } else {
@@ -307,6 +324,30 @@ var comparatorCtrl = function comparatorCtrl($http) {
         let minutes = parseInt(parsedTime[1]);
         let seconds = parseFloat(parsedTime[2]);
         return (hours * 3600) + (minutes * 60) + seconds;
+    };
+
+    self.stringTimeToTimeRegex = function stringTimeToTimeRegex(strTime) {
+        self.timeRegex.lastIndex = 0;
+        let matches = self.timeRegex.exec(strTime);
+        if (matches === null) {
+            return null;
+        }
+
+        let hours = 0;
+        let minutes = 0;
+        // Seconds includes milliseconds as well.
+        let seconds = 0;
+        if (matches.groups?.hour !== undefined) {
+            hours = parseInt(matches.groups.hour);
+            minutes = parseInt(matches.groups.hmin);
+            seconds = parseFloat(matches.groups.hsec);
+        } else if (matches.groups?.min !== undefined) {
+            minutes = parseInt(matches.groups.min);
+            seconds = parseFloat(matches.groups.msec);
+        } else {
+            seconds = parseFloat(matches.groups.sec);
+        }
+        return (3600 * hours) + (60 * minutes) + seconds;
     };
 
     self.timeToStringTime = function timeToStringTime(numTimeRaw) {
