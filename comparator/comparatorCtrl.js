@@ -44,7 +44,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     });
 
     self.precision = 2;
-    self.timeRegex = /^(?:(?<hour>\d+):(?<hmin>[0-5]\d):(?<hsec>[0-5]\d(?:\.\d+)?)|(?<min>[0-5]?\d):(?<msec>[0-5]\d(?:\.\d+)?)|(?<sec>[0-5]?\d(?:\.\d+)?))$/g;
+    self.timeRegex = /^(?:(?<hour>\d+):(?<hmin>[0-5]\d):(?<hsec>[0-5]\d(?:\.\d+)?)|(?<min>[0-5]?\d):(?<msec>[0-5]\d(?:\.\d+)?)|(?<sec>[0-5]?\d(?:\.\d+)?))$/;
 
     self.selectSplits = function selectSplits() {
         if (self.predefinedSplitSelect == '-1') {
@@ -327,7 +327,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.stringTimeToTimeRegex = function stringTimeToTimeRegex(strTime) {
-        self.timeRegex.lastIndex = 0;
         let matches = self.timeRegex.exec(strTime);
         if (matches === null) {
             return null;
