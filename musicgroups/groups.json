@@ -325,15 +325,6 @@
             }
         },
         {
-            "name": "Boss Battle",
-            "specificity": {
-                "exact": "BossBattle",
-                "high": "BossFight",
-                "mid": "BigFight",
-                "low": "Fight"
-            }
-        },
-        {
             "name": "Ganondorf Battle",
             "specificity": {
                 "exact": "GanondorfBattle",
