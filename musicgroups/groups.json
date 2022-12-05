@@ -1,0 +1,681 @@
+{
+    "bgm": [
+        {
+            "name": "Hyrule Field",
+            "specificity": {
+                "exact": "HyruleField",
+                "high": "Fields",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Lost Woods",
+            "specificity": {
+                "exact": "LostWoods",
+                "high": "Fields",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Gerudo Valley",
+            "specificity": {
+                "exact": "GerudoValley",
+                "high": "Fields",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Market",
+            "specificity": {
+                "exact": "Market",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Kakariko Village (Child)",
+            "specificity": {
+                "exact": "KakarikoChild",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Kakariko Village (Adult)",
+            "specificity": {
+                "exact": "KakarikoAdult",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Lon Lon Ranch",
+            "specificity": {
+                "exact": "LonLonRanch",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Kokiri Forest",
+            "specificity": {
+                "exact": "KokiriForest",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Goron City",
+            "specificity": {
+                "exact": "GoronCity",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Zora's Domain",
+            "specificity": {
+                "exact": "ZorasDomain",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Castle Courtyard",
+            "specificity": {
+                "exact": "CastleCourtyard",
+                "high": "Town",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Horse Race",
+            "specificity": {
+                "exact": "HorseRace",
+                "high": "Fun",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Mini-game",
+            "specificity": {
+                "exact": "Mini-game",
+                "high": "Fun",
+                "mid": "Outdoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Shooting Gallery",
+            "specificity": {
+                "exact": "ShootingGallery",
+                "high": "Fun",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Fairy Fountain / File Select",
+            "specificity": {
+                "exact": "FairyFountain",
+                "high": "MagicalPlace",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Temple of Time",
+            "specificity": {
+                "exact": "TempleOfTime",
+                "high": "MagicalPlace",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Chamber of the Sages",
+            "specificity": {
+                "exact": "ChamberOfTheSages",
+                "high": "MagicalPlace",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "House",
+            "specificity": {
+                "exact": "House",
+                "high": "House",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Shop",
+            "specificity": {
+                "exact": "Shop",
+                "high": "SalesArea",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "PotionShop",
+            "specificity": {
+                "exact": "PotionShop",
+                "high": "SalesArea",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Windmill Hut",
+            "specificity": {
+                "exact": "WindmillHut",
+                "high": "WindmillHut",
+                "mid": "Indoors",
+                "low": "Overworld"
+            }
+        },
+        {
+            "name": "Inside the Deku Tree / Grotto",
+            "specificity": {
+                "exact": "InsideDekuTree",
+                "high": "ChildDungeon",
+                "mid": "ChildDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Dodongo's Cavern / Death Mountain Crater / Dampe's Race / Gerudo Training Grounds",
+            "specificity": {
+                "exact": "DodongosCavern",
+                "high": "ChildDungeon",
+                "mid": "ChildDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Inside Jabu-Jabu's Belly",
+            "specificity": {
+                "exact": "JabuJabu",
+                "high": "ChildDungeon",
+                "mid": "ChildDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Forest Temple",
+            "specificity": {
+                "exact": "ForestTemple",
+                "high": "AncientDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Fire Temple",
+            "specificity": {
+                "exact": "FireTemple",
+                "high": "AncientDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Ice Cavern",
+            "specificity": {
+                "exact": "IceCavern",
+                "high": "MysticalDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Water Temple",
+            "specificity": {
+                "exact": "WaterTemple",
+                "high": "MysticalDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Spirit Temple",
+            "specificity": {
+                "exact": "SpiritTemple",
+                "high": "MysticalDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Shadow Temple / Bottom of the Well",
+            "specificity": {
+                "exact": "ShadowTemple",
+                "high": "SpookyDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Inside Ganon's Castle",
+            "specificity": {
+                "exact": "CastleUnderground",
+                "high": "SpookyDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Ganon's Castle Escape",
+            "specificity": {
+                "exact": "CastleEscape",
+                "high": "SpookyDungeon",
+                "mid": "AdultDungeon",
+                "low": "Dungeon"
+            }
+        },
+        {
+            "name": "Enemy Battle",
+            "specificity": {
+                "exact": "Battle",
+                "high": "SmallFight",
+                "mid": "SmallFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Miniboss Battle",
+            "specificity": {
+                "exact": "MinibossBattle",
+                "high": "SmallFight",
+                "mid": "SmallFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Boss Battle",
+            "specificity": {
+                "exact": "BossBattle",
+                "high": "BossFight",
+                "mid": "BigFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Fire Boss Battle",
+            "specificity": {
+                "exact": "FireBoss",
+                "high": "BossFight",
+                "mid": "BigFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Boss Battle",
+            "specificity": {
+                "exact": "BossBattle",
+                "high": "BossFight",
+                "mid": "BigFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Ganondorf Battle",
+            "specificity": {
+                "exact": "GanondorfBattle",
+                "high": "FinalFight",
+                "mid": "BigFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Ganon Battle",
+            "specificity": {
+                "exact": "GanonBattle",
+                "high": "FinalFight",
+                "mid": "BigFight",
+                "low": "Fight"
+            }
+        },
+        {
+            "name": "Title Screen",
+            "specificity": {
+                "exact": "TitleTheme",
+                "high": "HeroTheme",
+                "mid": "HeroTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Zelda's Theme",
+            "specificity": {
+                "exact": "ZeldaTheme",
+                "high": "HeroTheme",
+                "mid": "HeroTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Sheik's Theme",
+            "specificity": {
+                "exact": "SheikTheme",
+                "high": "HeroTheme",
+                "mid": "HeroTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Deku Tree's Theme",
+            "specificity": {
+                "exact": "DekuTree",
+                "high": "HeroTheme",
+                "mid": "HeroTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Kaepora Gaebora's Theme",
+            "specificity": {
+                "exact": "KaeporaGaebora",
+                "high": "HeroTheme",
+                "mid": "HeroTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Fairy Flying / Owl Flight",
+            "specificity": {
+                "exact": "FairyFlying",
+                "high": "HeroTheme",
+                "mid": "HeroTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Ganondorf's Theme",
+            "specificity": {
+                "exact": "GanondorfTheme",
+                "high": "VillainTheme",
+                "mid": "VillainTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Kotake and Koume's Theme",
+            "specificity": {
+                "exact": "KotakeAndKoume",
+                "high": "VillainTheme",
+                "mid": "VillainTheme",
+                "low": "CharacterTheme"
+            }
+        },
+        {
+            "name": "Ingo's Theme",
+            "specificity": {
+                "exact": "IngoTheme",
+                "high": "VillainTheme",
+                "mid": "VillainTheme",
+                "low": "CharacterTheme"
+            }
+        }
+    ],
+    "fanfare": [
+        {
+            "name": "Item Get",
+            "specificity": {
+                "exact": "ItemGet",
+                "high": "ItemFanfare",
+                "mid": "ItemFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Heart Container Get",
+            "specificity": {
+                "exact": "HeartContainerGet",
+                "high": "ItemFanfare",
+                "mid": "ItemFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Spirit Stone Get",
+            "specificity": {
+                "exact": "SpiritStoneGet",
+                "high": "ItemFanfare",
+                "mid": "ItemFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Heart Piece Get",
+            "specificity": {
+                "exact": "HeartPieceGet",
+                "high": "ItemFanfare",
+                "mid": "ItemFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Medallion Get",
+            "specificity": {
+                "exact": "MedallionGet",
+                "high": "ItemFanfare",
+                "mid": "ItemFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Learn Song",
+            "specificity": {
+                "exact": "LearnSong",
+                "high": "ItemFanfare",
+                "mid": "ItemFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Boss Defeated",
+            "specificity": {
+                "exact": "BossDefeated",
+                "high": "SuccessFanfare",
+                "mid": "SuccessFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Epona Race Goal",
+            "specificity": {
+                "exact": "EponaRaceGoal",
+                "high": "SuccessFanfare",
+                "mid": "SuccessFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Escape from Ranch",
+            "specificity": {
+                "exact": "EscapeFromRanch",
+                "high": "SuccessFanfare",
+                "mid": "SuccessFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Treasure Chest",
+            "specificity": {
+                "exact": "TreasureChest",
+                "high": "BigFanfare",
+                "mid": "BigFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "MasterSword",
+            "specificity": {
+                "exact": "MasterSword",
+                "high": "BigFanfare",
+                "mid": "BigFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Door of Time",
+            "specificity": {
+                "exact": "DoorOfTime",
+                "high": "BigFanfare",
+                "mid": "BigFanfare",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Zelda Turns Around",
+            "specificity": {
+                "exact": "ZeldaTurnsAround",
+                "high": "ZeldaTurnsAround",
+                "mid": "ZeldaTurnsAround",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Ganondorf Appears",
+            "specificity": {
+                "exact": "GanondorfAppears",
+                "high": "GanondorfAppears",
+                "mid": "GanondorfAppears",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Game Over",
+            "specificity": {
+                "exact": "GameOver",
+                "high": "GameOver",
+                "mid": "GameOver",
+                "low": "EventFanfare"
+            }
+        },
+        {
+            "name": "Prelude of Light",
+            "specificity": {
+                "exact": "PreludeOfLight",
+                "high": "WarpSong",
+                "mid": "WarpSong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Bolero of Fire",
+            "specificity": {
+                "exact": "BoleroOfFire",
+                "high": "WarpSong",
+                "mid": "WarpSong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Minuet of Forest",
+            "specificity": {
+                "exact": "MinuetOfForest",
+                "high": "WarpSong",
+                "mid": "WarpSong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Serenade of Water",
+            "specificity": {
+                "exact": "SerenadeOfWater",
+                "high": "WarpSong",
+                "mid": "WarpSong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Requiem of Spirit",
+            "specificity": {
+                "exact": "RequiemOfSpirit",
+                "high": "WarpSong",
+                "mid": "WarpSong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Nocturne of Shadow",
+            "specificity": {
+                "exact": "NocturneOfShadow",
+                "high": "WarpSong",
+                "mid": "WarpSong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Zelda's Lullaby",
+            "specificity": {
+                "exact": "ZeldasLullaby",
+                "high": "UtilitySong",
+                "mid": "UtilitySong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Epona's Song",
+            "specificity": {
+                "exact": "EponasSong",
+                "high": "UtilitySong",
+                "mid": "UtilitySong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Saria's Song",
+            "specificity": {
+                "exact": "SariasSong",
+                "high": "UtilitySong",
+                "mid": "UtilitySong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Sun's Song",
+            "specificity": {
+                "exact": "SunsSong",
+                "high": "UtilitySong",
+                "mid": "UtilitySong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Song of Time",
+            "specificity": {
+                "exact": "SongOfTime",
+                "high": "UtilitySong",
+                "mid": "UtilitySong",
+                "low": "SongFanfare"
+            }
+        },
+        {
+            "name": "Song of Storms",
+            "specificity": {
+                "exact": "SongOfStorms",
+                "high": "UtilitySong",
+                "mid": "UtilitySong",
+                "low": "SongFanfare"
+            }
+        }
+    ]
+}

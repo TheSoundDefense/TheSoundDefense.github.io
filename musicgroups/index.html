@@ -1,0 +1,120 @@
+<html>
+<head>
+    <title>Darunia's Joy Music Groups Tool</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="musicGroupsCtrl.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="body-class" ng-app="musicGroupsApp" ng-controller="musicGroupsCtrl as ctrl">
+    <h1 align="center">Darunia's Joy Music Groups Tool</h1>
+    <hr />
+    
+    <div class="tab">
+        <p class="infoText">This online tool is designed to make it easier to add location information to META files for songs in the Darunia's Joy repo.</p>
+        <p class="infoText">Select the locations below where you want your song to play.</p>
+        <div class="locationListPane">
+            <div class="locationListBox">
+                <div ng-repeat="location in ctrl.getCurrentList() | filter:ctrl.isLocationExcluded()"
+                     class="locationListItem"
+                     ng-class="{'selected': ctrl.selectedLocation.name === location.name}"
+                     ng-click="ctrl.selectLocation(location)">
+                    {{location.name}}
+                </div>
+            </div>
+            <div class="locationListButtons">
+                <div>Track Type</div>
+                <select name="trackTypeSelect"
+                        ng-model="ctrl.trackType"
+                        ng-change="ctrl.updateTrackType()">
+                    <option value="bgm">BGM</option>
+                    <option value="fanfare">Fanfare</option>
+                </select>
+                <button class="locationChangeButton" ng-click="ctrl.addSelectedLocation()">
+                    Add →
+                </button>
+                <button class="locationChangeButton" ng-click="ctrl.removeSelectedLocation()">
+                    ← Remove
+                </button>
+            </div>
+            <div class="locationListBox">
+                <div ng-repeat="location in ctrl.getCurrentList() | filter:ctrl.isLocationIncluded()"
+                     class="locationListItem"
+                     ng-class="{'selected': ctrl.selectedLocation.name === location.name}"
+                     ng-click="ctrl.selectLocation(location)">
+                    {{location.name}}
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="ctrl.getCurrentSet().size > 0"
+            class="infoText locationInstruction">
+            Paste the following string into line 4 of your META file:
+        </div>
+        <div class="infoText locationString">
+            {{ctrl.locationString}}
+        </div>
+
+        <div ng-if="ctrl.getCurrentSet().size > 0"
+             class="editPane">
+            <hr />
+            <div class="infoText removeGroupText">
+                Remove individual groups below (invalid removals will be rejected):
+            </div>
+            <div class="editPaneContent">
+                <div class="groupListBox">
+                    <div ng-repeat="groupName in ctrl.getListFromSet(ctrl.fullGroupSet)"
+                        class="groupListItem"
+                        ng-class="{'selected': ctrl.selectedGroup === groupName}"
+                        ng-click="ctrl.selectGroup(groupName)">
+                        {{groupName}}
+                    </div>
+                </div>
+                <button class="removeGroupButton"
+                        ng-click="ctrl.removeSelectedGroup()">
+                    Remove
+                </button>
+                <div class="groupBreakdownColumn">
+                    <div class="groupBreakdown">
+                        <div class="specificityName">
+                            Exact-specificity groups:
+                        </div>
+                        <div class="groupList">
+                            {{ctrl.getStringFromSet(ctrl.exactSet)}}
+                        </div>
+                    </div>
+                    <div class="groupBreakdown">
+                        <div class="specificityName">
+                            High-specificity groups:
+                        </div>
+                        <div class="groupList">
+                            {{ctrl.getStringFromSet(ctrl.highSet)}}
+                        </div>
+                    </div>
+                    <div class="groupBreakdown">
+                        <div class="specificityName">
+                            Mid-specificity groups:
+                        </div>
+                        <div class="groupList">
+                            {{ctrl.getStringFromSet(ctrl.midSet)}}
+                        </div>
+                    </div>
+                    <div class="groupBreakdown">
+                        <div class="specificityName">
+                            Low-specificity groups:
+                        </div>
+                        <div class="groupList">
+                            {{ctrl.getStringFromSet(ctrl.lowSet)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+    <div class="credits">
+        <p>Created by <a href="https://github.com/TheSoundDefense" target="_blank">The Sound Defense</a>.</p>
+    </div>
+</body>
+</html>
