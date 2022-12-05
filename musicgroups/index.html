@@ -17,8 +17,8 @@
             <div class="locationListBox">
                 <div ng-repeat="location in ctrl.getCurrentList() | filter:ctrl.isLocationExcluded()"
                      class="locationListItem"
-                     ng-class="{'selected': ctrl.selectedLocation.name === location.name}"
-                     ng-click="ctrl.selectLocation(location)">
+                     ng-class="{'selected': ctrl.isLocationSelected(location)}"
+                     ng-click="ctrl.toggleLocationSelection(location)">
                     {{location.name}}
                 </div>
             </div>
@@ -30,18 +30,18 @@
                     <option value="bgm">BGM</option>
                     <option value="fanfare">Fanfare</option>
                 </select>
-                <button class="locationChangeButton" ng-click="ctrl.addSelectedLocation()">
+                <button class="locationChangeButton" ng-click="ctrl.addSelectedLocations()">
                     Add →
                 </button>
-                <button class="locationChangeButton" ng-click="ctrl.removeSelectedLocation()">
+                <button class="locationChangeButton" ng-click="ctrl.removeSelectedLocations()">
                     ← Remove
                 </button>
             </div>
             <div class="locationListBox">
                 <div ng-repeat="location in ctrl.getCurrentList() | filter:ctrl.isLocationIncluded()"
                      class="locationListItem"
-                     ng-class="{'selected': ctrl.selectedLocation.name === location.name}"
-                     ng-click="ctrl.selectLocation(location)">
+                     ng-class="{'selected': ctrl.isLocationSelected(location)}"
+                     ng-click="ctrl.toggleLocationSelection(location)">
                     {{location.name}}
                 </div>
             </div>
@@ -59,19 +59,24 @@
              class="editPane">
             <hr />
             <div class="infoText removeGroupText">
-                Remove individual groups below (invalid removals will be rejected):
+                Add or remove individual groups below (invalid removals will be rejected):
+            </div>
+            <div ng-if="ctrl.groupErrorMessage !== undefined"
+                 class="infoText removeGroupErrorText">
+                 <span class="errorText">ERROR: </span>
+                 {{ctrl.groupErrorMessage}}
             </div>
             <div class="editPaneContent">
                 <div class="groupListBox">
                     <div ng-repeat="groupName in ctrl.getListFromSet(ctrl.fullGroupSet)"
                         class="groupListItem"
-                        ng-class="{'selected': ctrl.selectedGroup === groupName}"
-                        ng-click="ctrl.selectGroup(groupName)">
+                        ng-class="{'selected': ctrl.isGroupSelected(groupName)}"
+                        ng-click="ctrl.toggleGroupSelection(groupName)">
                         {{groupName}}
                     </div>
                 </div>
                 <button class="removeGroupButton"
-                        ng-click="ctrl.removeSelectedGroup()">
+                        ng-click="ctrl.removeSelectedGroups()">
                     Remove
                 </button>
                 <div class="groupBreakdownColumn">

@@ -90,6 +90,14 @@
     margin: 16px 0;
 }
 
+.removeGroupErrorText {
+    margin-bottom: 16px;
+}
+
+.errorText {
+    font-weight: bold;
+}
+
 .editPaneContent {
     align-items: flex-start;
     display: flex;

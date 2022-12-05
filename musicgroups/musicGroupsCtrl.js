@@ -14,11 +14,12 @@ var musicGroupsCtrl = function musicGroupsCtrl($http) {
     self.midSet = new Set();
     self.lowSet = new Set();
 
-    self.selectedLocation = undefined;
-    self.selectedGroup = undefined;
+    self.selectedLocationSet = new Set();
+    self.selectedGroupSet = new Set();
 
     self.fullGroupSet = new Set();
     self.locationString = "No locations selected.";
+    self.groupErrorMessage = undefined;
 
     $http.get('groups.json').then(function(response) {
         const locations = response.data;
@@ -126,7 +127,7 @@ var musicGroupsCtrl = function musicGroupsCtrl($http) {
     };
 
     self.updateTrackType = function updateTrackType() {
-        self.selectedLocation = undefined;
+        self.selectedLocationSet = new Set();
         self.recalculateGroups();
     };
 
@@ -142,21 +143,44 @@ var musicGroupsCtrl = function musicGroupsCtrl($http) {
         }
     };
 
-    self.selectLocation = function selectLocation(location) {
-        self.selectedLocation = location;
+    self.toggleLocationSelection = function toggleLocationSelection(location) {
+        if (self.selectedLocationSet.has(location)) {
+            self.selectedLocationSet.delete(location);
+        } else {
+            self.selectedLocationSet.add(location);
+        }
     };
 
-    self.selectGroup = function selectGroup(groupName) {
-        self.selectedGroup = groupName;
+    self.toggleGroupSelection = function toggleGroupSelection(groupName) {
+        if (self.selectedGroupSet.has(groupName)) {
+            self.selectedGroupSet.delete(groupName);
+        } else {
+            self.selectedGroupSet.add(groupName);
+        }
+        self.groupErrorMessage = undefined;
     };
 
-    self.addSelectedLocation = function addLocation() {
-        self.getCurrentSet().add(self.selectedLocation);
+    self.isLocationSelected = function isLocationSelected(location) {
+        return self.selectedLocationSet.has(location);
+    }
+
+    self.isGroupSelected = function isGroupSelected(groupName) {
+        return self.selectedGroupSet.has(groupName);
+    }
+
+    self.addSelectedLocations = function addLocation() {
+        for (let selectedLocation of self.selectedLocationSet) {
+            self.getCurrentSet().add(selectedLocation);
+        }
+        self.selectedLocationSet = new Set();
         self.recalculateGroups();
     };
 
-    self.removeSelectedLocation = function removeLocation() {
-        self.getCurrentSet().delete(self.selectedLocation);
+    self.removeSelectedLocations = function removeLocation() {
+        for (let selectedLocation of self.selectedLocationSet) {
+            self.getCurrentSet().delete(selectedLocation);
+        }
+        self.selectedLocationSet = new Set();
         self.recalculateGroups();
     };
 
@@ -210,27 +234,77 @@ var musicGroupsCtrl = function musicGroupsCtrl($http) {
         return setList.join(", ");
     };
 
-    self.removeSelectedGroup = function removeSelectedGroup() {
-        // Check every set to see if removing this group is valid.
-        if ((self.exactSet.has(self.selectedGroup) && self.exactSet.size === 1)
-            || (self.highSet.has(self.selectedGroup) && self.highSet.size === 1)
-            || (self.midSet.has(self.selectedGroup) && self.midSet.size === 1)
-            || (self.lowSet.has(self.selectedGroup) && self.lowSet.size === 1)) {
-            self.selectedGroup = undefined;
+    self.removeSelectedGroups = function removeSelectedGroups() {
+        // Check every set to see if removing these groups would be valid.
+        let errorSets = [];
+        let exactMatches = 0;
+        for (let groupName of self.selectedGroupSet) {
+            if (self.exactSet.has(groupName)) {
+                exactMatches += 1;
+            }
+            if (exactMatches >= self.exactSet.size) {
+                errorSets.push("exact-specificity");
+                break;
+            }
+        }
+        let highMatches = 0;
+        for (let groupName of self.selectedGroupSet) {
+            if (self.highSet.has(groupName)) {
+                highMatches += 1;
+            }
+            if (highMatches >= self.highSet.size) {
+                errorSets.push("high-specificity");
+                break;
+            }
+        }
+        let midMatches = 0;
+        for (let groupName of self.selectedGroupSet) {
+            if (self.midSet.has(groupName)) {
+                midMatches += 1;
+            }
+            if (midMatches >= self.midSet.size) {
+                errorSets.push("mid-specificity");
+                break;
+            }
+        }
+        let lowMatches = 0;
+        for (let groupName of self.selectedGroupSet) {
+            if (self.lowSet.has(groupName)) {
+                lowMatches += 1;
+            }
+            if (lowMatches >= self.lowSet.size) {
+                errorSets.push("low-specificity");
+                break;
+            }
+        }
+
+        // If we have any errors, display an error message and return.
+        if (errorSets.length > 0) {
+            self.groupErrorMessage = self.createGroupErrorMessage(errorSets);
+            self.selectedGroupSet = new Set();
             return;
         }
 
-        // At this point, we can remove the group.
-        self.fullGroupSet.delete(self.selectedGroup);
-        self.exactSet.delete(self.selectedGroup);
-        self.highSet.delete(self.selectedGroup);
-        self.midSet.delete(self.selectedGroup);
-        self.lowSet.delete(self.selectedGroup);
+        // At this point, we can remove the groups.
+        for (let groupName of self.selectedGroupSet) {
+            self.fullGroupSet.delete(groupName);
+            self.exactSet.delete(groupName);
+            self.highSet.delete(groupName);
+            self.midSet.delete(groupName);
+            self.lowSet.delete(groupName);
+        }
 
-        // Unselect the group.
-        self.selectedGroup = undefined;
+        // Unselect all groups.
+        self.selectedGroupSet = new Set();
 
         // Change the location string.
         self.locationString = self.getLocationString();
+    };
+
+    self.createGroupErrorMessage = function createGroupErrorMessage(errorSets) {
+        let setMessage = errorSets.length > 1
+            ? `${errorSets.slice(0, -1).join(", ")} and ${errorSets.slice(-1)[0]} sets`
+            : `${errorSets[0]} set`;
+        return `removing these groups would cause the ${setMessage} to be empty.`;
     };
 };
