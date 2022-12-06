@@ -516,7 +516,7 @@
             }
         },
         {
-            "name": "MasterSword",
+            "name": "Master Sword",
             "specificity": {
                 "exact": "MasterSword",
                 "high": "BigFanfare",
