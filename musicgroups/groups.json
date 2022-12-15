@@ -37,7 +37,7 @@
             }
         },
         {
-            "name": "Kakariko Village (Child)",
+            "name": "Kakariko Village / Fishing Pond (Child)",
             "specificity": {
                 "exact": "KakarikoChild",
                 "high": "Town",
@@ -46,7 +46,7 @@
             }
         },
         {
-            "name": "Kakariko Village (Adult)",
+            "name": "Kakariko Village / Fishing Pond (Adult)",
             "specificity": {
                 "exact": "KakarikoAdult",
                 "high": "Town",
