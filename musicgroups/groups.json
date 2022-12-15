@@ -289,7 +289,7 @@
             }
         },
         {
-            "name": "Enemy Battle",
+            "name": "Enemy Battle / Reeling in a Fish",
             "specificity": {
                 "exact": "Battle",
                 "high": "SmallFight",
