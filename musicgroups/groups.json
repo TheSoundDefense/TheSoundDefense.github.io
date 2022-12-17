@@ -534,7 +534,7 @@
             }
         },
         {
-            "name": "Zelda Turns Around",
+            "name": "Zelda Turns Around / Goron Rescued",
             "specificity": {
                 "exact": "ZeldaTurnsAround",
                 "high": "ZeldaTurnsAround",
