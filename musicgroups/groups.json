@@ -172,7 +172,7 @@
             }
         },
         {
-            "name": "PotionShop",
+            "name": "Potion Shop / Lakeside Laboratory",
             "specificity": {
                 "exact": "PotionShop",
                 "high": "SalesArea",
