@@ -1,0 +1,2112 @@
+{
+    "top_level": [
+        {
+            "name": "logic_rules",
+            "label": "Logic Rules",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "glitchless",
+                    "label": "Glitchless"
+                },
+                {
+                    "name": "glitched",
+                    "label": "Glitched"
+                },
+                {
+                    "name": "none",
+                    "label": "No Logic"
+                }
+            ]
+        },
+        {
+            "name": "reachable_locations",
+            "label": "Guarantee Reachable Locations",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["glitched", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "all",
+                    "label": "All"
+                },
+                {
+                    "name": "goals",
+                    "label": "All Goals"
+                },
+                {
+                    "name": "beatable",
+                    "label": "Required Only"
+                }
+            ]
+        },
+        {
+            "name": "logic_no_night_tokens_without_suns_song",
+            "label": "Nighttime Skulltulas Expect Sun's Song",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["glitched", "glitchless"]
+                }
+            ]
+        },
+        {
+            "name": "start_with_consumables",
+            "label": "Start With Consumables",
+            "type": "binary"
+        },
+        {
+            "name": "start_with_rupees",
+            "label": "Start With Max Rupees",
+            "type": "binary"
+        },
+        {
+            "name": "starting_hearts",
+            "label": "Starting Hearts",
+            "type": "numeric",
+            "num_options": {
+                "min": 3,
+                "max": 20,
+                "default": 3
+            }
+        }
+    ],
+    "open": [
+        {
+            "name": "open_forest",
+            "label": "Forest",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "open",
+                    "label": "Open Forest"
+                },
+                {
+                    "name": "closed_deku",
+                    "label": "Closed Deku"
+                },
+                {
+                    "name": "closed",
+                    "label": "Closed Forest"
+                }
+            ]
+        },
+        {
+            "name": "open_kakariko",
+            "label": "Kakariko Gate",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "open",
+                    "label": "Open Gate"
+                },
+                {
+                    "name": "zelda",
+                    "label": "Zelda's Letter Opens Gate"
+                },
+                {
+                    "name": "closed",
+                    "label": "Closed Gate"
+                }
+            ]
+        },
+        {
+            "name": "open_door_of_time",
+            "label": "Open Door of Time",
+            "type": "binary"
+        },
+        {
+            "name": "zora_fountain",
+            "label": "Zora's Fountain",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "closed",
+                    "label": "Default Behavior (Closed)"
+                },
+                {
+                    "name": "adult",
+                    "label": "Open For Adult"
+                },
+                {
+                    "name": "open",
+                    "label": "Always Open"
+                }
+            ]
+        },
+        {
+            "name": "gerudo_fortress",
+            "label": "Gerudo's Fortress",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "normal",
+                    "label": "Default Behavior"
+                },
+                {
+                    "name": "fast",
+                    "label": "Rescue One Carpenter"
+                },
+                {
+                    "name": "open",
+                    "label": "Open Gerudo's Fortress"
+                }
+            ]
+        },
+        {
+            "name": "dungeon_shortcuts_choice",
+            "label": "Dungeon Boss Shortcuts Mode",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules"
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "choice",
+                    "label": "Specific Dungeons",
+                    "conflict": {
+                        "name": "logic_rules",
+                        "value": ["glitched"]
+                    }
+                },
+                {
+                    "name": "all",
+                    "label": "All dungeons"
+                },
+                {
+                    "name": "random",
+                    "label": "Random dungeons"
+                }
+            ]
+        },
+        {
+            "name": "dungeon_shortcuts",
+            "label": "Dungeon Boss Shortcuts",
+            "type": "multi",
+            "prerequisite": [
+                {
+                    "name": "dungeon_shortcuts_choice",
+                    "value": ["choice"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "Deku Tree",
+                    "label": "Deku Tree"
+                },
+                {
+                    "name": "Dodongos Cavern",
+                    "label": "Dodongo's Cavern"
+                },
+                {
+                    "name": "Jabu Jabus Belly",
+                    "label": "Jabu Jabu's Belly"
+                },
+                {
+                    "name": "Forest Temple",
+                    "label": "Forest Temple"
+                },
+                {
+                    "name": "Fire Temple",
+                    "label": "Fire Temple"
+                },
+                {
+                    "name": "Water Temple",
+                    "label": "Water Temple"
+                },
+                {
+                    "name": "Shadow Temple",
+                    "label": "Shadow Temple"
+                },
+                {
+                    "name": "Spirit Temple",
+                    "label": "Spirit Temple"
+                }
+            ]
+        },
+        {
+            "name": "bridge",
+            "label": "Rainbow Bridge Requirement",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "open",
+                    "label": "Always Open",
+                    "weight": 1
+                },
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Requirements",
+                    "weight": 1
+                },
+                {
+                    "name": "stones",
+                    "label": "Spiritual Stones",
+                    "weight": 1
+                },
+                {
+                    "name": "medallions",
+                    "label": "Medallions",
+                    "weight": 1
+                },
+                {
+                    "name": "dungeons",
+                    "label": "Dungeons",
+                    "weight": 1
+                },
+                {
+                    "name": "tokens",
+                    "label": "Gold Skulltula Tokens",
+                    "weight": 0
+                },
+                {
+                    "name": "hearts",
+                    "label": "Hearts",
+                    "weight": 0
+                }
+            ]
+        },
+        {
+            "name": "bridge_medallions",
+            "label": "Medallions Required for Bridge",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "bridge",
+                    "value": ["medallions"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 6,
+                "default": 6
+            }
+        },
+        {
+            "name": "bridge_stones",
+            "label": "Spiritual Stones Required for Bridge",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "bridge",
+                    "value": ["stones"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 3,
+                "default": 3
+            }
+        },
+        {
+            "name": "bridge_rewards",
+            "label": "Dungeon Rewards Required for Bridge",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "bridge",
+                    "value": ["dungeons"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 9,
+                "default": 9
+            }
+        },
+        {
+            "name": "bridge_tokens",
+            "label": "Skulltulas Required for Bridge",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "bridge",
+                    "value": ["tokens"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 100,
+                "default": 100
+            }
+        },
+        {
+            "name": "bridge_hearts",
+            "label": "Hearts Required for Bridge",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "bridge",
+                    "value": ["hearts"]
+                }
+            ],
+            "num_options": {
+                "min": 4,
+                "max": 20,
+                "default": 20
+            }
+        },
+        {
+            "name": "trials_random",
+            "label": "Rando Number of Ganon's Trials",
+            "type": "binary",
+            "weight": 1
+        },
+        {
+            "name": "trials",
+            "label": "Ganon's Trials Count",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "trials_random",
+                    "value": [true]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 6,
+                "default": 6
+            }
+        }
+    ],
+    "world": [
+        {
+            "name": "starting_age",
+            "label": "Starting Age",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "open_forest"
+                }
+            ],
+            "options": [
+                {
+                    "name": "child",
+                    "label": "Child"
+                },
+                {
+                    "name": "adult",
+                    "label": "Adult",
+                    "conflict": {
+                        "name": "open_forest",
+                        "value": "closed"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "mq_dungeons_mode",
+            "label": "MQ Dungeon Mode",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla",
+                    "weight": 0
+                },
+                {
+                    "name": "mq",
+                    "label": "Master Quest",
+                    "weight": 0
+                },
+                {
+                    "name": "specific",
+                    "label": "Specific Dungeons",
+                    "weight": 0
+                },
+                {
+                    "name": "count",
+                    "label": "Count",
+                    "weight": 0
+                },
+                {
+                    "name": "random",
+                    "label": "Completely Random",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "mq_dungeons_specific",
+            "label": "MQ Dungeons",
+            "type": "multi",
+            "prerequisite": [
+                {
+                    "name": "mq_dungeons_mode",
+                    "value": ["specific"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "Deku Tree",
+                    "label": "Deku Tree"
+                },
+                {
+                    "name": "Dodongos Cavern",
+                    "label": "Dodongo's Cavern"
+                },
+                {
+                    "name": "Jabu Jabus Belly",
+                    "label": "Jabu Jabu's Belly"
+                },
+                {
+                    "name": "Forest Temple",
+                    "label": "Forest Temple"
+                },
+                {
+                    "name": "Fire Temple",
+                    "label": "Fire Temple"
+                },
+                {
+                    "name": "Water Temple",
+                    "label": "Water Temple"
+                },
+                {
+                    "name": "Shadow Temple",
+                    "label": "Shadow Temple"
+                },
+                {
+                    "name": "Spirit Temple",
+                    "label": "Spirit Temple"
+                },
+                {
+                    "name": "Bottom of the Well",
+                    "label": "Bottom of the Well"
+                },
+                {
+                    "name": "Ice Cavern",
+                    "label": "Ice Cavern"
+                },
+                {
+                    "name": "Gerudo Training Ground",
+                    "label": "Gerudo Training Ground"
+                },
+                {
+                    "name": "Ganons Castle",
+                    "label": "Ganon's Castle"
+                }
+            ]
+        },
+        {
+            "name": "mq_dungeons_count",
+            "label": "MQ Dungeon Count",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "mq_dungeons_mode",
+                    "value": ["count"]
+                }
+            ],
+            "num_options": {
+                "min": 0,
+                "max": 12,
+                "default": 0
+            }
+        },
+        {
+            "name": "empty_dungeons_mode",
+            "label": "Pre-completed Dungeons Mode",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "none",
+                    "label": "Off",
+                    "weight": 1
+                },
+                {
+                    "name": "specific",
+                    "label": "Specific Dungeons",
+                    "weight": 0
+                },
+                {
+                    "name": "count",
+                    "label": "Count",
+                    "weight": 0
+                }
+            ]
+        },
+        {
+            "name": "empty_dungeons_specific",
+            "label": "Pre-completed Dungeons",
+            "type": "multi",
+            "prerequisite": [
+                {
+                    "name": "empty_dungeons_mode",
+                    "value": ["specific"]
+                }
+            ],
+            "options": [
+                {
+                    "name":"Deku Tree",
+                    "value": "Deku Tree"
+                },
+                {
+                    "name": "Dodongos Cavern",
+                    "label": "Dodongo's Cavern"
+                },
+                {
+                    "name": "Jabu Jabus Belly",
+                    "label": "Jabu Jabu's Belly"
+                },
+                {
+                    "name": "Forest Temple",
+                    "label": "Forest Temple"
+                },
+                {
+                    "name": "Fire Temple",
+                    "label": "Fire Temple"
+                },
+                {
+                    "name": "Water Temple",
+                    "label": "Water Temple"
+                },
+                {
+                    "name": "Shadow Temple",
+                    "label": "Shadow Temple"
+                },
+                {
+                    "name": "Spirit Temple",
+                    "label": "Spirit Temple"
+                }
+            ]
+        },
+        {
+            "name": "empty_dungeons_count",
+            "label": "Pre-completed Dungeon Count",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "empty_dungeons_mode",
+                    "value": ["count"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 8,
+                "default": 2
+            }
+        },
+        {
+            "name": "shuffle_interior_entrances",
+            "label": "Shuffle Interior Entrances",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off",
+                    "weight": 2
+                },
+                {
+                    "name": "simple",
+                    "label": "Simple Interiors",
+                    "weight": 1
+                },
+                {
+                    "name": "all",
+                    "label": "All Interiors",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "shuffle_grotto_entrances",
+            "label": "Shuffle Grotto Entrances",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ]
+        },
+        {
+            "name": "shuffle_dungeon_entrances",
+            "label": "Shuffle Dungeon Entrances",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off",
+                    "weight": 2
+                },
+                {
+                    "name": "simple",
+                    "label": "Dungeon",
+                    "weight": 1
+                },
+                {
+                    "name": "all",
+                    "label": "Dungeon and Ganon",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "shuffle_bosses",
+            "label": "Shuffle Boss Entrances",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "limited",
+                    "label": "Age-Restricted"
+                },
+                {
+                    "name": "full",
+                    "label": "full"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_overworld_entrances",
+            "label": "Shuffle Overworld Entrances",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ]
+        },
+        {
+            "name": "owl_drops",
+            "label": "Randomize Owl Drops",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ]
+        },
+        {
+            "name": "warp_songs",
+            "label": "Randomize Warp Song Destinations",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ]
+        },
+        {
+            "name": "spawn_positions",
+            "label": "Randomize Overworld Spawns",
+            "type": "multi",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "child",
+                    "label": "Child"
+                },
+                {
+                    "name": "adult",
+                    "label": "Adult"
+                }
+            ]
+        },
+        {
+            "name": "triforce_hunt",
+            "label": "Triforce Hunt",
+            "type": "binary"
+        },
+        {
+            "name": "triforce_count_per_world",
+            "label": "Triforces Per World",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "triforce_hunt",
+                    "value": [true]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 200,
+                "default": 30
+            }
+        },
+        {
+            "name": "triforce_goal_per_world",
+            "label": "Required Triforces Per World",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "triforce_hunt",
+                    "value": [true]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 200,
+                "default": 20
+            }
+        },
+        {
+            "name": "bombchus_in_logic",
+            "label": "Bombchus Are Considered in Logic",
+            "type": "binary"
+        },
+        {
+            "name": "one_item_per_dungeon",
+            "label": "Dungeons Have One Major Item",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "shuffle_smallkeys",
+                    "value": ["remove", "vanilla", "dungeon", "regional", "overworld", "keysanity"]
+                },
+                {
+                    "name": "item_pool_value",
+                    "value": ["plentiful", "balanced", "scarce", "minimal"]
+                }
+            ]
+        }
+    ],
+    "shuffle": [
+        {
+            "name": "shuffle_song_items",
+            "label": "Shuffle Songs",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "song",
+                    "label": "Song Locations",
+                    "weight": 2
+                },
+                {
+                    "name": "dungeon",
+                    "label": "Dungeon Rewards",
+                    "weight": 1
+                },
+                {
+                    "name": "any",
+                    "label": "Anywhere",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "shopsanity",
+            "label": "Shopsanity",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off",
+                    "weight": 6
+                },
+                {
+                    "name": "0",
+                    "label": "0 Items Per Shop",
+                    "weight": 1
+                },
+                {
+                    "name": "1",
+                    "label": "1 Item Per Shop",
+                    "weight": 1
+                },
+                {
+                    "name": "2",
+                    "label": "2 Items Per Shop",
+                    "weight": 1
+                },
+                {
+                    "name": "3",
+                    "label": "3 Items Per Shop",
+                    "weight": 1
+                },
+                {
+                    "name": "4",
+                    "label": "4 Items Per Shop",
+                    "weight": 1
+                },
+                {
+                    "name": "random",
+                    "label": "Random # of Items Per Shop",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "shopsanity_prices",
+            "label": "Shopsanity Prices",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "shopsanity",
+                    "value": ["1", "2", "3", "4", "random"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "random",
+                    "label": "random"
+                },
+                {
+                    "name": "random_starting",
+                    "label": "Starting Wallet"
+                },
+                {
+                    "name": "random_adult",
+                    "label": "Adult's Wallet"
+                },
+                {
+                    "name": "random_giant",
+                    "label": "Giant's Wallet"
+                },
+                {
+                    "name": "random_tycoon",
+                    "label": "Tycoon's Wallet"
+                },
+                {
+                    "name": "affordable",
+                    "label": "Affordable"
+                }
+            ]
+        },
+        {
+            "name": "tokensanity",
+            "label": "Toknsanity",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "dungeons",
+                    "label": "Dungeons Only"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "all",
+                    "label": "All Tokens"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_scrubs",
+            "label": "Scrub Shuffle",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off",
+                    "weight": 1
+                },
+                {
+                    "name": "low",
+                    "label": "On (Affordable)",
+                    "weight": 1
+                },
+                {
+                    "name": "regular",
+                    "label": "On (Expensive)",
+                    "weight": 0
+                },
+                {
+                    "name": "random",
+                    "label": "On (Random Prices)",
+                    "weight": 0
+                }
+            ]
+        },
+        {
+            "name": "shuffle_child_trade",
+            "label": "Shuffle Child Trade Item",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Locations"
+                },
+                {
+                    "name": "shuffle",
+                    "label": "Shuffle Weird Egg"
+                },
+                {
+                    "name": "skip_child_zelda",
+                    "label": "Skip Child Zelda"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_freestanding_items",
+            "label": "Shuffle Rupees & Hearts",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "all",
+                    "label": "All"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "dungeons",
+                    "label": "Dungeons Only"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_pots",
+            "label": "Shuffle Pots",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "all",
+                    "label": "All"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "dungeons",
+                    "label": "Dungeons Only"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_crates",
+            "label": "Shuffle Crates",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "all",
+                    "label": "All"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "dungeons",
+                    "label": "Dungeons Only"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_cows",
+            "label": "Shuffle Cows",
+            "type": "binary"
+        },
+        {
+            "name": "shuffle_beehives",
+            "label": "Shuffle Beehives",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ]
+        },
+        {
+            "name": "shuffle_kokiri_sword",
+            "label": "Shuffle Kokiri Sword",
+            "type": "binary"
+        },
+        {
+            "name": "shuffle_ocarinas",
+            "label": "Shuffle Ocarinas",
+            "type": "binary"
+        },
+        {
+            "name": "shuffle_gerudo_card",
+            "label": "Shuffle Gerudo Card",
+            "type": "binary"
+        },
+        {
+            "name": "shuffle_beans",
+            "label": "Shuffle Magic Beans",
+            "type": "binary"
+        },
+        {
+            "name": "shuffle_medigoron_carpet_salesman",
+            "label": "Shuffle Medigoron & Carpet Salesman",
+            "type": "binary"
+        },
+        {
+            "name": "shuffle_frog_song_rupees",
+            "label": "Shuffle Frog Song Rupees",
+            "type": "binary"
+        }
+    ],
+    "shuffle_dungeon_items": [
+        {
+            "name": "shuffle_mapcompass",
+            "label": "Maps & Compasses",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "remove",
+                    "label": "Remove (Keysy)"
+                },
+                {
+                    "name": "startwith",
+                    "label": "Start With"
+                },
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Locations"
+                },
+                {
+                    "name": "dungeon",
+                    "label": "Own Dungeon"
+                },
+                {
+                    "name": "regional",
+                    "label": "Regional"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "any_dungeon",
+                    "label": "Any Dungeon"
+                },
+                {
+                    "name": "keysanity",
+                    "label": "Anywhere"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_smallkeys",
+            "label": "Small Keys",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "remove",
+                    "label": "Remove (Keysy)"
+                },
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Locations"
+                },
+                {
+                    "name": "dungeon",
+                    "label": "Own Dungeon"
+                },
+                {
+                    "name": "regional",
+                    "label": "Regional"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "any_dungeon",
+                    "label": "Any Dungeon"
+                },
+                {
+                    "name": "keysanity",
+                    "label": "Anywhere (Keysanity)"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_hideoutkeys",
+            "label": "Thieves' Hideout Keys",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "gerudo_fortress",
+                    "value": ["normal", "fast"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Locations",
+                    "weight": 1
+                },
+                {
+                    "name": "fortress",
+                    "label": "Gerudo Fortress Region",
+                    "weight": 0
+                },
+                {
+                    "name": "regional",
+                    "label": "Regional",
+                    "weight": 1
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only",
+                    "weight": 1
+                },
+                {
+                    "name": "any_dungeon",
+                    "label": "Any Dungeon",
+                    "weight": 1
+                },
+                {
+                    "name": "keysanity",
+                    "label": "Anywhere (Keysanity)",
+                    "weight": 1
+                }
+            ]
+        },
+        {
+            "name": "key_rings_choice",
+            "label": "Key Rings Mode",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "choice",
+                    "label": "Choose dungeons"
+                },
+                {
+                    "name": "all",
+                    "label": "All dungeons"
+                },
+                {
+                    "name": "random",
+                    "label": "Random dungeons"
+                }
+            ]
+        },
+        {
+            "name": "key_rings",
+            "label": "Key Rings",
+            "type": "multi",
+            "prerequisite": [
+                {
+                    "name": "key_rings_choice",
+                    "value": ["choice"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "Thieves Hideout",
+                    "label": "Thieves' Hideout"
+                },
+                {
+                    "name": "Forest Temple",
+                    "label": "Forest Temple"
+                },
+                {
+                    "name": "Fire Temple",
+                    "label": "Fire Temple"
+                },
+                {
+                    "name": "Water Temple",
+                    "label": "Water Temple"
+                },
+                {
+                    "name": "Shadow Temple",
+                    "label": "Shadow Temple"
+                },
+                {
+                    "name": "Spirit Temple",
+                    "label": "Spirit Temple"
+                },
+                {
+                    "name": "Bottom of the Well",
+                    "label": "Bottom of the Well"
+                },
+                {
+                    "name": "Gerudo Training Ground",
+                    "label": "Gerudo Training Ground"
+                },
+                {
+                    "name": "Ganons Castle",
+                    "label": "Ganon's Castle"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_bosskeys",
+            "label": "Boss Keys",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "remove",
+                    "label": "Remove (Keysy)"
+                },
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Locations"
+                },
+                {
+                    "name": "dungeon",
+                    "label": "Own Dungeon"
+                },
+                {
+                    "name": "regional",
+                    "label": "Regional"
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only"
+                },
+                {
+                    "name": "any_dungeon",
+                    "label": "Any Dungeon"
+                },
+                {
+                    "name": "keysanity",
+                    "label": "Anywhere (Keysanity)"
+                }
+            ]
+        },
+        {
+            "name": "shuffle_ganon_bosskey",
+            "label": "Ganon's Boss Key",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "triforce_hunt",
+                    "value": [false]
+                }
+            ],
+            "options": [
+                {
+                    "name": "remove",
+                    "label": "Remove (Keysy)",
+                    "weight": 4
+                },
+                {
+                    "name": "vanilla",
+                    "label": "Vanilla Location",
+                    "weight": 2
+                },
+                {
+                    "name": "dungeon",
+                    "label": "Own Dungeon",
+                    "weight": 2
+                },
+                {
+                    "name": "regional",
+                    "label": "Regional",
+                    "weight": 0
+                },
+                {
+                    "name": "overworld",
+                    "label": "Overworld Only",
+                    "weight": 0
+                },
+                {
+                    "name": "any_dungeon",
+                    "label": "Any Dungeon",
+                    "weight": 0
+                },
+                {
+                    "name": "keysanity",
+                    "label": "Anywhere (Keysanity)",
+                    "weight": 4
+                },
+                {
+                    "name": "on_lacs",
+                    "label": "Light Arrow Cutscene",
+                    "weight": 1
+                },
+                {
+                    "name": "stones",
+                    "label": "Stones",
+                    "weight": 0
+                },
+                {
+                    "name": "medallions",
+                    "label": "Medallions",
+                    "weight": 0
+                },
+                {
+                    "name": "dungeons",
+                    "label": "Dungeons",
+                    "weight": 0
+                },
+                {
+                    "name": "tokens",
+                    "label": "Tokens",
+                    "weight": 0
+                },
+                {
+                    "name": "Hearts",
+                    "label": "Hearts",
+                    "weight": 0
+                }
+            ]
+        },
+        {
+            "name": "ganon_bosskey_medallions",
+            "label": "Medallions Required for Ganon's BK",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "shuffle_ganon_bosskey",
+                    "value": ["medallions"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 6,
+                "default": 6
+            }
+        },
+        {
+            "name": "ganon_bosskey_stones",
+            "label": "Spiritual Stones Required for Ganon's BK",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "shuffle_ganon_bosskey",
+                    "value": ["stones"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 3,
+                "default": 3
+            }
+        },
+        {
+            "name": "ganon_bosskey_rewards",
+            "label": "Dungeon Rewards Required for Ganon's BK",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "shuffle_ganon_bosskey",
+                    "value": ["dungeons"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 9,
+                "default": 9
+            }
+        },
+        {
+            "name": "ganon_bosskey_tokens",
+            "label": "Gold Skulltula Tokens Required for Ganon's BK",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "shuffle_ganon_bosskey",
+                    "value": ["tokens"]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 100,
+                "default": 100
+            }
+        },
+        {
+            "name": "ganon_bosskey_hearts",
+            "label": "Hearts Required for Ganon's BK",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "shuffle_ganon_bosskey",
+                    "value": ["hearts"]
+                }
+            ],
+            "num_options": {
+                "min": 4,
+                "max": 20,
+                "default": 20
+            }
+        },
+        {
+            "name": "enhance_map_compass",
+            "label": "Maps and Compasses Give Information",
+            "type": "binary"
+        }
+    ],
+    "timesavers": [
+        {
+            "name": "no_escape_sequence",
+            "label": "Skip Tower Escape Sequence",
+            "type": "binary"
+        },
+        {
+            "name": "no_guard_stealth",
+            "label": "Skip Child Stealth",
+            "type": "binary"
+        },
+        {
+            "name": "no_epona_race",
+            "label": "Skip Epona Race",
+            "type": "binary"
+        },
+        {
+            "name": "skip_some_minigame_phases",
+            "label": "Skip Some Minigame Phases",
+            "type": "binary"
+        },
+        {
+            "name": "complete_mask_quest",
+            "label": "Complete Mask Quest",
+            "type": "binary"
+        },
+        {
+            "name": "useful_cutscenes",
+            "label": "Enable Specific Glitch-Useful Cutscenes",
+            "type": "binary"
+        },
+        {
+            "name": "fast_chests",
+            "label": "Fast Chest Cutscenes",
+            "type": "binary"
+        },
+        {
+            "name": "free_scarecrow",
+            "label": "Free Scarecrow's Song",
+            "type": "binary"
+        },
+        {
+            "name": "fast_bunny_hood",
+            "label": "Fast Bunny Hood",
+            "type": "binary"
+        },
+        {
+            "name": "plant_beans",
+            "label": "Plant Magic Beans",
+            "type": "binary"
+        },
+        {
+            "name": "chicken_count_random",
+            "label": "Random Cucco Count",
+            "type": "binary"
+        },
+        {
+            "name": "chicken_count",
+            "label": "Cucco Count",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "chicken_count_random",
+                    "value": [false]
+                }
+            ],
+            "num_options": {
+                "min": 0,
+                "max": 7,
+                "default": 7
+            }
+        },
+        {
+            "name": "big_poe_count_random",
+            "label": "Random Big Poe Target Count",
+            "type": "binary"
+        },
+        {
+            "name": "big_poe_count",
+            "label": "Big Poe Target Count",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "big_poe_count_random",
+                    "value": [false]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 10,
+                "default": 10
+            }
+        },
+        {
+            "name": "easier_fire_arrow_entry",
+            "label": "Easier Fire Arrow Entry",
+            "type": "binary"
+        },
+        {
+            "name": "fae_torch_count",
+            "label": "Fire Arrow Entry Torch Count",
+            "type": "numeric",
+            "prerequisite": [
+                {
+                    "name": "easier_fire_arrow_entry",
+                    "value": [true]
+                }
+            ],
+            "num_options": {
+                "min": 1,
+                "max": 23,
+                "default": 3
+            }
+        }
+    ],
+    "misc": [
+        {
+            "name": "ocarina_songs",
+            "label": "Randomize Ocarina Song Notes",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "frog",
+                    "label": "Frog Songs Only"
+                },
+                {
+                    "name": "warp",
+                    "label": "Warp Songs Only"
+                },
+                {
+                    "name": "all",
+                    "label": "All Songs"
+                }
+            ]
+        },
+        {
+            "name": "correct_chest_appearances",
+            "label": "Chest Appearance Matches Contents",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "textures",
+                    "label": "Texture"
+                },
+                {
+                    "name": "both",
+                    "label": "Both Size and Texture"
+                },
+                {
+                    "name": "classic",
+                    "label": "Classic"
+                }
+            ]
+        },
+        {
+            "name": "minor_items_as_major_chest",
+            "label": "Minor Items in Big/Gold chests",
+            "type": "binary",
+            "prerequisite": [
+                {
+                    "name": "correct_chest_appearances",
+                    "value": ["textures", "both", "classic"]
+                }
+            ]
+        },
+        {
+            "name": "invisible_chests",
+            "label": "Invisible Chests",
+            "type": "binary"
+        },
+        {
+            "name": "correct_potcrate_appearances",
+            "label": "Pot, Crate, & Beehive Appearance Matches Contents",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "Off"
+                },
+                {
+                    "name": "textures_content",
+                    "label": "Texture (Match Content)"
+                },
+                {
+                    "name": "textures_unchecked",
+                    "label": "Texture (Unchecked)"
+                }
+            ]
+        },
+        {
+            "name": "clearer_hints",
+            "label": "Clearer Hints",
+            "type": "binary"
+        },
+        {
+            "name": "hints",
+            "label": "Gossip Stones",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "none",
+                    "label": "No Hints"
+                },
+                {
+                    "name": "mask",
+                    "label": "Hints; Need Mask of Truth"
+                },
+                {
+                    "name": "agony",
+                    "label": "Hints; Need Stone of Agony"
+                },
+                {
+                    "name": "always",
+                    "label": "Hints; Need Nothing"
+                }
+            ]
+        },
+        {
+            "name": "hint_dist",
+            "label": "Hint Distribution",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "balanced",
+                    "label": "Balanced"
+                },
+                {
+                    "name": "bingo",
+                    "label": "Bingo"
+                },
+                {
+                    "name": "chaos",
+                    "label": "Chaos!!!"
+                },
+                {
+                    "name": "coop2",
+                    "label": "Co-op"
+                },
+                {
+                    "name": "ddr",
+                    "label": "DDR"
+                },
+                {
+                    "name": "league",
+                    "label": "League S3"
+                },
+                {
+                    "name": "mw3",
+                    "label": "MW Season 3"
+                },
+                {
+                    "name": "scrubs",
+                    "label": "Scrubs"
+                },
+                {
+                    "name": "strong",
+                    "label": "Strong"
+                },
+                {
+                    "name": "tournament",
+                    "label": "Tournament"
+                },
+                {
+                    "name": "useless",
+                    "label": "Useless"
+                },
+                {
+                    "name": "very_strong",
+                    "label": "Very Strong"
+                },
+                {
+                    "name": "very_strong_magic",
+                    "label": "Very Strong with Magic"
+                },
+                {
+                    "name": "weekly",
+                    "label": "Weekly"
+                }
+            ]
+        },
+        {
+            "name": "misc_hints",
+            "label": "Misc. Hints",
+            "type": "multi",
+            "options": [
+                {
+                    "name": "altar",
+                    "label": "Temple of Time Altar",
+                    "weight": 1
+                },
+                {
+                    "name": "dampe_diary",
+                    "label": "Dampé's Diary (Hookshot)",
+                    "weight": 0
+                },
+                {
+                    "name": "ganondorf",
+                    "label": "Ganondorf (Light Arrows)",
+                    "weight": 1
+                },
+                {
+                    "name": "warp_songs",
+                    "label": "Warp Songs",
+                    "weight": 1
+                },
+                {
+                    "name": "10_skulltulas",
+                    "label": "House of Skulltula: 10",
+                    "weight": 0
+                },
+                {
+                    "name": "20_skulltulas",
+                    "label": "House of Skulltula: 20",
+                    "weight": 0
+                },
+                {
+                    "name": "30_skulltulas",
+                    "label": "House of Skulltula: 30",
+                    "weight": 0
+                },
+                {
+                    "name": "40_skulltulas",
+                    "label": "House of Skulltula: 40",
+                    "weight": 0
+                },
+                {
+                    "name": "50_skulltulas",
+                    "label": "House of Skulltula: 50",
+                    "weight": 0
+                }
+            ]
+        },
+        {
+            "name": "text_shuffle",
+            "label": "Text Shuffle",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "none",
+                    "label": "No Text Shuffled"
+                },
+                {
+                    "name": "except_hints",
+                    "label": "Shuffled except Important Text"
+                },
+                {
+                    "name": "complete",
+                    "label": "All Text Shuffled"
+                }
+            ]
+        },
+        {
+            "name": "damage_multiplier",
+            "label": "Damage Multiplier",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "half",
+                    "label": "Half"
+                },
+                {
+                    "name": "normal",
+                    "label": "Normal"
+                },
+                {
+                    "name": "double",
+                    "label": "Double"
+                },
+                {
+                    "name": "quadruple",
+                    "label": "Quadruple"
+                },
+                {
+                    "name": "ohko",
+                    "label": "OHKO"
+                }
+            ]
+        },
+        {
+            "name": "deadly_bonks",
+            "label": "Bonks Do Damage",
+            "type": "radio",
+            "prerequisite": [
+                {
+                    "name": "logic_rules",
+                    "value": ["none", "glitchless"]
+                }
+            ],
+            "options": [
+                {
+                    "name": "none",
+                    "label": "No Damage"
+                },
+                {
+                    "name": "half",
+                    "label": "Quarter Heart"
+                },
+                {
+                    "name": "normal",
+                    "label": "Half Heart"
+                },
+                {
+                    "name": "double",
+                    "label": "Whole Heart"
+                },
+                {
+                    "name": "quadruple",
+                    "label": "Two Hearts"
+                },
+                {
+                    "name": "ohko",
+                    "label": "One Bonk KO"
+                }
+            ]
+        },
+        {
+            "name": "no_collectible_hearts",
+            "label": "Hero Mode",
+            "type": "binary"
+        },
+        {
+            "name": "starting_tod",
+            "label": "Starting Time of Day",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "default",
+                    "label": "Default (10:00)"
+                },
+                {
+                    "name": "random",
+                    "label": "Random Choice"
+                },
+                {
+                    "name": "sunrise",
+                    "label": "Sunrise (6:30)"
+                },
+                {
+                    "name": "morning",
+                    "label": "Morning (9:00)"
+                },
+                {
+                    "name": "noon",
+                    "label": "Noon (12:00)"
+                },
+                {
+                    "name": "afternoon",
+                    "label": "Afternoon (15:00)"
+                },
+                {
+                    "name": "sunset",
+                    "label": "Sunset (18:00)"
+                },
+                {
+                    "name": "evening",
+                    "label": "Evening (21:00)"
+                },
+                {
+                    "name": "midnight",
+                    "label": "Midnight (00:00)"
+                },
+                {
+                    "name": "witching-hour",
+                    "label": "Witching Hour (03:00)"
+                }
+            ]
+        },
+        {
+            "name": "blue_fire_arrows",
+            "label": "Blue Fire Arrows",
+            "type": "binary"
+        },
+        {
+            "name": "fix_broken_drops",
+            "label": "Fix Broken Drops",
+            "type": "binary"
+        }
+    ],
+    "item_pool": [
+        {
+            "name": "item_pool_value",
+            "label": "Item Pool",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "ludicrous",
+                    "label": "Ludicrous"
+                },
+                {
+                    "name": "plentiful",
+                    "label": "Plentiful"
+                },
+                {
+                    "name": "balanced",
+                    "label": "Balanced"
+                },
+                {
+                    "name": "scarce",
+                    "label": "Scarce"
+                },
+                {
+                    "name": "minimal",
+                    "label": "Minimal"
+                }
+            ]
+        },
+        {
+            "name": "junk_ice_traps",
+            "label": "Ice Traps",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "off",
+                    "label": "No Ice Traps"
+                },
+                {
+                    "name": "normal",
+                    "label": "Normal Ice Traps"
+                },
+                {
+                    "name": "on",
+                    "label": "Extra Ice Traps"
+                },
+                {
+                    "name": "mayhem",
+                    "label": "Ice Trap Mayhem"
+                },
+                {
+                    "name": "onslaught",
+                    "label": "Ice Trap Onslaught"
+                }
+            ]
+        },
+        {
+            "name": "ice_trap_appearance",
+            "label": "Ice Trap Appearance",
+            "type": "radio",
+            "options": [
+                {
+                    "name": "major_only",
+                    "label": "Major Items Only"
+                },
+                {
+                    "name": "junk_only",
+                    "label": "Junk Items Only"
+                },
+                {
+                    "name": "anything",
+                    "label": "Anything"
+                }
+            ]
+        },
+        {
+            "name": "adult_trade_start",
+            "label": "Adult Trade Sequence Items",
+            "type": "multi",
+            "options": [
+                {
+                    "name": "Pocket Egg",
+                    "label": "Pocket Egg"
+                },
+                {
+                    "name": "Pocket Cucco",
+                    "label": "Pocket Cucco"
+                },
+                {
+                    "name": "Cojiro",
+                    "label": "Cojiro"
+                },
+                {
+                    "name": "Odd Mushroom",
+                    "label": "Odd Mushroom"
+                },
+                {
+                    "name": "Poachers Saw",
+                    "label": "Poacher's Saw"
+                },
+                {
+                    "name": "Broken Sword",
+                    "label": "Broken Sword"
+                },
+                {
+                    "name": "Prescription",
+                    "label": "Prescription"
+                },
+                {
+                    "name": "Eyeball Frog",
+                    "label": "Eyeball Frog"
+                },
+                {
+                    "name": "Eyedrops",
+                    "label": "Eyedrops"
+                },
+                {
+                    "name": "Claim Check",
+                    "label": "Claim Check"
+                }
+            ]
+        }
+    ]
+}
