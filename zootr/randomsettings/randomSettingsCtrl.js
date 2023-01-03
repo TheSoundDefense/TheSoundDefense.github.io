@@ -34,7 +34,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($scope, $http) {
 
     self.restoreDefaultSettings = function restoreDefaultSettings() {
         self.simpleSettings = "t";
-        self.criticalHintsOn = "f";
+        self.criticalHintsOn = "t";
         self.flatSettings = {};
         self.allWeights = {};
         localStorage.clear();
