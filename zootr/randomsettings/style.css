@@ -1,0 +1,108 @@
+.body-class {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    background-color: #bfffe0;
+}
+  
+.body-class hr {
+    border: 0;
+    height: 1px;
+    width: 600px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0));
+}
+
+.tab {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.infoText {
+    text-align: center;
+    width: 800px;
+}
+
+.weightEntry {
+    width: 3.125rem;
+}
+
+input:out-of-range {
+    background-color: #fcc;
+}
+
+.columnGroup {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 840px;
+}
+
+.settingColumn {
+    margin: 0 auto;
+    padding: 0 8px;
+    width: 400px;
+}
+
+.settingColumn.leftBorder {
+    border-left: 1px solid rgba(0, 0, 0, 0.50);
+}
+
+.settingColumn.rightBorder {
+    border-right: 1px solid rgba(0, 0, 0, 0.50);
+}
+
+.setting {
+    margin-bottom: 8px;
+}
+
+.settingRow {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.settingInfo {
+    flex: 0 0 auto;
+}
+
+.guaranteed {
+    font-weight: bold;
+}
+
+.invalidSetting {
+    opacity: 0.3;
+}
+
+.zeroWeight {
+    opacity: 0.3;
+}
+
+.settingsButton {
+    width: 400px;
+    height: 24px;
+}
+
+.plandoFile {
+    width: 800px;
+    border: 1px solid rgba(0, 0, 0, 0.50);
+}
+
+pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.errorMessage {
+    margin-top: 8px;
+}

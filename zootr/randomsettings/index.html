@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta charset="utf-8">
     <title>Ocarina of Time Randomizer - Weighted Settings Tool</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
     <script src="randomSettingsCtrl.js"></script>
@@ -7,6 +8,237 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body class="body-class" ng-app="randomSettingsApp" ng-controller="randomSettingsCtrl as ctrl">
-    {{ctrl.allSettings}}
+    <h1 align="center">Ocarina of Time Randomizer - Weighted Settings Tool</h1>
+    <hr />
+
+    <div class="tab">
+        <p class="infoText">
+            This online tool generates a plandomizer file for the Ocarina of Time Randomizer, with
+            randomly selected settings. Users can specify weights for settings, to adjust how often
+            those settings are randomly selected.
+        </p>
+        <p class="infoText">
+            This is designed to work with the <b>7.1 version</b> of the Ocarina of Time Randomizer.
+        </p>
+
+        <button ng-if="!ctrl.fullInstructionsVisible" ng-click="ctrl.displayFullInstructions()">
+            Show full instructions
+        </button>
+
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            Settings or options will be in <span class="guaranteed">bold</span> if their weight
+            indicates that they are guaranteed to be chosen.
+            Settings or options will be <span class="zeroWeight">greyed out</span> if they have a
+            weight of zero, to indicate that they are disabled and they will never be selected.
+            Settings will also be <span class="invalidSetting">greyed out</span> if they will not
+            be applied, due to the value of some other setting or option. (For example, if "Triforce
+            Hunt" is set to zero, Triforce-related settings will be greyed out.)
+        </p>
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            "Simple Settings" will only randomize the settings that are randomized when "Randomize
+            Main Rule Settings" is selected in the official Ocarina of Time Randomizer. Users can
+            still apply weights for those settings. All other settings will have their default
+            values applied. Choosing "All Settings" will randomize all non-cosmetic settings.
+        </p>
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            If "Add Critical Hints" is checked, then the Gossip Stones outside of the Temple of Time
+            will tell the player about any critical requirements (rainbow bridge, LACS requirements,
+            Ganon's boss key/Triforce pieces, and easier fire arrow entry). Checking this box will also
+            force the "Gossip Stones" option to "Hints; Need Nothing".
+        </p>
+        <hr ng-if="ctrl.fullInstructionsVisible" />
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            For <b>binary</b> settings (either on or off), specify a weight between 0 and 1. 0 indicates
+            the setting will never be chosen. 1 indicates the setting will always be chosen.
+        </p>
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            For <b>radio</b> settings (several options, only one selected), specify a numeric weight
+            for each option. The weight can be as low as zero (option will never be selected) and as
+            large as desired. Two options with the same weight will be chosen with equal probability.
+            If one option has twice the weight of another, that option will be chosen twice as often
+            as the other.
+        </p>
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            For <b>multi</b> settings (several options, multiple selected), specify a weight between
+            0 and 1 for each option. 0 indicates the option will never be chosen. 1 indicates the
+            option will always be chosen.
+        </p>
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            For <b>numeric</b> settings, there are two options:
+            <br />
+            <b>Random:</b> a number will be selected entirely at random, from between the minimum
+            and maximum.
+            <br />
+            <b>Weighted:</b> a number will be randomly selected between the minimum and maximum.
+            Numbers close to the user-specified average are more likely to be chosen.
+        </p>
+
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            Special case: for the "Triforces Per World" setting, you will specify a <b>minimum
+            scale</b> and a <b>maximum scale</b>, and a number will be randomly chosen between
+            them. The number of Triforce pieces in the world will be equal to the goal number of
+            Triforce pieces, multipled by that scale. (The scale must be between 1 and 2.) For
+            example, if the "Required Triforces Per World" setting is chosen to be 20, and the
+            scale for "Triforce Per World" is chosen to be 1.5, 30 Triforce pieces will be placed
+            in each world.
+        </p>
+        <hr />
+
+        <p class="infoText">
+            Simple Settings
+            <input type="radio" ng-model="ctrl.simpleSettings" value="true" ng-value="true">
+            All Settings
+            <input type="radio" ng-model="ctrl.simpleSettings" value="false" ng-value="false">
+        </p>
+        <p class="infoText">
+            Add Critical Hints
+            <input type="checkbox" ng-model="ctrl.criticalHintsOn" ng-change="ctrl.toggleHints()">
+        </p>
+        <hr />
+
+        <div class="columnGroup">
+            <div ng-repeat="(categoryName, category) in ctrl.allSettings"
+                 ng-if="ctrl.isCategoryDisplayed(categoryName)"
+                 class="settingColumn">
+                <h2>{{categoryName}}</h2>
+                <div ng-repeat="setting in category | filter:ctrl.isSettingDisplayed()"
+                     class="setting"
+                     ng-class="{invalidSetting: !ctrl.isSettingPossible(setting)}">
+                    <div ng-if="setting['type'] === 'binary'"
+                         class="settingRow"
+                         ng-class="{zeroWeight: ctrl.isSettingWeightZero(setting), guaranteed: ctrl.isBinarySettingGuaranteed(setting)}">
+                        <span>
+                            <u>{{setting['label']}} (Binary)</u>
+                        </span>
+                        <span><input class="weightEntry"
+                            type="number"
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            ng-model="ctrl.allWeights[setting['name']]"></span>
+                    </div>
+                    <div ng-if="setting['type'] === 'radio'">
+                        <span>
+                            <u>{{setting['label']}} (Radio)</u>
+                        </span>
+                        <div ng-repeat="option in setting['options']"
+                             class="settingRow"
+                             ng-class="{zeroWeight: ctrl.isOptionWeightZero(setting, option), guaranteed: ctrl.isRadioOptionGuaranteed(setting, option)}">
+                            <span>--- {{option['label']}}</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="0"
+                                ng-disabled="ctrl.isInputDisabled(setting)"
+                                ng-model="ctrl.allWeights[setting['name']][option['name']]">
+                        </div>
+                    </div>
+                    <div ng-if="setting['type'] === 'multi'">
+                        <span>
+                            <u>{{setting['label']}} (Multi)</u>
+                        </span>
+                        <div ng-repeat="option in setting['options']"
+                             class="settingRow"
+                             ng-class="{zeroWeight: ctrl.isOptionWeightZero(setting, option), guaranteed: ctrl.isMultiOptionGuaranteed(setting, option)}">
+                            <span>--- {{option['label']}}</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="0"
+                                max="1"
+                                step="0.1"
+                                ng-model="ctrl.allWeights[setting['name']][option['name']]">
+                        </div>
+                    </div>
+                    <div ng-if="setting['type'] === 'numeric'">
+                        <span>
+                            <u>{{setting['label']}} (Numeric)</u>
+                        </span>
+                        <div class="settingRow">
+                            <span>--- Distribution</span>
+                            <select ng-model="ctrl.allWeights[setting['name']]['distribution']">
+                                <option value="uniform">
+                                    Random
+                                </option>
+                                <option value="gaussian">
+                                    Weighted
+                                </option>
+                            </select>
+                        </div>
+                        <div class="settingRow">
+                            <span>--- Min</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="{{ctrl.flatSettings[setting['name']]['num_options']['min']}}"
+                                max="{{ctrl.flatSettings[setting['name']]['num_options']['max']}}"
+                                step="1"
+                                ng-model="ctrl.allWeights[setting['name']]['min']">
+                        </div>
+                        <div class="settingRow">
+                            <span>--- Max</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="{{ctrl.flatSettings[setting['name']]['num_options']['min']}}"
+                                max="{{ctrl.flatSettings[setting['name']]['num_options']['max']}}"
+                                step="1"
+                                ng-model="ctrl.allWeights[setting['name']]['max']">
+                        </div>
+                        <div class="settingRow"
+                             ng-if="ctrl.allWeights[setting['name']]['distribution'] === 'gaussian'">
+                            <span>--- Average</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="{{ctrl.allWeights[setting['name']]['min']}}"
+                                max="{{ctrl.allWeights[setting['name']]['max']}}"
+                                step="1"
+                                ng-model="ctrl.allWeights[setting['name']]['mean']">
+                        </div>
+                    </div>
+                    <!-- Special cases handled here. -->
+                    <div ng-if="setting['name'] === 'triforce_count_per_world'">
+                        <span>
+                            <u>{{setting['label']}} (Special Case)</u>
+                        </span>
+                        <div class="settingRow">
+                            <span>--- Min. Scale</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="{{ctrl.flatSettings[setting['name']]['special_options']['scale_min']}}"
+                                max="{{ctrl.flatSettings[setting['name']]['special_options']['scale_max']}}"
+                                step="0.1"
+                                ng-model="ctrl.allWeights[setting['name']]['scale_min']">
+                        </div>
+                        <div class="settingRow">
+                            <span>--- Max. Scale</span>
+                            <input class="weightEntry"
+                                type="number"
+                                min="{{ctrl.flatSettings[setting['name']]['special_options']['scale_min']}}"
+                                max="{{ctrl.flatSettings[setting['name']]['special_options']['scale_max']}}"
+                                step="0.1"
+                                ng-model="ctrl.allWeights[setting['name']]['scale_max']">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+        <button ng-click="ctrl.generateFinalSettings()" class="settingsButton">Generate settings</button>
+        <div ng-if="ctrl.errorString !== ''" class="errorMessage">
+            <b>Error: {{ctrl.errorString}}</b>
+        </div>
+        <div ng-if="ctrl.finalSettings !== ''">
+            <p class="infoText">
+                Click the text below to copy it to your clipboard. Save it into a .json file
+                and apply it as the plandomizer file when generating your seed.
+            </p>
+            <pre id="plandoTextElement"
+                 class="plandoFile"
+                 ng-click="ctrl.selectPlandoText()">{{ctrl.finalSettings}}</pre>
+        </div>
+    </div>
+
+    <hr />
+    <div class="credits">
+        <p>Created by <a href="https://github.com/TheSoundDefense" target="_blank">The Sound Defense</a>.</p>
+    </div>
 </body>
 </html>
