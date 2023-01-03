@@ -42,9 +42,15 @@
         </p>
         <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
             If "Add Critical Hints" is checked, then the Gossip Stones outside of the Temple of Time
-            will tell the player about any critical requirements (rainbow bridge, LACS requirements,
-            Ganon's boss key/Triforce pieces, and easier fire arrow entry). Checking this box will also
+            (or the altar inside the Temple of Time, if that hint is active) will tell the player about
+            any critical requirements (rainbow bridge, LACS requirements, Ganon's boss key/Triforce
+            pieces, easier fire arrow entry, and possibly logic rules). Checking this box will also
             force the "Gossip Stones" option to "Hints; Need Nothing".
+        </p>
+        <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
+            When you click "Generate Settings", your settings will be saved in your browser, and they
+            will be shown the next time you visit this page. Clicking on "Restore Default Settings"
+            will reset all settings to their defaults, and delete the settings from your local storage.
         </p>
         <hr ng-if="ctrl.fullInstructionsVisible" />
         <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
@@ -86,13 +92,20 @@
 
         <p class="infoText">
             Simple Settings
-            <input type="radio" ng-model="ctrl.simpleSettings" value="true" ng-value="true">
+            <input type="radio" ng-model="ctrl.simpleSettings" value="t">
             All Settings
-            <input type="radio" ng-model="ctrl.simpleSettings" value="false" ng-value="false">
+            <input type="radio" ng-model="ctrl.simpleSettings" value="f">
         </p>
         <p class="infoText">
             Add Critical Hints
-            <input type="checkbox" ng-model="ctrl.criticalHintsOn" ng-change="ctrl.toggleHints()">
+            <input type="checkbox"
+                   ng-model="ctrl.criticalHintsOn"
+                   ng-change="ctrl.toggleHints()"
+                   ng-true-value="'t'"
+                   ng-false-value="'f'">
+        </p>
+        <p class="infoText">
+            <button ng-click="ctrl.restoreDefaultSettings()">Restore Default Settings</button>
         </p>
         <hr />
 

@@ -1,4 +1,4 @@
-var randomSettingsCtrl = function randomSettingsCtrl($http) {
+var randomSettingsCtrl = function randomSettingsCtrl($scope, $http) {
     let self = this;
 
     self.allSettings = {};
@@ -9,9 +9,16 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     self.finalSettings = "";
     self.errorString = "";
 
-    self.simpleSettings = true;
-    self.criticalHintsOn = false;
+    self.simpleSettings = "t";
+    self.criticalHintsOn = "t";
     self.fullInstructionsVisible = false;
+
+    self.initialized = false;
+
+    $http.get('settings_list.json').then(function(response) {
+        self.allSettings = response.data;
+        self.initialize();
+    });
 
     // This function will restore locally stored settings, if possible. It returns
     // true if successful and false if not.
@@ -20,76 +27,88 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             return false;
         }
         self.allWeights = JSON.parse(localStorage.getItem('weights'));
+        self.simpleSettings = localStorage.getItem('simple_settings');
+        self.criticalHintsOn = localStorage.getItem('critical_hints_on');
         return true;
     };
 
-    $http.get('settings_list.json').then(function(response) {
-        self.allSettings = response.data;
-    });
+    self.restoreDefaultSettings = function restoreDefaultSettings() {
+        self.simpleSettings = "t";
+        self.criticalHintsOn = "f";
+        self.flatSettings = {};
+        self.allWeights = {};
+        localStorage.clear();
 
-    //let settingsRestored = self.restoreSettings();
+        self.initialize();
+    };
 
-    // Apply default weights to all settings that don't already have them. Also
-    // add all settings to our master object (which will make the data binding
-    // much easier.)
-    for (const category in self.allSettings) {
-        for (const setting of self.allSettings[category]) {
-            self.flatSettings[setting["name"]] = setting;
+    self.initialize = function initialize() {
+        let settingsRestored = self.restoreSettings();
 
-            //if (settingsRestored) continue;
+        // Apply default weights to all settings that don't already have them. Also
+        // add all settings to our master object (which will make the data binding
+        // much easier.)
+        for (const category in self.allSettings) {
+            for (const setting of self.allSettings[category]) {
+                self.flatSettings[setting["name"]] = setting;
 
-            // Binary on/off settings get a straight 0.5 weight.
-            if (setting["type"] === "binary") {
-                if (setting["weight"] === undefined) {
-                    setting["weight"] = 0.5;
-                }
-                self.allWeights[setting["name"]] = setting["weight"];
-            }
-            // Radio settings get a weight of 1 for each option.
-            // Only one option can be chosen for each radio setting.
-            if (setting["type"] === "radio") {
-                let weightsObject = {};
-                for (const option of setting["options"]) {
-                    if (option["weight"] === undefined) {
-                        option["weight"] = 1;
+                if (settingsRestored) continue;
+
+                // Binary on/off settings get a straight 0.5 weight.
+                if (setting["type"] === "binary") {
+                    if (setting["weight"] === undefined) {
+                        setting["weight"] = 0.5;
                     }
-                    weightsObject[option["name"]] = option["weight"];
+                    self.allWeights[setting["name"]] = setting["weight"];
                 }
-                self.allWeights[setting["name"]] = weightsObject;
-            }
-            // Multi settings get a weight of 0.5 for each option.
-            // Any combination of options can be chosen for multi settings.
-            if (setting["type"] === "multi") {
-                let weightsObject = {};
-                for (const option of setting["options"]) {
-                    if (option["weight"] === undefined) {
-                        option["weight"] = 0.5;
+                // Radio settings get a weight of 1 for each option.
+                // Only one option can be chosen for each radio setting.
+                if (setting["type"] === "radio") {
+                    let weightsObject = {};
+                    for (const option of setting["options"]) {
+                        if (option["weight"] === undefined) {
+                            option["weight"] = 1;
+                        }
+                        weightsObject[option["name"]] = option["weight"];
                     }
-                    weightsObject[option["name"]] = option["weight"];
+                    self.allWeights[setting["name"]] = weightsObject;
                 }
-                self.allWeights[setting["name"]] = weightsObject;
-            }
-            // Numeric settings do not have weights per se. They instead
-            // have min, max and mean.
-            if (setting["type"] === "numeric") {
-                self.allWeights[setting["name"]] = {
-                    "distribution": setting["num_options"]["distribution"],
-                    "min": setting["num_options"]["min"],
-                    "max": setting["num_options"]["max"],
-                    "mean": setting["num_options"]["mean"]
-                };
-            }
-            // Handle special cases.
-            if (setting["type"] === "special_case") {
-                if (setting["name"] === "triforce_count_per_world") {
+                // Multi settings get a weight of 0.5 for each option.
+                // Any combination of options can be chosen for multi settings.
+                if (setting["type"] === "multi") {
+                    let weightsObject = {};
+                    for (const option of setting["options"]) {
+                        if (option["weight"] === undefined) {
+                            option["weight"] = 0.5;
+                        }
+                        weightsObject[option["name"]] = option["weight"];
+                    }
+                    self.allWeights[setting["name"]] = weightsObject;
+                }
+                // Numeric settings do not have weights per se. They instead
+                // have min, max and mean.
+                if (setting["type"] === "numeric") {
                     self.allWeights[setting["name"]] = {
-                        "scale_min": setting["special_options"]["scale_min"],
-                        "scale_max": setting["special_options"]["scale_max"]
+                        "distribution": setting["num_options"]["distribution"],
+                        "min": setting["num_options"]["min"],
+                        "max": setting["num_options"]["max"],
+                        "mean": setting["num_options"]["mean"]
                     };
+                }
+                // Handle special cases.
+                if (setting["type"] === "special_case") {
+                    if (setting["name"] === "triforce_count_per_world") {
+                        self.allWeights[setting["name"]] = {
+                            "scale_min": setting["special_options"]["scale_min"],
+                            "scale_max": setting["special_options"]["scale_max"]
+                        };
+                    }
                 }
             }
         }
-    }
+
+        self.initialized = true;
+    };
 
     self.displayFullInstructions = function displayFullInstructions() {
         self.fullInstructionsVisible = true;
@@ -98,7 +117,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     self.toggleHints = function toggleHints() {
         // When we toggle critical hints, we need to forcibly change the weights
         // for the Gossip Stones setting.
-        if (self.criticalHintsOn) {
+        if (self.isCriticalHintsOn()) {
             self.allWeights["hints"]["none"] = 0;
             self.allWeights["hints"]["mask"] = 0;
             self.allWeights["hints"]["agony"] = 0;
@@ -111,12 +130,20 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         }
     };
 
+    self.isSimpleSettingsOn = function isSimpleSettingsOn() {
+        return self.simpleSettings === "t";
+    };
+
+    self.isCriticalHintsOn = function isCriticalHintsOn() {
+        return self.criticalHintsOn === "t";
+    };
+
     self.isInputDisabled = function isInputDisabled(setting) {
-        return self.criticalHintsOn && setting["name"] === "hints";
+        return self.isCriticalHintsOn() && setting["name"] === "hints";
     };
 
     self.isCategoryDisplayed = function isCategoryDisplayed(categoryName) {
-        return (!self.simpleSettings ||
+        return (!self.isSimpleSettingsOn() ||
                 (categoryName === "Open"
                  || categoryName === "World"
                  || categoryName === "Shuffle Dungeon Items"));
@@ -124,7 +151,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
 
     self.isSettingDisplayed = function isSettingDisplayed() {
         return function(setting) {
-            return setting["simple_shuffle"] || !self.simpleSettings;
+            return setting["simple_shuffle"] || !self.isSimpleSettingsOn();
         };
     };
 
@@ -132,6 +159,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     // has a prerequisite that has zero weight, this setting cannot possibly
     // be included.
     self.isSettingPossible = function isSettingPossible(setting) {
+        if (!self.initialized) return true;
         if (setting["prerequisite"] === undefined) {
             return true;
         }
@@ -170,10 +198,12 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     };
 
     self.isBinarySettingGuaranteed = function isBinarySettingGuaranteed(setting) {
+        if (!self.initialized) return false;
         return self.allWeights[setting["name"]] === 1;
     };
 
     self.isRadioOptionGuaranteed = function isRadioOptionGuaranteed(setting, option) {
+        if (!self.initialized) return false;
         // Check every option. If any options other than the one in question have a
         // non-zero weight, or if this one has a weight less than one, return false.
         const settingWeights = self.allWeights[setting["name"]];
@@ -191,14 +221,17 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     };
 
     self.isMultiOptionGuaranteed = function isMultiOptionGuaranteed(setting, option) {
+        if (!self.initialized) return false;
         return self.allWeights[setting["name"]][option["name"]] === 1;
     };
 
     self.isSettingWeightZero = function isSettingWeightZero(setting) {
+        if (!self.initialized) return false;
         return self.allWeights[setting["name"]] === 0;
     };
 
     self.isOptionWeightZero = function isOptionWeightZero(setting, option) {
+        if (!self.initialized) return false;
         return self.allWeights[setting["name"]][option["name"]] === 0;
     };
 
@@ -297,7 +330,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     self.randomizeSetting = function randomizeSetting(setting, conflictingSettings) {
         // If we are in simple settings mode, and this is not a simplpe setting,
         // just use the default value.
-        if (self.simpleSettings && setting["simple_shuffle"] === false) {
+        if (self.isSimpleSettingsOn() && setting["simple_shuffle"] === false) {
             return setting["default_value"];
         }
 
@@ -508,199 +541,208 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
 
         // First option: Triforce Hunt.
         if (settingsObject["triforce_hunt"] === true) {
-            const triforceCount = settingsObject["triforce_goal_per_world"];
-            const triforceHint = `They say that #Ganondorf# can be defeated with the power of ` +
-            `#${self.getNumberText(triforceCount)}# pieces of the #Triforce#.`;
-            const hintObject = {
-                "text": triforceHint,
-                "colors": ["Yellow", "Green", "Red"]
+            // If the altar hint is on, we won't add this hint.
+            if (!settingsObject["misc_hints"].includes("altar")) {
+                const triforceCount = settingsObject["triforce_goal_per_world"];
+                const triforceHint = `They say that #Ganondorf# can be defeated with the power of ` +
+                `#${self.getNumberText(triforceCount)}# pieces of the #Triforce#.`;
+                const hintObject = {
+                    "text": triforceHint,
+                    "colors": ["Yellow", "Green", "Red"]
+                }
+                hintsArray.push(hintObject);
             }
-            hintsArray.push(hintObject);
         }
 
         // Second option: rainbow bridge.
         const bridgeSetting = settingsObject["bridge"];
-        if (bridgeSetting === "open") {
-            const bridgeHint = `They say that a #rainbow bridge# has appeared in front of ` +
-            `#Ganondorf's castle#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Red", "Pink"]
+        // If the altar hint is on, we won't add this hint.
+        if (!settingsObject["misc_hints"].includes("altar")) {
+            if (bridgeSetting === "open") {
+                const bridgeHint = `They say that a #rainbow bridge# has appeared in front of ` +
+                `#Ganondorf's castle#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Red", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bridgeSetting === "vanilla") {
+                const bridgeHint = `They say that the #rainbow bridge# will appear for one who ` +
+                `bears the #Shadow# and #Spirit# Medallions and the #Light Arrows#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Yellow", "Yellow", "Pink", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bridgeSetting === "stones") {
+                const stoneCount = settingsObject["bridge_stones"];
+                const stonePhrase = stoneCount === 1 ? "Spiritual Stone" : "Spiritual Stones";
+                const bridgeHint = `They say that the #rainbow bridge# will appear by the power of ` +
+                `#${self.getNumberText(stoneCount)} ${stonePhrase}#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Green", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bridgeSetting === "medallions") {
+                const medallionCount = settingsObject["bridge_medallions"];
+                const medallionPhrase = medallionCount === 1 ? "medallion" : "medallions";
+                const bridgeHint = `They say that the #rainbow bridge# will appear by the power of ` +
+                `#${self.getNumberText(medallionCount)} ${medallionPhrase}#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Green", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bridgeSetting === "dungeons") {
+                const dungeonCount = settingsObject["bridge_rewards"];
+                const dungeonPhrase = dungeonCount === 1 ? "dungeon" : "dungeons";
+                const bridgeHint = `They say that the #rainbow bridge# will appear for one who has ` +
+                `conquered #${self.getNumberText(dungeonCount)} ${dungeonPhrase}#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Green", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bridgeSetting === "tokens") {
+                const tokenCount = settingsObject["bridge_tokens"];
+                const tokenPhrase = tokenCount === 1 ? "Token" : "Tokens";
+                const bridgeHint = `They say that the #rainbow bridge# will appear by the power of ` +
+                `#${self.getNumberText(tokenCount)} Gold Skulltula ${tokenPhrase}#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Green", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bridgeSetting === "hearts") {
+                const heartCount = settingsObject["bridge_hearts"];
+                const bridgeHint = `They say that the #rainbow bridge# will appear for one who has ` +
+                `#${self.getNumberText(heartCount)} hearts#.`;
+                const hintObject = {
+                    "text": bridgeHint,
+                    "colors": ["Green", "Pink"]
+                }
+                hintsArray.push(hintObject);
             }
-            hintsArray.push(hintObject);
-        } else if (bridgeSetting === "vanilla") {
-            const bridgeHint = `They say that the #rainbow bridge# will appear for one who ` +
-            `bears the #Shadow# and #Spirit# Medallions and the #Light Arrows#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Yellow", "Yellow", "Pink", "Pink"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bridgeSetting === "stones") {
-            const stoneCount = settingsObject["bridge_stones"];
-            const stonePhrase = stoneCount === 1 ? "Spiritual Stone" : "Spiritual Stones";
-            const bridgeHint = `They say that the #rainbow bridge# will appear by the power of ` +
-            `#${self.getNumberText(stoneCount)} ${stonePhrase}#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Green", "Pink"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bridgeSetting === "medallions") {
-            const medallionCount = settingsObject["bridge_medallions"];
-            const medallionPhrase = medallionCount === 1 ? "medallion" : "medallions";
-            const bridgeHint = `They say that the #rainbow bridge# will appear by the power of ` +
-            `#${self.getNumberText(medallionCount)} ${medallionPhrase}#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Green", "Pink"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bridgeSetting === "dungeons") {
-            const dungeonCount = settingsObject["bridge_rewards"];
-            const dungeonPhrase = dungeonCount === 1 ? "dungeon" : "dungeons";
-            const bridgeHint = `They say that the #rainbow bridge# will appear for one who has ` +
-            `conquered #${self.getNumberText(dungeonCount)} ${dungeonPhrase}#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Green", "Pink"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bridgeSetting === "tokens") {
-            const tokenCount = settingsObject["bridge_tokens"];
-            const tokenPhrase = tokenCount === 1 ? "Token" : "Tokens";
-            const bridgeHint = `They say that the #rainbow bridge# will appear by the power of ` +
-            `#${self.getNumberText(tokenCount)} Gold Skulltula ${tokenPhrase}#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Green", "Pink"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bridgeSetting === "hearts") {
-            const heartCount = settingsObject["bridge_hearts"];
-            const bridgeHint = `They say that the #rainbow bridge# will appear for one who has ` +
-            `#${self.getNumberText(heartCount)} hearts#.`;
-            const hintObject = {
-                "text": bridgeHint,
-                "colors": ["Green", "Pink"]
-            }
-            hintsArray.push(hintObject);
         }
 
         // Third option: Ganon's boss key (incompatible with Triforce Hunt).
         const bossDoorSetting = settingsObject["shuffle_ganon_bosskey"];
-        if (bossDoorSetting === "remove") {
-            const bossDoorHint = `They say that the #door in Ganondorf's tower# is open to all.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Red"]
+        // If the altar hint is on, we won't add this hint.
+        if (!settingsObject["misc_hints"].includes("altar")) {
+            if (bossDoorSetting === "remove") {
+                const bossDoorHint = `They say that the #door in Ganondorf's tower# is open to all.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "vanilla") {
+                const bossDoorHint = `They say that the #key to Ganondorf's chambers# is guarded by ` +
+                `Stalfos in #his own tower#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Light Blue", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "dungeon") {
+                const bossDoorHint = `They say that #Ganondorf# has hidden the key to his chambers ` +
+                `#somewhere in his castle#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Light Blue", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "regional") {
+                const bossDoorHint = `They say that the #key to Ganondorf's chambers# is #not hidden ` +
+                `far from his castle#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Light Blue", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "overworld") {
+                const bossDoorHint = `They say that the #key to Ganondorf's chambers# is hidden ` +
+                `#somewhere in the Hyrule overworld#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Light Blue", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "any_dungeon") {
+                const bossDoorHint = `They say that the #key to Ganondorf's chambers# is hidden ` +
+                `in #a dungeon somewhere in Hyrule#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Light Blue", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "keysanity") {
+                const bossDoorHint = `They say that #no one knows# where the #key to Ganondorf's ` +
+                `chambers# is hidden.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Red", "Pink"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "on_lacs") {
+                const bossDoorHint = `They say that #Princess Zelda# waits in the #Temple of Time# ` +
+                `to give the #key to Ganondorf's chambers#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Red", "Light Blue", "Light Blue"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "stones") {
+                const stoneCount = settingsObject["ganon_bosskey_stones"];
+                const stonePhrase = stoneCount === 1 ? "Spiritual Stone" : "Spiritual Stones";
+                const bossDoorHint = `They say that #Ganondorf's door# will open by the power of ` +
+                `#${self.getNumberText(stoneCount)} ${stonePhrase}#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Green", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "medallions") {
+                const medallionCount = settingsObject["ganon_bosskey_medallions"];
+                const medallionPhrase = medallionCount === 1 ? "medallion" : "medallions";
+                const bossDoorHint = `They say that #Ganondorf's door# will open by the power of ` +
+                `#${self.getNumberText(medallionCount)} ${medallionPhrase}#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Green", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "dungeons") {
+                const dungeonCount = settingsObject["ganon_bosskey_rewards"];
+                const dungeonPhrase = dungeonCount === 1 ? "dungeon" : "dungeons";
+                const bossDoorHint = `They say that #Ganondorf's door# will open for one who has ` +
+                `conquered #${self.getNumberText(dungeonCount)} ${dungeonPhrase}#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Green", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "tokens") {
+                const tokenCount = settingsObject["ganon_bosskey_tokens"];
+                const tokenPhrase = tokenCount === 1 ? "Token" : "Tokens";
+                const bossDoorHint = `They say that #Ganondorf's door# will open by the power of ` +
+                `#${self.getNumberText(tokenCount)} ${tokenPhrase}#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Green", "Red"]
+                }
+                hintsArray.push(hintObject);
+            } else if (bossDoorSetting === "hearts") {
+                const heartCount = settingsObject["ganon_bosskey_hearts"];
+                const bossDoorHint = `They say that #Ganondorf's door# will open for one who has ` +
+                `#${self.getNumberText(heartCount)} hearts#.`;
+                const hintObject = {
+                    "text": bossDoorHint,
+                    "colors": ["Green", "Red"]
+                }
+                hintsArray.push(hintObject);
             }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "vanilla") {
-            const bossDoorHint = `They say that the #key to Ganondorf's chambers# is guarded by ` +
-            `Stalfos in #his own tower#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Light Blue", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "dungeon") {
-            const bossDoorHint = `They say that #Ganondorf# has hidden the key to his chambers ` +
-            `#somewhere in his castle#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Light Blue", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "regional") {
-            const bossDoorHint = `They say that the #key to Ganondorf's chambers# is #not hidden ` +
-            `far from his castle#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Light Blue", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "overworld") {
-            const bossDoorHint = `They say that the #key to Ganondorf's chambers# is hidden ` +
-            `#somewhere in the Hyrule overworld#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Light Blue", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "any_dungeon") {
-            const bossDoorHint = `They say that the #key to Ganondorf's chambers# is hidden ` +
-            `in #a dungeon somewhere in Hyrule#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Light Blue", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "keysanity") {
-            const bossDoorHint = `They say that #no one knows# where the #key to Ganondorf's ` +
-            `chambers# is hidden.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Red", "Pink"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "on_lacs") {
-            const bossDoorHint = `They say that #Princess Zelda# waits in the #Temple of Time# ` +
-            `to give the #key to Ganondorf's chambers#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Red", "Light Blue", "Light Blue"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "stones") {
-            const stoneCount = settingsObject["ganon_bosskey_stones"];
-            const stonePhrase = stoneCount === 1 ? "Spiritual Stone" : "Spiritual Stones";
-            const bossDoorHint = `They say that #Ganondorf's door# will open by the power of ` +
-            `#${self.getNumberText(stoneCount)} ${stonePhrase}#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Green", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "medallions") {
-            const medallionCount = settingsObject["ganon_bosskey_medallions"];
-            const medallionPhrase = medallionCount === 1 ? "medallion" : "medallions";
-            const bossDoorHint = `They say that #Ganondorf's door# will open by the power of ` +
-            `#${self.getNumberText(medallionCount)} ${medallionPhrase}#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Green", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "dungeons") {
-            const dungeonCount = settingsObject["ganon_bosskey_rewards"];
-            const dungeonPhrase = dungeonCount === 1 ? "dungeon" : "dungeons";
-            const bossDoorHint = `They say that #Ganondorf's door# will open for one who has ` +
-            `conquered #${self.getNumberText(dungeonCount)} ${dungeonPhrase}#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Green", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "tokens") {
-            const tokenCount = settingsObject["ganon_bosskey_tokens"];
-            const tokenPhrase = tokenCount === 1 ? "Token" : "Tokens";
-            const bossDoorHint = `They say that #Ganondorf's door# will open by the power of ` +
-            `#${self.getNumberText(tokenCount)} ${tokenPhrase}#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Green", "Red"]
-            }
-            hintsArray.push(hintObject);
-        } else if (bossDoorSetting === "hearts") {
-            const heartCount = settingsObject["ganon_bosskey_hearts"];
-            const bossDoorHint = `They say that #Ganondorf's door# will open for one who has ` +
-            `#${self.getNumberText(heartCount)} hearts#.`;
-            const hintObject = {
-                "text": bossDoorHint,
-                "colors": ["Green", "Red"]
-            }
-            hintsArray.push(hintObject);
         }
 
         // Fourth option: LACS cutscene.
@@ -778,10 +820,38 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             hintsArray.push(hintObject);
         }
 
-        // We should have at most four hints now. We'll assign the ones we have to the
-        // Temple of Time Gossip Stones.
+        // Sixth option: logic rules.
+        const logicRules = settingsObject["logic_rules"];
+        if (logicRules === "glitchless") {
+            const logicHint = `They say that #a noble hero# will defeat #Ganondorf# and ` +
+            `save #Hyrule#.`;
+            const hintObject = {
+                "text": logicHint,
+                "colors": ["Light Blue", "Red", "Green"]
+            };
+            hintsArray.push(hintObject);
+        } else if (logicRules === "glitched") {
+            const logicHint = `They say that #a tricky hero# will defeat #Ganondorf# and ` +
+            `save #Hyrule#.`;
+            const hintObject = {
+                "text": logicHint,
+                "colors": ["Light Blue", "Red", "Green"]
+            };
+            hintsArray.push(hintObject);
+        } else if (logicRules === "none") {
+            const logicHint = `They say that it #may be impossible# to defeat #Ganondorf# and ` +
+            `save #Hyrule#.`;
+            const hintObject = {
+                "text": logicHint,
+                "colors": ["Light Blue", "Red", "Pink"]
+            };
+            hintsArray.push(hintObject);
+        }
+
+        // We'll assign the hints we have to the Temple of Time Gossip Stones. If we
+        // have more than four hints, the last one (logic rules) will be dropped.
         let gossipStoneObject = {};
-        for (let i = 0; i < hintsArray.length; i++) {
+        for (let i = 0; i < hintsArray.length && i < 4; i++) {
             gossipStoneObject[locationsArray[i]] = hintsArray[i];
         }
 
@@ -897,7 +967,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             "settings": settingsObject
         };
         // If hints are on, add them now.
-        if (self.criticalHintsOn) {
+        if (self.isCriticalHintsOn()) {
             plandoObject["gossip_stones"] = self.createCriticalHints(settingsObject);
         }
 
@@ -909,6 +979,8 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
 
     self.saveSettings = function saveSettings() {
         localStorage.setItem('weights', JSON.stringify(self.allWeights));
+        localStorage.setItem('simple_settings', self.simpleSettings);
+        localStorage.setItem('critical_hints_on', self.criticalHintsOn);
     };
 
     self.generateFinalSettings = function generateFinalSettings() {
