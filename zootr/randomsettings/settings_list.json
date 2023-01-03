@@ -76,7 +76,7 @@
             "label": "Start With Max Rupees",
             "type": "binary",
             "simple_shuffle": false,
-            "default_value": true,
+            "default_value": true
         },
         {
             "name": "starting_hearts",
