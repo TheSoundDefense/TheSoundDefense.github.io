@@ -27,7 +27,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         self.allSettings = response.data;
     });
 
-    let settingsRestored = self.restoreSettings();
+    //let settingsRestored = self.restoreSettings();
 
     // Apply default weights to all settings that don't already have them. Also
     // add all settings to our master object (which will make the data binding
@@ -36,7 +36,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         for (const setting of self.allSettings[category]) {
             self.flatSettings[setting["name"]] = setting;
 
-            if (settingsRestored) continue;
+            //if (settingsRestored) continue;
 
             // Binary on/off settings get a straight 0.5 weight.
             if (setting["type"] === "binary") {
