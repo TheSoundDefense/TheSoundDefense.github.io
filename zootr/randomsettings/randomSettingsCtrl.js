@@ -1,11 +1,11 @@
-var randomSettingsCtrl = function randomSettingsCtrl($cope, $http) {
+var randomSettingsCtrl = function randomSettingsCtrl($http) {
     let self = this;
 
     self.allSettings = {};
     self.allWeights = {};
     // This object only exists for convenience. It makes lookups much easier.
     self.flatSettings = {};
-    
+
     self.finalSettings = "";
     self.errorString = "";
 
