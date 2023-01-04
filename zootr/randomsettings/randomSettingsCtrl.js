@@ -109,6 +109,9 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             }
         }
 
+        // We need to separately handle weights that may be affected due to critical hints.
+        self.toggleHints();
+
         self.initialized = true;
     };
 
