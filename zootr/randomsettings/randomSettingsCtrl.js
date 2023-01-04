@@ -1,4 +1,4 @@
-var randomSettingsCtrl = function randomSettingsCtrl($scope, $http) {
+var randomSettingsCtrl = function randomSettingsCtrl($http) {
     let self = this;
 
     self.allSettings = {};
@@ -52,7 +52,9 @@ var randomSettingsCtrl = function randomSettingsCtrl($scope, $http) {
             for (const setting of self.allSettings[category]) {
                 self.flatSettings[setting["name"]] = setting;
 
-                if (settingsRestored) continue;
+                if (settingsRestored && self.allWeights[setting["name"]] !== undefined) {
+                    continue;
+                }
 
                 // Binary on/off settings get a straight 0.5 weight.
                 if (setting["type"] === "binary") {
@@ -988,10 +990,31 @@ var randomSettingsCtrl = function randomSettingsCtrl($scope, $http) {
         self.errorString = "";
         try {
             const finalSettingsObject = self.buildFinalSettings();
-            self.finalSettings = JSON.stringify(finalSettingsObject, null, 2);
+            const finalSettingsString = JSON.stringify(finalSettingsObject, null, 2);
+            self.finalSettings = finalSettingsString;
+            self.downloadPlandoFile(finalSettingsString);
         } catch (error) {
             self.errorString = error.message;
         }
+    };
+
+    self.downloadPlandoFile = function downloadPlandoFile(settingsString) {
+        // Create the file.
+        const file = new File([settingsString], 'plando_settings.json', {
+            type: "application/json"
+        });
+
+        // Create a link that holds the file, and auto-click it.
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(file);
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+
+        // Delete the link.
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     };
 
     self.selectPlandoText = function selectPlandoText() {
