@@ -83,10 +83,11 @@
             Special case: for the "Triforces Per World" setting, you will specify a <b>minimum
             scale</b> and a <b>maximum scale</b>, and a number will be randomly chosen between
             them. The number of Triforce pieces in the world will be equal to the goal number of
-            Triforce pieces, multipled by that scale. (The scale must be between 1 and 2.) For
+            Triforce pieces, multipled by that scale. (The scale cannot be smaller than 1.) For
             example, if the "Required Triforces Per World" setting is chosen to be 20, and the
             scale for "Triforce Per World" is chosen to be 1.5, 30 Triforce pieces will be placed
-            in each world.
+            in each world. No matter what scale is chosen, the total number of Triforce pieces will
+            not be greater than 200.
         </p>
         <hr />
 

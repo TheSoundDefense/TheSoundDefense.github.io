@@ -313,12 +313,12 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                     if (setting["name"] === "triforce_count_per_world") {
                         if (weights["scale_min"] === undefined) {
                             const errorMessage = `Invalid minimum scale value for setting \
-                            "${setting["label"]}". Minimum must be between 1 and 2.`;
+                            "${setting["label"]}". Minimum must be between 1 and 200.`;
                             throw new RangeError(errorMessage);
                         }
                         if (weights["scale_max"] === undefined) {
                             const errorMessage = `Invalid maximum scale value for setting \
-                            "${setting["label"]}". Maximum must be between 1 and 2.`;
+                            "${setting["label"]}". Maximum must be between 1 and 200.`;
                             throw new RangeError(errorMessage);
                         }
                         if (weights["scale_min"] > weights["scale_max"]) {
@@ -519,16 +519,17 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     // Handle special cases.
     self.randomizeSpecialCases = function randomizeSpecialCases(setting, settingsObject) {
         if (setting["name"] === "triforce_count_per_world") {
-            const triforce_goal = settingsObject["triforce_goal_per_world"];
+            const triforceGoal = settingsObject["triforce_goal_per_world"];
             // If the goal number has not been set, return undefined.
-            if (triforce_goal === undefined) {
+            if (triforceGoal === undefined) {
                 return undefined;
             }
 
             const min = setting["special_options"]["scale_min"];
             const max = setting["special_options"]["scale_max"];
             const randScale = ((max - min) * Math.random()) + min;
-            return Math.floor((triforce_goal * randScale) + 0.5);
+            const numPieces = Math.floor((triforceGoal * randScale) + 0.5)
+            return Math.min(numPieces, 200);
         }
 
         return undefined;
@@ -636,10 +637,10 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         // If the altar hint is on, we won't add this hint.
         if (!settingsObject["misc_hints"].includes("altar")) {
             if (bossDoorSetting === "remove") {
-                const bossDoorHint = `They say that the #door in Ganondorf's tower# is open to all.`;
+                const bossDoorHint = `They say that the #door in Ganondorf's tower# is #open to all#.`;
                 const hintObject = {
                     "text": bossDoorHint,
-                    "colors": ["Red"]
+                    "colors": ["Light Blue", "Red"]
                 }
                 hintsArray.push(hintObject);
             } else if (bossDoorSetting === "vanilla") {
