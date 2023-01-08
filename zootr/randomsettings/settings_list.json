@@ -1549,7 +1549,9 @@
             ],
             "special_options": {
                 "scale_min": 1,
-                "scale_max": 200
+                "scale_max": 200,
+                "default_min": 1,
+                "default_max": 2
             }
         },
         {

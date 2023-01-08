@@ -101,8 +101,8 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                 if (setting["type"] === "special_case") {
                     if (setting["name"] === "triforce_count_per_world") {
                         self.allWeights[setting["name"]] = {
-                            "scale_min": setting["special_options"]["scale_min"],
-                            "scale_max": setting["special_options"]["scale_max"]
+                            "scale_min": setting["special_options"]["default_min"],
+                            "scale_max": setting["special_options"]["default_max"]
                         };
                     }
                 }
