@@ -829,16 +829,16 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         // Sixth option: logic rules.
         const logicRules = settingsObject["logic_rules"];
         if (logicRules === "glitchless") {
-            const logicHint = `They say that #a noble hero# will defeat #Ganondorf# and ` +
-            `save #Hyrule#.`;
+            const logicHint = `They say that the #laws of this world#, imbued by #Nayru#, will ` +
+            `#not hinder the hero# on their quest to save #Hyrule#.`;
             const hintObject = {
                 "text": logicHint,
-                "colors": ["Light Blue", "Red", "Green"]
+                "colors": ["Light Blue", "Green", "Light Blue", "Yellow"]
             };
             hintsArray.push(hintObject);
         } else if (logicRules === "glitched") {
-            const logicHint = `They say that #a tricky hero# will defeat #Ganondorf# and ` +
-            `save #Hyrule#.`;
+            const logicHint = `They say that a hero may have to #break the laws of this world# ` +
+            `in order to defeat #Ganondorf# and save #Hyrule#.`;
             const hintObject = {
                 "text": logicHint,
                 "colors": ["Light Blue", "Red", "Green"]
