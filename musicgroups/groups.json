@@ -145,7 +145,7 @@
             }
         },
         {
-            "name": "Chamber of the Sages",
+            "name": "Chamber of the Sages / Ganondorf Sealed",
             "specificity": {
                 "exact": "ChamberOfTheSages",
                 "high": "MagicalPlace",
@@ -199,7 +199,7 @@
             }
         },
         {
-            "name": "Dodongo's Cavern / Death Mountain Crater / Dampe's Race / Gerudo Training Grounds",
+            "name": "Dodongo's Cavern / Death Mountain Crater / Dampe's Race / Gerudo Fortress / Gerudo Training Grounds",
             "specificity": {
                 "exact": "DodongosCavern",
                 "high": "ChildDungeon",
