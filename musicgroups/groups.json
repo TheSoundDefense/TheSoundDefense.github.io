@@ -537,8 +537,8 @@
             "name": "Zelda Turns Around / Goron Rescued / Carpenter Rescued",
             "specificity": {
                 "exact": "ZeldaTurnsAround",
-                "high": "ZeldaTurnsAround",
-                "mid": "ZeldaTurnsAround",
+                "high": "SuccessFanfare",
+                "mid": "SuccessFanfare",
                 "low": "EventFanfare"
             }
         },
@@ -546,8 +546,8 @@
             "name": "Ganondorf Appears",
             "specificity": {
                 "exact": "GanondorfAppears",
-                "high": "GanondorfAppears",
-                "mid": "GanondorfAppears",
+                "high": "BigFanfare",
+                "mid": "BigFanfare",
                 "low": "EventFanfare"
             }
         },
