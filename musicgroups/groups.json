@@ -100,7 +100,7 @@
             }
         },
         {
-            "name": "Horse Race",
+            "name": "Horse Race / Horseback Archery",
             "specificity": {
                 "exact": "HorseRace",
                 "high": "Fun",
@@ -109,7 +109,7 @@
             }
         },
         {
-            "name": "Mini-game",
+            "name": "Super Cuccos / Diving Game / Mini-Game",
             "specificity": {
                 "exact": "Mini-game",
                 "high": "Fun",
@@ -118,7 +118,7 @@
             }
         },
         {
-            "name": "Shooting Gallery",
+            "name": "Shooting Gallery / Bombchu Bowling / Treasure Chest Game",
             "specificity": {
                 "exact": "ShootingGallery",
                 "high": "Fun",
@@ -172,7 +172,7 @@
             }
         },
         {
-            "name": "Potion Shop / Lakeside Laboratory",
+            "name": "Potion Shop / Lakeside Laboratory / Big Poe Merchant",
             "specificity": {
                 "exact": "PotionShop",
                 "high": "SalesArea",
