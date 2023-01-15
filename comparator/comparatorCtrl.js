@@ -419,6 +419,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
         }
         return '-';
     }
+
+    self.selectTimeText = function selectTimeText() {
+        const input = document.getElementById('timeText');
+        window.getSelection().selectAllChildren(input);
+        navigator.clipboard.writeText(input.innerText);
+    };
     
     self.restart = function restart() {
         self.splitsList = [];
