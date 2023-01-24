@@ -1172,7 +1172,7 @@
                 {
                     "name": "vanilla",
                     "label": "Vanilla",
-                    "weight": 0
+                    "weight": 1
                 },
                 {
                     "name": "mq",

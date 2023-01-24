@@ -64,7 +64,11 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                 // Binary on/off settings get a straight 0.5 weight.
                 if (setting["type"] === "binary") {
                     if (self.settingIsDeprecated(setting)) {
+                        // Is this setting deprecated?
                         setting["weight"] = setting["deprecated_weight"];
+                    } else if (self.allWeights[setting["name"]] !== undefined) {
+                        // Does this setting have a stored weight already?
+                        setting["weight"] = self.allWeights[setting["name"]];
                     } else if (setting["weight"] === undefined) {
                         setting["weight"] = 0.5;
                     }
@@ -76,7 +80,12 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                     let weightsObject = {};
                     for (const option of setting["options"]) {
                         if (self.optionIsDeprecated(option)) {
+                            // Is this option deprecated?
                             option["weight"] = option["deprecated_weight"];
+                        } else if (self.allWeights[setting["name"]] !== undefined
+                                   && self.allWeights[setting["name"]][option["name"]] !== undefined) {
+                            // Does this option have a stored weight already?
+                            option["weight"] = self.allWeights[setting["name"]][option["name"]];
                         } else if (option["weight"] === undefined) {
                             option["weight"] = 1;
                         }
@@ -91,6 +100,10 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                     for (const option of setting["options"]) {
                         if (self.optionIsDeprecated(option)) {
                             option["weight"] = option["deprecated_weight"];
+                        } else if (self.allWeights[setting["name"]] !== undefined
+                                   && self.allWeights[setting["name"]][option["name"]] !== undefined) {
+                            // Does this option have a stored weight already?
+                            option["weight"] = self.allWeights[setting["name"]][option["name"]];
                         } else if (option["weight"] === undefined) {
                             option["weight"] = 0.5;
                         }
