@@ -135,7 +135,7 @@
                         <span>
                             <u>{{setting['label']}} (Radio)</u>
                         </span>
-                        <div ng-repeat="option in setting['options']"
+                        <div ng-repeat="option in setting['options'] | filter:ctrl.optionNotDeprecatedFilter()"
                              class="settingRow"
                              ng-class="{zeroWeight: ctrl.isOptionWeightZero(setting, option), guaranteed: ctrl.isRadioOptionGuaranteed(setting, option)}">
                             <span>--- {{option['label']}}</span>
@@ -150,7 +150,7 @@
                         <span>
                             <u>{{setting['label']}} (Multi)</u>
                         </span>
-                        <div ng-repeat="option in setting['options']"
+                        <div ng-repeat="option in setting['options'] | filter:ctrl.optionNotDeprecatedFilter()"
                              class="settingRow"
                              ng-class="{zeroWeight: ctrl.isOptionWeightZero(setting, option), guaranteed: ctrl.isMultiOptionGuaranteed(setting, option)}">
                             <span>--- {{option['label']}}</span>

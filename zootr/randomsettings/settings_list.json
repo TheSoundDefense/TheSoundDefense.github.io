@@ -168,7 +168,9 @@
             "label": "Random Cucco Count",
             "type": "binary",
             "simple_shuffle": false,
-            "default_value": false
+            "default_value": false,
+            "deprecated": true,
+            "deprecated_weight": 0
         },
         {
             "name": "chicken_count",
@@ -194,7 +196,9 @@
             "label": "Random Big Poe Target Count",
             "type": "binary",
             "simple_shuffle": false,
-            "default_value": false
+            "default_value": false,
+            "deprecated": true,
+            "deprecated_weight": 0
         },
         {
             "name": "big_poe_count",
@@ -358,7 +362,9 @@
                 },
                 {
                     "name": "random",
-                    "label": "Random dungeons"
+                    "label": "Random dungeons",
+                    "deprecated": true,
+                    "deprecated_weight": 0
                 }
             ]
         },
@@ -686,7 +692,9 @@
             "label": "Random Number of Ganon's Trials",
             "type": "binary",
             "simple_shuffle": true,
-            "weight": 1
+            "weight": 1,
+            "deprecated": true,
+            "deprecated_weight": 0
         },
         {
             "name": "trials",
@@ -848,7 +856,9 @@
                 },
                 {
                     "name": "random",
-                    "label": "Random dungeons"
+                    "label": "Random dungeons",
+                    "deprecated": true,
+                    "deprecated_weight": 0
                 }
             ]
         },
@@ -1182,7 +1192,9 @@
                 {
                     "name": "random",
                     "label": "Completely Random",
-                    "weight": 1
+                    "weight": 1,
+                    "deprecated": true,
+                    "deprecated_weight": 0
                 }
             ]
         },

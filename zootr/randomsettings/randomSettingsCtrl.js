@@ -52,13 +52,20 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             for (const setting of self.allSettings[category]) {
                 self.flatSettings[setting["name"]] = setting;
 
-                if (settingsRestored && self.allWeights[setting["name"]] !== undefined) {
+                // If this setting has saved data from the user's browser, and the
+                // setting is not deprecated at all, skip over it.
+                if (settingsRestored
+                    && self.allWeights[setting["name"]] !== undefined
+                    && !self.settingIsDeprecated(setting)
+                    && !self.settingHasDeprecatedOption(setting)) {
                     continue;
                 }
 
                 // Binary on/off settings get a straight 0.5 weight.
                 if (setting["type"] === "binary") {
-                    if (setting["weight"] === undefined) {
+                    if (self.settingIsDeprecated(setting)) {
+                        setting["weight"] = setting["deprecated_weight"];
+                    } else if (setting["weight"] === undefined) {
                         setting["weight"] = 0.5;
                     }
                     self.allWeights[setting["name"]] = setting["weight"];
@@ -68,7 +75,9 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                 if (setting["type"] === "radio") {
                     let weightsObject = {};
                     for (const option of setting["options"]) {
-                        if (option["weight"] === undefined) {
+                        if (self.optionIsDeprecated(option)) {
+                            option["weight"] = option["deprecated_weight"];
+                        } else if (option["weight"] === undefined) {
                             option["weight"] = 1;
                         }
                         weightsObject[option["name"]] = option["weight"];
@@ -80,7 +89,9 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                 if (setting["type"] === "multi") {
                     let weightsObject = {};
                     for (const option of setting["options"]) {
-                        if (option["weight"] === undefined) {
+                        if (self.optionIsDeprecated(option)) {
+                            option["weight"] = option["deprecated_weight"];
+                        } else if (option["weight"] === undefined) {
                             option["weight"] = 0.5;
                         }
                         weightsObject[option["name"]] = option["weight"];
@@ -113,6 +124,32 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         self.toggleHints();
 
         self.initialized = true;
+    };
+
+    self.settingIsDeprecated = function settingIsDeprecated(setting) {
+        return setting["deprecated"] === true;
+    };
+
+    self.settingHasDeprecatedOption = function settingHasDeprecatedOption(setting) {
+        if (setting["options"] === undefined) {
+            return false;
+        }
+        for (const option of setting["options"]) {
+            if (option["deprecated"] === true) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    self.optionIsDeprecated = function optionIsDeprecated(option) {
+        return option["deprecated"] === true;
+    };
+
+    self.optionNotDeprecatedFilter = function optionNotDeprecatedFilter() {
+        return function(option) {
+            return option["deprecated"] !== true;
+        };
     };
 
     self.displayFullInstructions = function displayFullInstructions() {
@@ -156,7 +193,8 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
 
     self.isSettingDisplayed = function isSettingDisplayed() {
         return function(setting) {
-            return setting["simple_shuffle"] || !self.isSimpleSettingsOn();
+            return (setting["simple_shuffle"] || !self.isSimpleSettingsOn())
+                   && !self.settingIsDeprecated(setting);
         };
     };
 
