@@ -6,6 +6,20 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
     // This object only exists for convenience. It makes lookups much easier.
     self.flatSettings = {};
 
+    // An object for additional quality-of-life settings.
+    self.qualityOfLifeOptionsVisible = false;
+    self.qualityOfLifeOptions = {
+        "shuffle_pots_crates_rupees_together": "f",
+        "exclude_minimal_triforce_hunt": "f",
+        "exclude_ice_trap_misery": "f",
+        "disable_pot_chest_texture_independence": "f",
+        "disable_hideoutkeys_independence": "f",
+        "restrict_one_entrance_randomizer": "f",
+        "random_scrubs_start_wallet": "f",
+        "exclude_mapcompass_info_remove": "f",
+        "ohko_starts_with_nayrus": "f"
+    };
+
     self.finalSettings = "";
     self.errorString = "";
 
@@ -27,14 +41,32 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             return false;
         }
         self.allWeights = JSON.parse(localStorage.getItem('weights'));
-        self.simpleSettings = localStorage.getItem('simple_settings');
-        self.criticalHintsOn = localStorage.getItem('critical_hints_on');
+        if (localStorage.getItem('simple_settings') !== null) {
+            self.simpleSettings = localStorage.getItem('simple_settings');
+        }
+        if (localStorage.getItem('critical_hints_on') !== null) {
+            self.criticalHintsOn = localStorage.getItem('critical_hints_on');
+        }
+        if (localStorage.getItem('qol_options') !== null) {
+            self.qualityOfLifeOptions = JSON.parse(localStorage.getItem('qol_options'));
+        }
         return true;
     };
 
     self.restoreDefaultSettings = function restoreDefaultSettings() {
         self.simpleSettings = "t";
         self.criticalHintsOn = "t";
+        self.qualityOfLifeOptions = {
+            "shuffle_pots_crates_rupees_together": "f",
+            "exclude_minimal_triforce_hunt": "f",
+            "exclude_ice_trap_misery": "f",
+            "disable_pot_chest_texture_independence": "f",
+            "disable_hideoutkeys_independence": "f",
+            "restrict_one_entrance_randomizer": "f",
+            "random_scrubs_start_wallet": "f",
+            "exclude_mapcompass_info_remove": "f",
+            "ohko_starts_with_nayrus": "f"
+        };
         self.flatSettings = {};
         self.allWeights = {};
         localStorage.clear();
@@ -136,6 +168,9 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         // We need to separately handle weights that may be affected due to critical hints.
         self.toggleHints();
 
+        // Toggle the rupee/pot/crate shuffling here.
+        self.togglePotCrateRupeeShuffle();
+
         self.initialized = true;
     };
 
@@ -169,21 +204,38 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         self.fullInstructionsVisible = true;
     };
 
+    self.displayQualityOfLifeOptions = function displayQualityOfLifeOptions() {
+        self.qualityOfLifeOptionsVisible = true;
+    };
+
     self.toggleHints = function toggleHints() {
         // When we toggle critical hints, we need to forcibly change the weights
-        // for the Gossip Stones setting.
+        // for the Gossip Stones setting. We also need to change the weight for
+        // the Bingo hint distribution.
         if (self.isCriticalHintsOn()) {
             self.allWeights["hints"]["none"] = 0;
             self.allWeights["hints"]["mask"] = 0;
             self.allWeights["hints"]["agony"] = 0;
             self.allWeights["hints"]["always"] = 1;
+            self.allWeights["hint_dist"]["bingo"] = 0;
         } else {
             self.allWeights["hints"]["none"] = 1;
             self.allWeights["hints"]["mask"] = 1;
             self.allWeights["hints"]["agony"] = 1;
             self.allWeights["hints"]["always"] = 1;
+            self.allWeights["hint_dist"]["bingo"] = 1;
         }
     };
+
+    self.togglePotCrateRupeeShuffle = function togglePotCrateRupeeShuffle() {
+        // Change the label for the rupee shuffle setting.
+        let freestandingSetting = self.getFullSetting("shuffle_freestanding_items");
+        if (self.isPotCrateRupeeShuffleOn()) {
+            freestandingSetting["label"] = "Shuffle Pots, Crates, Rupees & Hearts";
+        } else {
+            freestandingSetting["label"] = "Shuffle Rupees & Hearts";
+        }
+    }
 
     self.isSimpleSettingsOn = function isSimpleSettingsOn() {
         return self.simpleSettings === "t";
@@ -193,8 +245,24 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         return self.criticalHintsOn === "t";
     };
 
-    self.isInputDisabled = function isInputDisabled(setting) {
-        return self.isCriticalHintsOn() && setting["name"] === "hints";
+    self.isPotCrateRupeeShuffleOn = function isPotCrateRupeeShuffleOn() {
+        return self.qualityOfLifeOptions["shuffle_pots_crates_rupees_together"] === "t";
+    }
+
+    self.isInputDisabled = function isInputDisabled(setting, option) {
+        if (!self.isCriticalHintsOn()) {
+            return false;
+        }
+
+        if (setting["name"] === "hints") {
+            return true;
+        }
+
+        if (setting["name"] === "hint_dist" && option["name"] === "bingo") {
+            return true;
+        }
+
+        return false;
     };
 
     self.isCategoryDisplayed = function isCategoryDisplayed(categoryName) {
@@ -206,8 +274,21 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
 
     self.isSettingDisplayed = function isSettingDisplayed() {
         return function(setting) {
-            return (setting["simple_shuffle"] || !self.isSimpleSettingsOn())
-                   && !self.settingIsDeprecated(setting);
+            // Do not display deprecated settings.
+            if (self.settingIsDeprecated(setting)) {
+                return false;
+            }
+
+            // Do not display pot or crate shuffle if all of those options are
+            // being shuffled together. Only one option will be displayed.
+            if (self.isPotCrateRupeeShuffleOn()) {
+                if (setting["name"] === "shuffle_pots" || setting["name"] === "shuffle_crates") {
+                    return false;
+                }
+            }
+
+            // Lastly, look at whether or not this is a simple setting.
+            return setting["simple_shuffle"] || !self.isSimpleSettingsOn();
         };
     };
 
@@ -880,11 +961,11 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         // Sixth option: logic rules.
         const logicRules = settingsObject["logic_rules"];
         if (logicRules === "glitchless") {
-            const logicHint = `They say that the #laws of this world#, imbued by #Nayru#, will ` +
-            `#not hinder the hero# on their quest to save #Hyrule#.`;
+            const logicHint = `They say that a hero will #not have to break the laws of this world# ` +
+            `in order to defeat #Ganondorf# and save #Hyrule#.`;
             const hintObject = {
                 "text": logicHint,
-                "colors": ["Light Blue", "Green", "Light Blue", "Yellow"]
+                "colors": ["Light Blue", "Red", "Green"]
             };
             hintsArray.push(hintObject);
         } else if (logicRules === "glitched") {
@@ -938,6 +1019,196 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         if (num === 20) return "twenty";
         return num.toString();
     }
+
+    self.applyQualityOfLifeSettings = function applyQualityOfLifeSettings(settingsObject) {
+        if (self.qualityOfLifeOptions["shuffle_pots_crates_rupees_together"] === "t") {
+            // Obtain the freestanding shuffle value, if it exists, and make sure the
+            // pots and crates values match.
+            let freestandingValue = settingsObject["shuffle_freestanding_items"];
+            if (freestandingValue !== undefined) {
+                settingsObject["shuffle_pots"] = freestandingValue;
+                settingsObject["shuffle_crates"] = freestandingValue;
+            }
+        }
+
+        if (self.qualityOfLifeOptions["exclude_minimal_triforce_hunt"] === "t") {
+            // If the Triforce Hunt setting is on, make sure the Item Pool setting is not
+            // set to "minimal". If it is, re-roll. If "minimal" was the only setting with
+            // a non-zero weight, use "scarce" instead.
+            let triforceHunt = settingsObject["triforce_hunt"];
+            if (triforceHunt === true) {
+                let itemPool = settingsObject["item_pool_value"];
+                if (itemPool === "minimal") {
+                    let itemPoolWeights = self.allWeights["item_pool_value"];
+                    let oldItemPoolMinimalWeight = itemPoolWeights["minimal"];
+                    itemPoolWeights["minimal"] = 0;
+                    let totalWeights = Object.values(itemPoolWeights).reduce((a, b) => a + b, 0);
+                    if (totalWeights <= 0) {
+                        settingsObject["item_pool_value"] = "scarce";
+                    } else {
+                        let itemPoolObj = self.getFullSetting("item_pool_value");
+                        settingsObject["item_pool_value"] = self.randomizeRadioSetting(itemPoolObj);
+                    }
+                    // Reset the weight, so this won't error out next time.
+                    itemPoolWeights["minimal"] = oldItemPoolMinimalWeight;
+                }
+            }
+        }
+
+        if (self.qualityOfLifeOptions["exclude_ice_trap_misery"] === "t") {
+            // If the damage multiplier is too high, make sure ice traps aren't on "mayhem"
+            // or "onslaught". If they are, re-roll. If those were the only settings with
+            // non-zero weights, use "on" (extra) instead.
+            let damageMultiplier = settingsObject["damage_multiplier"];
+            if (damageMultiplier === "ohko" || damageMultiplier === "quadruple") {
+                let iceTraps = settingsObject["junk_ice_traps"];
+                if (iceTraps === "mayhem" || iceTraps === "onslaught") {
+                    let iceTrapWeights = self.allWeights["junk_ice_traps"];
+                    let oldMayhemWeight = iceTrapWeights["mayhem"];
+                    let oldOnslaughtWeight = iceTrapWeights["onslaught"];
+                    iceTrapWeights["mayhem"] = 0;
+                    iceTrapWeights["onslaught"] = 0;
+                    let totalWeights = Object.values(iceTrapWeights).reduce((a, b) => a + b, 0);
+                    if (totalWeights <= 0) {
+                        settingsObject["junk_ice_traps"] = "on";
+                    } else {
+                        let iceTrapObj = self.getFullSetting("junk_ice_traps");
+                        settingsObject["junk_ice_traps"] = self.randomizeRadioSetting(iceTrapObj);
+                    }
+                    // Reset the weights, so this won't error out next time.
+                    iceTrapWeights["mayhem"] = oldMayhemWeight;
+                    iceTrapWeights["onslaught"] = oldOnslaughtWeight;
+                }
+            }
+        }
+
+        if (self.qualityOfLifeOptions["disable_pot_chest_texture_independence"] === "t") {
+            // Tie pot/crate/beehive appearance to chest appearance.
+            // Chest "off" = pot/crate/beehive "off"
+            // Chest "classic" = pot/crate/beehive "textures_unchecked"
+            // Chest "textures"/"both" = pot/crate/beehive "textures_content"
+            let chestAppearance = settingsObject["correct_chest_appearances"];
+            if (chestAppearance === "off") {
+                settingsObject["correct_potcrate_appearances"] = "off";
+            } else if (chestAppearance === "classic") {
+                settingsObject["correct_potcrate_appearances"] = "textures_unchecked";
+            } else {
+                settingsObject["correct_potcrate_appearances"] = "textures_content";
+            }
+        }
+
+        if (self.qualityOfLifeOptions["disable_hideoutkeys_independence"] === "t") {
+            // Tie hideout key behavior to small key behavior.
+            // Small keys "remove"/"vanilla"/"dungeon" = hideout keys "vanilla"
+            // In all other cases, they will exactly match.
+            // Only do this if hideout keys have been set at all.
+            if (settingsObject["shuffle_hideoutkeys"] !== undefined) {
+                let smallKeyBehavior = settingsObject["shuffle_smallkeys"];
+                if (smallKeyBehavior === "remove" || smallKeyBehavior === "dungeon") {
+                    settingsObject["shuffle_hideoutkeys"] = "vanilla";
+                } else {
+                    settingsObject["shuffle_hideoutkeys"] = smallKeyBehavior;
+                }
+            }
+        }
+
+        if (self.qualityOfLifeOptions["restrict_one_entrance_randomizer"] === "t") {
+            // Only allow at most one type of entrance to be randomized. Take all of the
+            // randomized entrance types and choose only one to stay randomized. All the
+            // others will be set to "off" or false as appropriate.
+            let randomizedEntranceTypes = [];
+            if (settingsObject["shuffle_interior_entrances"] !== undefined &&
+                settingsObject["shuffle_interior_entrances"] !== "off") {
+                randomizedEntranceTypes.push("shuffle_interior_entrances");
+            }
+            if (settingsObject["shuffle_grotto_entrances"]) {
+                randomizedEntranceTypes.push("shuffle_grotto_entrances");
+            }
+            if (settingsObject["shuffle_dungeon_entrances"] !== undefined &&
+                settingsObject["shuffle_dungeon_entrances"] !== "off") {
+                randomizedEntranceTypes.push("shuffle_dungeon_entrances");
+            }
+            if (settingsObject["shuffle_bosses"] !== undefined &&
+                settingsObject["shuffle_bosses"] !== "off") {
+                randomizedEntranceTypes.push("shuffle_bosses");
+            }
+            if (settingsObject["shuffle_overworld_entrances"]) {
+                randomizedEntranceTypes.push("shuffle_overworld_entrances");
+            }
+
+            if (randomizedEntranceTypes.length > 1) {
+                let selectedNum = Math.floor(Math.random() * randomizedEntranceTypes.length);
+                let selectedType = randomizedEntranceTypes[selectedNum];
+                if (randomizedEntranceTypes.includes("shuffle_interior_entrances")
+                    && selectedType !== "shuffle_interior_entrances") {
+                    settingsObject["shuffle_interior_entrances"] = "off";
+                }
+                if (randomizedEntranceTypes.includes("shuffle_grotto_entrances")
+                    && selectedType !== "shuffle_grotto_entrances") {
+                    settingsObject["shuffle_grotto_entrances"] = false;
+                }
+                if (randomizedEntranceTypes.includes("shuffle_dungeon_entrances")
+                    && selectedType !== "shuffle_dungeon_entrances") {
+                    settingsObject["shuffle_dungeon_entrances"] = "off";
+                }
+                if (randomizedEntranceTypes.includes("shuffle_bosses")
+                    && selectedType !== "shuffle_bosses") {
+                    settingsObject["shuffle_bosses"] = "off";
+                }
+                if (randomizedEntranceTypes.includes("shuffle_overworld_entrances")
+                    && selectedType !== "shuffle_overworld_entrances") {
+                    settingsObject["shuffle_overworld_entrances"] = false;
+                }
+            }
+        }
+
+        if (self.qualityOfLifeOptions["random_scrubs_start_wallet"] === "t") {
+            // If scrubs are set to have random prices, add a wallet to the
+            // starting inventory.
+            if (settingsObject["shuffle_scrubs"] === "random") {
+                if (settingsObject["starting_items"] === undefined) {
+                    settingsObject["starting_items"] = {};
+                }
+                settingsObject["starting_items"]["Progressive Wallet"] = 1;
+            }
+        }
+
+        if (self.qualityOfLifeOptions["exclude_mapcompass_info_remove"] === "t") {
+            // If maps and compasses give information, make sure they are not
+            // removed. If they are, re-roll. If "remove" is the only option with
+            // a non-zero weight, use "startwith" instead.
+            let enhancedMaps = settingsObject["enhance_map_compass"];
+            if (enhancedMaps === true) {
+                let mapShuffle = settingsObject["shuffle_mapcompass"];
+                if (mapShuffle === "remove") {
+                    let mapWeights = self.allWeights["shuffle_mapcompass"];
+                    let oldRemoveMapWeight = mapWeights["remove"];
+                    mapWeights["remove"] = 0;
+                    let totalWeights = Object.values(mapWeights).reduce((a, b) => a + b, 0);
+                    if (totalWeights <= 0) {
+                        settingsObject["shuffle_mapcompass"] = "startwith";
+                    } else {
+                        let mapObj = self.getFullSetting("shuffle_mapcompass");
+                        settingsObject["shuffle_mapcompass"] = self.randomizeRadioSetting(mapObj);
+                    }
+                    // Reset the weight, so this won't error out next time.
+                    mapWeights["remove"] = oldRemoveMapWeight;
+                }
+            }
+        }
+
+        if (self.qualityOfLifeOptions["ohko_starts_with_nayrus"] === "t") {
+            // If OHKO is on, add Nayru's Love to the starting inventory.
+            if (settingsObject["damage_multiplier"] === "ohko") {
+                if (settingsObject["starting_items"] === undefined) {
+                    settingsObject["starting_items"] = {};
+                }
+                settingsObject["starting_items"]["Nayrus Love"] = 1;
+            }
+        }
+
+        return settingsObject;
+    };
 
     self.buildFinalSettings = function buildFinalSettings() {
         // Start by validating all of our settings. If anything is invalid,
@@ -1020,6 +1291,12 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
             currentPrereqLength = settingsWithPrerequisites.length;
         }
 
+        // Next, apply any quality of life options that might change the value of our
+        // settings.
+        settingsObject = self.applyQualityOfLifeSettings(settingsObject);
+
+        // We have all of the settings in place. Now we need to assemble this into a JSON
+        // object suitable for a plando file.
         const plandoObject = {
             "settings": settingsObject
         };
@@ -1038,6 +1315,7 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
         localStorage.setItem('weights', JSON.stringify(self.allWeights));
         localStorage.setItem('simple_settings', self.simpleSettings);
         localStorage.setItem('critical_hints_on', self.criticalHintsOn);
+        localStorage.setItem('qol_options', JSON.stringify(self.qualityOfLifeOptions));
     };
 
     self.generateFinalSettings = function generateFinalSettings() {

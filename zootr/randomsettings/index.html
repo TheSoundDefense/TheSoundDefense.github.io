@@ -45,7 +45,8 @@
             (or the altar inside the Temple of Time, if that hint is active) will tell the player about
             any critical requirements (rainbow bridge, LACS requirements, Ganon's boss key/Triforce
             pieces, easier fire arrow entry, and possibly logic rules). Checking this box will also
-            force the "Gossip Stones" option to "Hints; Need Nothing".
+            force the "Gossip Stones" option to "Hints; Need Nothing", and will prevent the "Bingo"
+            hint distribution from being selected, due to conflicts.
         </p>
         <p class="infoText" ng-if="ctrl.fullInstructionsVisible">
             When you click "Generate Settings", your settings will be saved in your browser, and they
@@ -98,7 +99,7 @@
             <input type="radio" ng-model="ctrl.simpleSettings" value="f">
         </p>
         <p class="infoText">
-            Add Critical Hints
+            Add critical hints
             <input type="checkbox"
                    ng-model="ctrl.criticalHintsOn"
                    ng-change="ctrl.toggleHints()"
@@ -108,6 +109,86 @@
         <p class="infoText">
             <button ng-click="ctrl.restoreDefaultSettings()">Restore Default Settings</button>
         </p>
+        <hr />
+        <button ng-if="!ctrl.qualityOfLifeOptionsVisible"
+                ng-click="ctrl.displayQualityOfLifeOptions()">
+            Show quality of life options
+        </button>
+
+        <div class="infoText" ng-if="ctrl.qualityOfLifeOptionsVisible">
+            <div class="qolOption">
+                Shuffle pots, crates, rupees and freestanding hearts together
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['shuffle_pots_crates_rupees_together']"
+                    ng-change="ctrl.togglePotCrateRupeeShuffle()"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Prevent minimal item pool if Triforce Hunt is on
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['exclude_minimal_triforce_hunt']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Prevent excessive ice traps if quadruple or OHKO damage is on
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['exclude_ice_trap_misery']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Pot/crate/beehive appearance matches chest appearance
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['disable_pot_chest_texture_independence']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Thieves' Hideout key setting matches small keys setting
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['disable_hideoutkeys_independence']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Only randomize one entrance type
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['restrict_one_entrance_randomizer']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Start with a wallet if shuffled scrubs have random prices
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['random_scrubs_start_wallet']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Do not remove maps and compasses if they give information
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['exclude_mapcompass_info_remove']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+
+            <div class="qolOption">
+                Start with Nayru's Love if one-hit KO is active
+                <input type="checkbox"
+                    ng-model="ctrl.qualityOfLifeOptions['ohko_starts_with_nayrus']"
+                    ng-true-value="'t'"
+                    ng-false-value="'f'">
+            </div>
+        </div>
         <hr />
 
         <div class="columnGroup">
@@ -142,7 +223,7 @@
                             <input class="weightEntry"
                                 type="number"
                                 min="0"
-                                ng-disabled="ctrl.isInputDisabled(setting)"
+                                ng-disabled="ctrl.isInputDisabled(setting, option)"
                                 ng-model="ctrl.allWeights[setting['name']][option['name']]">
                         </div>
                     </div>

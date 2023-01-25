@@ -4,7 +4,7 @@
     justify-content: space-between;
     align-items: center;
     font-family: Verdana, Geneva, sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem;
     background-color: #bfffe0;
 }
   
@@ -25,6 +25,10 @@
 .infoText {
     text-align: center;
     width: 800px;
+}
+
+.qolOption {
+    margin: 8px 0;
 }
 
 .weightEntry {
