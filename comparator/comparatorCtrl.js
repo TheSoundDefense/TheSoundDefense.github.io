@@ -29,6 +29,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.timeDifferenceString = '';
     self.raceComplete = false;
 
+    self.displayCalculator = false;
+    self.operand1 = '';
+    self.operand2 = '';
+    self.operator = '+';
+    self.calculatorResult = '';
+
     self.predefinedSplits = [];
     self.predefinedSplitSelect = '-1';
     $http.get('splits.json').then(function(response) {
@@ -424,6 +430,22 @@ var comparatorCtrl = function comparatorCtrl($http) {
         const input = document.getElementById('timeText');
         window.getSelection().selectAllChildren(input);
         navigator.clipboard.writeText(input.innerText);
+    };
+
+    self.toggleCalculator = function toggleCalculator() {
+        self.displayCalculator = !self.displayCalculator;
+    };
+
+    // operand1 and operand2 are both strings representing time.
+    self.timeCalculatorFunction = function timeCalculatorFunction() {
+        let time1 = self.stringTimeToTimeRegex(self.operand1);
+        let time2 = self.stringTimeToTimeRegex(self.operand2);
+        if (time1 === null || time2 === null) {
+            return;
+        }
+
+        let result = self.operator === '+' ? time1 + time2 : time1 - time2;
+        self.calculatorResult = self.timeToStringTime(result);
     };
     
     self.restart = function restart() {

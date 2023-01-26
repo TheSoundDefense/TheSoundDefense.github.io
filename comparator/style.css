@@ -81,8 +81,20 @@ tr:nth-child(even) {
     margin-bottom: 8px;
 }
 
-.newRaceButton {
+.calculatorPanel {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin-bottom: 24px;
+}
+
+.calculatorElements {
+    margin-top: 16px;
+}
+
+.newRaceButton {
+    margin: 16px 0;
 }
 
 .credits {

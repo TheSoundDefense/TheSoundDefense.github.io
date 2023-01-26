@@ -166,6 +166,24 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 <button ng-click="ctrl.addAdjustment(1)">Add split time</button>
             </div>
         </div>
+        <div class="calculatorPanel">
+            <div>
+                <button ng-click="ctrl.toggleCalculator()">
+                    {{ctrl.displayCalculator ? 'Hide calculator' : 'Show calculator'}}
+                </button>
+            </div>
+            <div class="calculatorElements" ng-if="ctrl.displayCalculator">
+                <input placeholder="12:34.56" ng-model="ctrl.operand1">
+                <select name="calculatorOperator" ng-model="ctrl.operator">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                </select>
+                <input placeholder="12:34.56" ng-model="ctrl.operand2">
+                <button ng-click="ctrl.timeCalculatorFunction()">=</button>
+                <input placeholder="12:34.56" ng-model="ctrl.calculatorResult">
+            </div>
+        </div>
+        <hr />
         <div class="newRaceButton">
             <button ng-click="ctrl.restart()">New Race</button>
         </div>
