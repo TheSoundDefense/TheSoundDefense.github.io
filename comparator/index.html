@@ -105,20 +105,33 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
         </div>
         <div id="timeText" class="timeResults infoText" ng-click="ctrl.selectTimeText()">
             <div ng-show="ctrl.leadingRunner < 0">
-                Both runners are {{ctrl.approximate ? "approximately " : ""}} <span class="timeKeyInfo">tied</span>
+                <div>Both runners are</div>
+                <div ng-if="ctrl.approximate">approximately</div>
+                <div>
+                    <span class="timeKeyInfo">tied</span>
+                    <span ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">as of</span>
+                </div>
+                <div ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">
+                    {{ctrl.splitsList[ctrl.latestCommonSplit]}}
+                </div>
             </div>
             <div ng-show="ctrl.leadingRunner >= 0">
-                <span class="timeKeyInfo">
-                    {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
-                </span>
-                {{ctrl.raceComplete ? "wins by" : "is ahead by"}}
-                {{ctrl.approximate ? "approximately" : ""}}
-                <span class="timeKeyInfo">
-                    {{ctrl.timeDifferenceString}}
-                </span>
-            </div>
-            <div ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">
-                as of {{ctrl.splitsList[ctrl.latestCommonSplit]}}
+                <div>
+                    <span class="timeKeyInfo">
+                        {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
+                    </span>
+                    {{ctrl.raceComplete ? "wins by" : "is ahead by"}}
+                </div>
+                <div ng-if="ctrl.approximate">approximately</div>
+                <div>
+                    <span class="timeKeyInfo">
+                        {{ctrl.timeDifferenceString}}
+                    </span>
+                    <span ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">as of</span>
+                </div>
+                <div ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">
+                    {{ctrl.splitsList[ctrl.latestCommonSplit]}}
+                </div>
             </div>
         </div>
         <div class="infoText">
