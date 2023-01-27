@@ -432,6 +432,21 @@ var comparatorCtrl = function comparatorCtrl($http) {
         navigator.clipboard.writeText(input.innerText);
     };
 
+    self.selectGainText = function selectGainText(idx) {
+        const delta = self.deltas[idx];
+        if (delta.gain === 0) {
+            return;
+        }
+
+        const textElement = document.getElementById('gainText' + idx);
+        window.getSelection().selectAllChildren(textElement);
+
+        const gainText = `${self.getRunnerName(delta.gainingRunner)} ` +
+                         `gains ${self.timeToStringTimeWithFullText(delta.gain)} ` +
+                         `in ${self.splitsList[idx]}`;
+        navigator.clipboard.writeText(gainText);
+    };
+
     self.toggleCalculator = function toggleCalculator() {
         self.displayCalculator = !self.displayCalculator;
     };

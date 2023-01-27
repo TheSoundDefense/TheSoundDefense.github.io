@@ -77,7 +77,9 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                         <td>{{ctrl.getRunnerName(delta.leader)}}</td>
                         <td>{{delta.timeDelta !== undefined ? ctrl.timeToStringTime(delta.timeDelta) : '-'}}</td>
                         <td ng-show="!delta.gain">-</td>
-                        <td ng-show="delta.gain">
+                        <td ng-show="delta.gain"
+                            id="gainText{{$index}}"
+                            ng-click="ctrl.selectGainText($index)">
                             {{ctrl.getRunnerName(delta.gainingRunner)}}
                             gains
                             {{ctrl.timeToStringTime(delta.gain)}}
