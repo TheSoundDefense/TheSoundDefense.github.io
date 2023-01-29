@@ -93,6 +93,10 @@ tr:nth-child(even) {
     margin-top: 16px;
 }
 
+.downloadCsvButton {
+    margin-top: 16px;
+}
+
 .newRaceButton {
     margin: 16px 0;
 }

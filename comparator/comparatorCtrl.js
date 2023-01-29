@@ -462,6 +462,87 @@ var comparatorCtrl = function comparatorCtrl($http) {
         let result = self.operator === '+' ? time1 + time2 : time1 - time2;
         self.calculatorResult = self.timeToStringTime(result);
     };
+
+    self.exportToCsv = function exportToCsv() {
+        let csvString = `${self.getRunnerName(0)},,,,,,,,,${self.getRunnerName(1)},,,\n`;
+        csvString += 'Split Name,IL Time,Adjustments,Cumulative Time,,';
+        csvString += 'Leader,Difference,Gain,,';
+        csvString += 'Split Name,IL Time,Adjustments,Cumulative Time\n';
+
+        for (let i = 0; i < self.splitsList.length; i++) {
+            let firstRunnerSplit = self.firstRunnerSplits[i];
+            let secondRunnerSplit = self.secondRunnerSplits[i];
+            let delta = self.deltas[i];
+
+            // First runner data.
+            csvString += `${self.splitsList[i]},`;
+            if (firstRunnerSplit.splitTime !== undefined) {
+                csvString += `${self.timeToStringTime(firstRunnerSplit.splitTime)},`;
+            } else {
+                csvString += '-,';
+            }
+            csvString += `${self.timeToStringTime(firstRunnerSplit.adjustment)},`;
+            if (firstRunnerSplit.cumulativeTime !== undefined) {
+                let totalTime = firstRunnerSplit.cumulativeTime + firstRunnerSplit.cumulativeAdjustment;
+                csvString += `${self.timeToStringTime(totalTime)},`;
+            } else {
+                csvString += '-,';
+            }
+            csvString += ',';
+
+            // Deltas.
+            csvString += `${self.getRunnerName(delta.leader)},`;
+            if (delta.timeDelta !== undefined) {
+                csvString += `${self.timeToStringTime(delta.timeDelta)},`;
+            } else {
+                csvString += '-,';
+            }
+            if (delta.gain) {
+                csvString += `${self.getRunnerName(delta.gainingRunner)} ` +
+                             `gains ${self.timeToStringTime(delta.gain)},`;
+            } else {
+                csvString += '-,';
+            }
+            csvString += ',';
+
+            // Second runner data.
+            csvString += `${self.splitsList[i]},`;
+            if (secondRunnerSplit.splitTime !== undefined) {
+                csvString += `${self.timeToStringTime(secondRunnerSplit.splitTime)},`;
+            } else {
+                csvString += '-,';
+            }
+            csvString += `${self.timeToStringTime(secondRunnerSplit.adjustment)},`;
+            if (secondRunnerSplit.cumulativeTime !== undefined) {
+                let totalTime = secondRunnerSplit.cumulativeTime + secondRunnerSplit.cumulativeAdjustment;
+                csvString += `${self.timeToStringTime(totalTime)}`;
+            } else {
+                csvString += '-';
+            }
+            csvString += '\n';
+        }
+
+        self.downloadCsv(csvString);
+    };
+
+    self.downloadCsv = function downloadCsv(csvString) {
+        // Create the file.
+        const file = new File([csvString], 'race_data.csv', {
+            type: "text/csv"
+        });
+
+        // Create a link that holds the file, and auto-click it.
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(file);
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+
+        // Delete the link.
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    };
     
     self.restart = function restart() {
         self.splitsList = [];
