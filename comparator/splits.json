@@ -308,6 +308,79 @@
         ]
     },
     {
+        "name": "Sonic the Hedgehog (2006)",
+        "categories": [
+            {
+                "name": "Shadow's Story (NCW)",
+                "splits": [
+                    "White Acropolis",
+                    "Egg Cerberus",
+                    "Kingdom Valley",
+                    "Crisis City",
+                    "Flame Core",
+                    "Iblis Phase 2",
+                    "Tropical Jungle (Rouge)",
+                    "Mephiles Phase 1",
+                    "Radical Train",
+                    "Vs. Silver",
+                    "Aquatic Base",
+                    "Wave Ocean",
+                    "Mission 15",
+                    "Dusty Desert",
+                    "Mephiles Phase 2"
+                ]
+            },
+            {
+                "name": "Silver's Story (NCW)",
+                "splits": [
+                    "Crisis City",
+                    "Iblis Phase 1",
+                    "Tropical Jungle",
+                    "Wave Ocean (Blaze)",
+                    "Dusty Desert",
+                    "Vs. Sonic",
+                    "White Acropolis",
+                    "Egg Genesis",
+                    "Escort Elise (Amy)",
+                    "Radical Train",
+                    "Vs. Shadow",
+                    "Aquatic Base",
+                    "Protect Anna",
+                    "Test of Friendship",
+                    "Test of Memory",
+                    "Test of Heart",
+                    "Kingdom Valley",
+                    "Flame Core",
+                    "Iblis Phase 3"
+                ]
+            },
+            {
+                "name": "Sonic's Story (NCW)",
+                "splits": [
+                    "Alberto Robert",
+                    "Wave Ocean",
+                    "Egg Cerberus",
+                    "Dusty Desert",
+                    "Vs. Silver",
+                    "Warehouse Battle",
+                    "Cave Gate",
+                    "White Acropolis",
+                    "Crisis City",
+                    "Flame Core",
+                    "Iblis Phase 2",
+                    "Radical Train",
+                    "Egg Genesis",
+                    "Test of Intelligence",
+                    "Test of Courage",
+                    "Test of Love",
+                    "Kingdom Valley",
+                    "Aquatic Base",
+                    "Egg Wyvern"
+                ]
+            }
+        ]
+    },
+    {
         "name": "Sonic the Hedgehog CD",
         "categories": [
             {
