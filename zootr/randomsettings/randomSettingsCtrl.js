@@ -657,10 +657,11 @@ var randomSettingsCtrl = function randomSettingsCtrl($http) {
                 return undefined;
             }
 
-            const min = setting["special_options"]["scale_min"];
-            const max = setting["special_options"]["scale_max"];
+            const weights = self.allWeights[setting["name"]];
+            const min = weights["scale_min"];
+            const max = weights["scale_max"];
             const randScale = ((max - min) * Math.random()) + min;
-            const numPieces = Math.floor((triforceGoal * randScale) + 0.5)
+            const numPieces = Math.floor((triforceGoal * randScale) + 0.5);
             return Math.min(numPieces, 200);
         }
 
