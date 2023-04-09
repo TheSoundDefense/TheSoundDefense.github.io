@@ -464,9 +464,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.exportToCsv = function exportToCsv() {
-        let csvString = `${self.getRunnerName(0)},,,,,,,,,${self.getRunnerName(1)},,,\n`;
+        let csvString = `${self.getRunnerName(0)},,,,,,,,,,${self.getRunnerName(1)},,,\n`;
         csvString += 'Split Name,IL Time,Adjustments,Cumulative Time,,';
-        csvString += 'Leader,Difference,Gain,,';
+        csvString += 'Leader,Difference,Gaining Runner,Gain,,';
         csvString += 'Split Name,IL Time,Adjustments,Cumulative Time\n';
 
         for (let i = 0; i < self.splitsList.length; i++) {
@@ -498,10 +498,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 csvString += '-,';
             }
             if (delta.gain) {
-                csvString += `${self.getRunnerName(delta.gainingRunner)} ` +
-                             `gains ${self.timeToStringTime(delta.gain)},`;
+                csvString += `${self.getRunnerName(delta.gainingRunner)},` +
+                             `${self.timeToStringTime(delta.gain)},`;
             } else {
-                csvString += '-,';
+                csvString += '-,-,';
             }
             csvString += ',';
 
