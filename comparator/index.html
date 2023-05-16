@@ -133,9 +133,16 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                     {{ctrl.splitsList[ctrl.latestCommonSplit]}}
                 </div>
             </div>
+            <div ng-show="ctrl.showSplitCounter">
+                (Split {{ctrl.latestCommonSplit + 1}}/{{ctrl.splitsList.length}})
+            </div>
+        </div>
+        <div class="infoText splitCounterText">
+            Click the above text to copy it to your clipboard.
         </div>
         <div class="infoText">
-            Click the above text to copy it to your clipboard.
+            Show split counter:
+            <input type="checkbox" ng-model="ctrl.showSplitCounter">
         </div>
         <div class="timeEntries">
             <div class="runnerTimeEntry">

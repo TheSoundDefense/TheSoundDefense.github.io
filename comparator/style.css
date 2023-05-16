@@ -77,6 +77,10 @@ tr:nth-child(even) {
     text-align: center;
 }
 
+.splitCounterText {
+    margin-top: 16px;
+}
+
 .addSplitText {
     margin-bottom: 8px;
 }

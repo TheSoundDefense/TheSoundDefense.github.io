@@ -6,6 +6,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.splitsList = [];
     self.timingMethod = 'cumulative';
     self.approximate = false;
+    self.showSplitCounter = true;
 
     self.firstRunnerName = '';
     self.secondRunnerName = '';
