@@ -51,7 +51,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     });
 
     self.precision = 2;
-    self.timeRegex = /^(?:(?<hour>\d+):(?<hmin>[0-5]\d):(?<hsec>[0-5]\d(?:\.\d+)?)|(?<min>[0-5]?\d):(?<msec>[0-5]\d(?:\.\d+)?)|(?<sec>[0-5]?\d(?:\.\d+)?))$/;
+    self.timeRegex = /^(?:(?<hour>\d+):(?<hmin>[0-5]\d):(?<hsec>[0-5]\d(?:[\.,]\d+)?)|(?<min>[0-5]?\d):(?<msec>[0-5]\d(?:[\.,]\d+)?)|(?<sec>[0-5]?\d(?:[\.,]\d+)?))$/;
 
     self.selectSplits = function selectSplits() {
         if (self.predefinedSplitSelect == '-1') {
@@ -106,7 +106,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
         if (index == 0) {
             let newTime = self.stringTimeToTimeRegex(self.firstRunnerNewSplitTime);
             if (newTime === null) {
-                self.firstRunnerNewSplitTime = '';
                 return;
             }
             let chosenSplit = parseInt(self.firstSplitSelect);
@@ -123,7 +122,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
         } else {
             let newTime = self.stringTimeToTimeRegex(self.secondRunnerNewSplitTime);
             if (newTime === null) {
-                self.secondRunnerNewSplitTime = '';
                 return;
             }
             let chosenSplit = parseInt(self.secondSplitSelect);
@@ -145,7 +143,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
         if (index == 0) {
             let newAdjustment = self.stringTimeToTimeRegex(self.firstRunnerNewAdjustment);
             if (newAdjustment === null) {
-                self.firstRunnerNewAdjustment = '';
                 return;
             }
             if (self.firstRunnerAdjustmentDirection === 'remove') {
@@ -160,7 +157,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
         } else {
             let newAdjustment = self.stringTimeToTimeRegex(self.secondRunnerNewAdjustment);
             if (newAdjustment === null) {
-                self.secondRunnerNewAdjustment = '';
                 return;
             }
             if (self.secondRunnerAdjustmentDirection === 'remove') {
