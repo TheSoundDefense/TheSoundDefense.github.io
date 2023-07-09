@@ -422,10 +422,18 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.getTotalRaceTime = function getTotalRaceTime(runnerIndex) {
         if (runnerIndex === 0) {
-            return self.firstRunnerSplits[self.numLaps - 1][self.splitsPerLap - 1].cumulativeTime;
+            let finalSplit = self.firstRunnerSplits[self.numLaps - 1][self.splitsPerLap - 1];
+            if (finalSplit !== undefined) {
+                return finalSplit.cumulativeTime;
+            }
         } else {
-            return self.secondRunnerSplits[self.numLaps - 1][self.splitsPerLap - 1].cumulativeTime;
+            let finalSplit = self.secondRunnerSplits[self.numLaps - 1][self.splitsPerLap - 1];
+            if (finalSplit !== undefined) {
+                return finalSplit.cumulativeTime;
+            }
         }
+
+        return undefined;
     };
 
     self.stringTimeToTime = function stringTimeToTime(strTime) {
