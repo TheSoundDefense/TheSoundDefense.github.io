@@ -8,10 +8,17 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.approximate = false;
     self.showSplitCounter = true;
 
+    self.multilap = false;
+    self.numLaps = 1;
+    self.flatSplitsList = [];
+    self.splitsPerLap = -1;
+
     self.firstRunnerName = '';
     self.secondRunnerName = '';
     self.firstRunnerSplits = [];
     self.secondRunnerSplits = [];
+    self.firstRunnerLapTimes = [];
+    self.secondRunnerLapTimes = [];
 
     self.firstSplitSelect = '0';
     self.secondSplitSelect = '0';
@@ -68,25 +75,50 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.begin = function begin() {
+        // A quick failsafe.
+        if (!self.multilap) {
+            self.numLaps = 1;
+        }
+
         let parsedList = self.splitTextContents.split('\n');
 
         if (parsedList.length <= 0 || !self.firstRunnerName || !self.secondRunnerName) {
             return;
         }
 
+        self.splitsPerLap = parsedList.length;
+
         // Create a list of split names, and also initialize the splits arrays.
-        for (let parsedSplit of parsedList) {
-            if (parsedSplit) {
-                self.splitsList.push(parsedSplit);
-                self.firstRunnerSplits.push(self.newSplitItem(parsedSplit));
-                self.secondRunnerSplits.push(self.newSplitItem(parsedSplit));
-                self.deltas.push({
-                    leader: undefined,
-                    timeDelta: undefined,
-                    gain: undefined,
-                    gainingRunner: undefined
-                });
+        // We'll do this once per lap.
+        for (let lap = 0; lap < self.numLaps; lap++) {
+            let lapSplitList = [];
+            let lapFirstRunnerSplits = [];
+            let lapSecondRunnerSplits = [];
+            let lapDeltas = [];
+            for (let parsedSplit of parsedList) {
+                if (parsedSplit) {
+                    let splitName = parsedSplit;
+                    if (self.multilap) {
+                        splitName = `${parsedSplit} (${lap+1})`;
+                    }
+                    self.flatSplitsList.push(splitName);
+                    lapSplitList.push(splitName);
+                    lapFirstRunnerSplits.push(self.newSplitItem(splitName));
+                    lapSecondRunnerSplits.push(self.newSplitItem(splitName));
+                    lapDeltas.push({
+                        leader: undefined,
+                        timeDelta: undefined,
+                        gain: undefined,
+                        gainingRunner: undefined
+                    });
+                }
             }
+            self.splitsList.push(lapSplitList);
+            self.firstRunnerSplits.push(lapFirstRunnerSplits);
+            self.secondRunnerSplits.push(lapSecondRunnerSplits);
+            self.firstRunnerLapTimes.push(undefined);
+            self.secondRunnerLapTimes.push(undefined);
+            self.deltas.push(lapDeltas);
         }
 
         self.displayedTab = 'data-entry';
@@ -97,6 +129,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             name: splitName,
             splitTime: undefined,
             cumulativeTime: undefined,
+            cumulativeTimeInLap: undefined,
             adjustment: 0,
             cumulativeAdjustment: 0
         };
@@ -108,15 +141,16 @@ var comparatorCtrl = function comparatorCtrl($http) {
             if (newTime === null) {
                 return;
             }
-            let chosenSplit = parseInt(self.firstSplitSelect);
+            let splitIndex = parseInt(self.firstSplitSelect);
+            let chosenSplit = self.getLapAndSplitFromIndex(splitIndex);
             if (self.timingMethod === 'cumulative') {
-                self.firstRunnerSplits[chosenSplit].cumulativeTime = newTime;
+                self.firstRunnerSplits[chosenSplit.lap][chosenSplit.split].cumulativeTimeInLap = newTime;
             } else {
-                self.firstRunnerSplits[chosenSplit].splitTime = newTime;
+                self.firstRunnerSplits[chosenSplit.lap][chosenSplit.split].splitTime = newTime;
             }
             // Update the select box, and erase the input.
-            if (chosenSplit < self.splitsList.length - 1) {
-                self.firstSplitSelect = (chosenSplit + 1).toString();
+            if (splitIndex < self.flatSplitsList.length - 1) {
+                self.firstSplitSelect = (splitIndex + 1).toString();
             }
             self.firstRunnerNewSplitTime = '';
         } else {
@@ -124,15 +158,16 @@ var comparatorCtrl = function comparatorCtrl($http) {
             if (newTime === null) {
                 return;
             }
-            let chosenSplit = parseInt(self.secondSplitSelect);
+            let splitIndex = parseInt(self.secondSplitSelect);
+            let chosenSplit = self.getLapAndSplitFromIndex(splitIndex);
             if (self.timingMethod === 'cumulative') {
-                self.secondRunnerSplits[chosenSplit].cumulativeTime = newTime;
+                self.secondRunnerSplits[chosenSplit.lap][chosenSplit.split].cumulativeTimeInLap = newTime;
             } else {
-                self.secondRunnerSplits[chosenSplit].splitTime = newTime;
+                self.secondRunnerSplits[chosenSplit.lap][chosenSplit.split].splitTime = newTime;
             }
             // Update the select box, and erase the input.
-            if (chosenSplit < self.splitsList.length - 1) {
-                self.secondSplitSelect = (chosenSplit + 1).toString();
+            if (splitIndex < self.flatSplitsList.length - 1) {
+                self.secondSplitSelect = (splitIndex + 1).toString();
             }
             self.secondRunnerNewSplitTime = '';
         }
@@ -151,8 +186,9 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 newAdjustment = Math.abs(newAdjustment);
             }
             // Update the adjustment for this split.
-            let currentSplit = parseInt(self.firstSplitSelect);
-            self.firstRunnerSplits[currentSplit].adjustment += newAdjustment;
+            let splitIndex = parseInt(self.firstSplitSelect);
+            let currentSplit = self.getLapAndSplitFromIndex(splitIndex);
+            self.firstRunnerSplits[currentSplit.lap][currentSplit.split].adjustment += newAdjustment;
             self.firstRunnerNewAdjustment = '';
         } else {
             let newAdjustment = self.stringTimeToTimeRegex(self.secondRunnerNewAdjustment);
@@ -165,150 +201,230 @@ var comparatorCtrl = function comparatorCtrl($http) {
                 newAdjustment = Math.abs(newAdjustment);
             }
             // Update the adjustment for this split.
-            let currentSplit = parseInt(self.secondSplitSelect);
-            self.secondRunnerSplits[currentSplit].adjustment += newAdjustment;
+            let splitIndex = parseInt(self.secondSplitSelect);
+            let currentSplit = self.getLapAndSplitFromIndex(splitIndex);
+            self.secondRunnerSplits[currentSplit.lap][currentSplit.split].adjustment += newAdjustment;
             self.secondRunnerNewAdjustment = '';
         }
         self.recalculateTimes();
-    }
+    };
+
+    self.getLapAndSplitFromIndex = function getLapAndSplitFromIndex(index) {
+        if (!self.multilap || self.numLaps === 1) {
+            return {lap: 0, split: index};
+        }
+        return {
+            lap: Math.floor(index / self.splitsPerLap),
+            split: index % self.splitsPerLap
+        };
+    };
 
     self.recalculateTimes = function recalculateTimes() {
-        let firstRunnerCumulative = 0;
-        let secondRunnerCumulative = 0;
         let firstRunnerRecordForIl = true;
         let secondRunnerRecordForIl = true;
+        let firstRunnerCumulativeLaps = 0;
+        let secondRunnerCumulativeLaps = 0;
         let firstRunnerCumulativeAdjustments = 0;
         let secondRunnerCumulativeAdjustments = 0;
-        for (let i = 0; i < this.splitsList.length; i++) {
-            let firstSplit = self.firstRunnerSplits[i];
-            let secondSplit = self.secondRunnerSplits[i];
+        for (let lap = 0; lap < self.numLaps; lap++) {
+            let firstRunnerLapCumulative = 0;
+            let secondRunnerLapCumulative = 0;
+            for (let i = 0; i < this.splitsPerLap; i++) {
+                let firstSplit = self.firstRunnerSplits[lap][i];
+                let secondSplit = self.secondRunnerSplits[lap][i];
 
-            // The timing method we use determines what splits need to be
-            // calculated and which are hard data.
-            if (self.timingMethod === 'cumulative') {
-                // For the first split, the split time and cumulative time
-                // are the same.
-                if (i === 0) {
-                    firstSplit.splitTime = firstSplit.cumulativeTime;
-                    secondSplit.splitTime = secondSplit.cumulativeTime;
-                } else {
-                    let firstPreviousSplit = self.firstRunnerSplits[i-1];
-                    let secondPreviousSplit = self.secondRunnerSplits[i-1];
-                    // If this split is present, and the last split is present,
-                    // calculate the individual split time. We can do this
-                    // throughout the whole set of splits, no matter how many
-                    // cumulative times are present.
-                    if (firstSplit.cumulativeTime !== undefined
-                        && firstPreviousSplit.cumulativeTime !== undefined) {
-                        firstSplit.splitTime = firstSplit.cumulativeTime - firstPreviousSplit.cumulativeTime;
+                // The timing method we use determines what splits need to be
+                // calculated and which are hard data.
+                if (self.timingMethod === 'cumulative') {
+                    // For the first split, the split time and cumulative time
+                    // are the same.
+                    if (i === 0 && lap === 0) {
+                        firstSplit.splitTime = firstSplit.cumulativeTimeInLap;
+                        secondSplit.splitTime = secondSplit.cumulativeTimeInLap;
+                    } else {
+                        let firstPreviousSplit;
+                        let secondPreviousSplit;
+                        if (i === 0) {
+                            firstPreviousSplit = self.firstRunnerSplits[lap-1][self.splitsPerLap-1];
+                            secondPreviousSplit = self.secondRunnerSplits[lap-1][self.splitsPerLap-1];
+                        } else {
+                            firstPreviousSplit = self.firstRunnerSplits[lap][i-1];
+                            secondPreviousSplit = self.secondRunnerSplits[lap][i-1];
+                        }
+
+                        // If this is the first split in the lap, the split
+                        // time is the cumulative time in the lap so far.
+                        if (i === 0) {
+                            firstSplit.splitTime = firstSplit.cumulativeTimeInLap;
+                            secondSplit.splitTime = secondSplit.cumulativeTimeInLap;
+                        } else {
+                            // If this split is present, and the last split is present,
+                            // calculate the individual split time. We can do this
+                            // throughout the whole set of splits, no matter how many
+                            // cumulative times are present.
+                            if (firstSplit.cumulativeTimeInLap !== undefined
+                                && firstPreviousSplit.cumulativeTimeInLap !== undefined) {
+                                firstSplit.splitTime = firstSplit.cumulativeTimeInLap - firstPreviousSplit.cumulativeTimeInLap;
+                            }
+                            if (secondSplit.cumulativeTimeInLap !== undefined
+                                && secondPreviousSplit.cumulativeTimeInLap !== undefined) {
+                                secondSplit.splitTime = secondSplit.cumulativeTimeInLap - secondPreviousSplit.cumulativeTimeInLap;
+                            }
+                        }
                     }
-                    if (secondSplit.cumulativeTime !== undefined
-                        && secondPreviousSplit.cumulativeTime !== undefined) {
-                        secondSplit.splitTime = secondSplit.cumulativeTime - secondPreviousSplit.cumulativeTime;
+                    // Set the cumulative overall time, across all laps.
+                    if (firstSplit.cumulativeTimeInLap !== undefined) {
+                        firstSplit.cumulativeTime = firstSplit.cumulativeTimeInLap + firstRunnerCumulativeLaps;
+                    }
+                    if (secondSplit.cumulativeTimeInLap !== undefined) {
+                        secondSplit.cumulativeTime = secondSplit.cumulativeTimeInLap + secondRunnerCumulativeLaps;
+                    }
+                } else {
+                    // For the first split, the split time and cumulative time
+                    // are the same.
+                    if (i === 0 && lap === 0) {
+                        firstSplit.cumulativeTime = firstSplit.splitTime;
+                        firstSplit.cumulativeTimeInLap = firstSplit.splitTime;
+                        firstRunnerLapCumulative = firstSplit.cumulativeTimeInLap !== undefined
+                            ? firstSplit.cumulativeTimeInLap
+                            : 0;
+                        secondSplit.cumulativeTime = secondSplit.splitTime;
+                        secondSplit.cumulativeTimeInLap = secondSplit.splitTime;
+                        secondRunnerLapCumulative = secondSplit.cumulativeTimeInLap !== undefined
+                            ? secondSplit.cumulativeTimeInLap
+                            : 0;
+                    } else {
+                        // We determine cumulative times up until we find a single
+                        // unpopulated split. At that point, we stop.
+                        if (firstSplit.splitTime !== undefined) {
+                            firstRunnerLapCumulative += firstSplit.splitTime;
+                            if (firstRunnerRecordForIl) {
+                                firstSplit.cumulativeTimeInLap = firstRunnerLapCumulative;
+                                firstSplit.cumulativeTime = firstRunnerLapCumulative + firstRunnerCumulativeLaps;
+                            }
+                        } else {
+                            firstRunnerRecordForIl = false;
+                        }
+                        if (secondSplit.splitTime !== undefined) {
+                            secondRunnerLapCumulative += secondSplit.splitTime;
+                            if (secondRunnerRecordForIl) {
+                                secondSplit.cumulativeTimeInLap = secondRunnerLapCumulative;
+                                secondSplit.cumulativeTime = secondRunnerLapCumulative + secondRunnerCumulativeLaps;
+                            }
+                        } else {
+                            secondRunnerRecordForIl = false;
+                        }
                     }
                 }
-            } else {
-                // For the first split, the split time and cumulative time
-                // are the same.
-                if (i === 0) {
-                    firstSplit.cumulativeTime = firstSplit.splitTime;
-                    firstRunnerCumulative = firstSplit.cumulativeTime !== undefined
-                        ? firstSplit.cumulativeTime
-                        : 0;
-                    secondSplit.cumulativeTime = secondSplit.splitTime;
-                    secondRunnerCumulative = secondSplit.cumulativeTime !== undefined
-                        ? secondSplit.cumulativeTime
-                        : 0;
-                } else {
-                    // We determine cumulative times up until we find a single
-                    // unpopulated split. At that point, we stop.
-                    if (firstSplit.splitTime !== undefined) {
-                        firstRunnerCumulative += firstSplit.splitTime;
-                        if (firstRunnerRecordForIl) {
-                            firstSplit.cumulativeTime = firstRunnerCumulative;
-                        }
-                    } else {
-                        firstRunnerRecordForIl = false;
-                    }
-                    if (secondSplit.splitTime !== undefined) {
-                        secondRunnerCumulative += secondSplit.splitTime;
-                        if (secondRunnerRecordForIl) {
-                            secondSplit.cumulativeTime = secondRunnerCumulative;
-                        }
-                    } else {
-                        secondRunnerRecordForIl = false;
-                    }
-                }
+                
+                // Lastly, determine cumulative adjustments.
+                firstRunnerCumulativeAdjustments += firstSplit.adjustment;
+                firstSplit.cumulativeAdjustment = firstRunnerCumulativeAdjustments;
+                secondRunnerCumulativeAdjustments += secondSplit.adjustment;
+                secondSplit.cumulativeAdjustment = secondRunnerCumulativeAdjustments;
             }
-            
-            // Lastly, determine cumulative adjustments.
-            firstRunnerCumulativeAdjustments += firstSplit.adjustment;
-            firstSplit.cumulativeAdjustment = firstRunnerCumulativeAdjustments;
-            secondRunnerCumulativeAdjustments += secondSplit.adjustment;
-            secondSplit.cumulativeAdjustment = secondRunnerCumulativeAdjustments;
+
+            // Add in lap times here. If the last split of this lap is
+            // populated, we're safe to add a lap time.
+            let firstRunnerLapTime = self.firstRunnerSplits[lap][this.splitsPerLap-1].cumulativeTimeInLap;
+            if (firstRunnerLapTime !== undefined) {
+                self.firstRunnerLapTimes[lap] = firstRunnerLapTime;
+                firstRunnerCumulativeLaps += firstRunnerLapTime;
+            }
+            let secondRunnerLapTime = self.secondRunnerSplits[lap][this.splitsPerLap-1].cumulativeTimeInLap;
+            if (secondRunnerLapTime !== undefined) {
+                self.secondRunnerLapTimes[lap] = secondRunnerLapTime;
+                secondRunnerCumulativeLaps += secondRunnerLapTime;
+            }
         }
         self.recalculateLead();
-    }
+    };
 
     self.recalculateLead = function recalculateLead() {
-        self.latestCommonSplit = -1;
+        self.latestCommonSplit = {lap: -1, split: -1};
         let previousDelta = 0;
-        for (let i = 0; i < this.splitsList.length; i++) {
-            // Only calculate a difference for this split if both runners have
-            // populated data for this split.
-            if (this.firstRunnerSplits[i].cumulativeTime !== undefined
-                && this.secondRunnerSplits[i].cumulativeTime !== undefined) {
-                let firstSplitTime = this.firstRunnerSplits[i].cumulativeTime;
-                let secondSplitTime = this.secondRunnerSplits[i].cumulativeTime;
+        for (let lap = 0; lap < this.numLaps; lap++) {
+            for (let i = 0; i < this.splitsPerLap; i++) {
+                // Only calculate a difference for this split if both runners have
+                // populated data for this split.
+                if (this.firstRunnerSplits[lap][i].cumulativeTime !== undefined
+                    && this.secondRunnerSplits[lap][i].cumulativeTime !== undefined) {
+                    let firstSplitTime = this.firstRunnerSplits[lap][i].cumulativeTime;
+                    let secondSplitTime = this.secondRunnerSplits[lap][i].cumulativeTime;
 
-                // This is the point where we add time adjustments.
-                firstSplitTime += this.firstRunnerSplits[i].cumulativeAdjustment;
-                secondSplitTime += this.secondRunnerSplits[i].cumulativeAdjustment;
+                    // This is the point where we add time adjustments.
+                    firstSplitTime += this.firstRunnerSplits[lap][i].cumulativeAdjustment;
+                    secondSplitTime += this.secondRunnerSplits[lap][i].cumulativeAdjustment;
 
-                self.latestCommonSplit = i;
+                    self.latestCommonSplit = {lap, split: i};
 
-                let diffTime = firstSplitTime - secondSplitTime;
-                let gain = diffTime - previousDelta;
-                // If the gain is positive, then the delta has become larger,
-                // and runner 2 has gained time. A negative delta favors
-                // player 1 (as smaller times are better).
-                let gainingRunner = -1;
-                if (gain > 0) {
-                    gainingRunner = 1;
-                } else if (gain < 0) {
-                    gainingRunner = 0;
+                    let diffTime = firstSplitTime - secondSplitTime;
+                    let gain = diffTime - previousDelta;
+                    // If the gain is positive, then the delta has become larger,
+                    // and runner 2 has gained time. A negative delta favors
+                    // player 1 (as smaller times are better).
+                    let gainingRunner = -1;
+                    if (gain > 0) {
+                        gainingRunner = 1;
+                    } else if (gain < 0) {
+                        gainingRunner = 0;
+                    }
+                    // We save this as a non-absolute value, in order to make sure the
+                    // gains are correct.
+                    previousDelta = diffTime;
+                    // For display purposes, we want these to be absolute values from
+                    // here on out.
+                    diffTime = Math.abs(diffTime);
+                    gain = Math.abs(gain);
+
+                    self.timeDifference = diffTime;
+                    self.timeDifferenceString = self.timeToStringTimeWithFullText(diffTime);
+                    let leadingRunner = -1;
+                    if (firstSplitTime < secondSplitTime) {
+                        leadingRunner = 0;
+                    } else if (secondSplitTime < firstSplitTime) {
+                        leadingRunner = 1;
+                    }
+                    self.leadingRunner = leadingRunner;
+
+                    self.deltas[lap][i] = {
+                        leader: leadingRunner,
+                        timeDelta: diffTime,
+                        gain: gain,
+                        gainingRunner: gainingRunner
+                    };
                 }
-                // We save this as a non-absolute value, in order to make sure the
-                // gains are correct.
-                previousDelta = diffTime;
-                // For display purposes, we want these to be absolute values from
-                // here on out.
-                diffTime = Math.abs(diffTime);
-                gain = Math.abs(gain);
-
-                self.timeDifference = diffTime;
-                self.timeDifferenceString = self.timeToStringTimeWithFullText(diffTime);
-                let leadingRunner = -1;
-                if (firstSplitTime < secondSplitTime) {
-                    leadingRunner = 0;
-                } else if (secondSplitTime < firstSplitTime) {
-                    leadingRunner = 1;
-                }
-                self.leadingRunner = leadingRunner;
-
-                self.deltas[i] = {
-                    leader: leadingRunner,
-                    timeDelta: diffTime,
-                    gain: gain,
-                    gainingRunner: gainingRunner
-                };
             }
         }
-
         // At the end of this, timeDifference, timeDifferenceString, and leadingRunner
         // will all be set appropriately.
-        if (self.latestCommonSplit >= self.splitsList.length - 1) {
-            self.raceComplete = true;
+    };
+
+    self.getSplitCounter = function getSplitCounter() {
+        let currentSplit = 0;
+        if (this.commonSplitExists()) {
+            currentSplit = (self.latestCommonSplit.lap * self.splitsPerLap)
+                + self.latestCommonSplit.split + 1;
+        }
+        let totalSplits = self.numLaps * self.splitsPerLap;
+        return `(Split ${currentSplit}/${totalSplits})`;
+    };
+
+    self.commonSplitExists = function commonSplitExists() {
+        return self.latestCommonSplit.lap >= 0
+            && self.latestCommonSplit.split >= 0;
+    };
+
+    self.raceComplete = function raceComplete() {
+        return self.latestCommonSplit.lap >= (self.numLaps - 1)
+            && self.latestCommonSplit.split >= (self.splitsPerLap - 1);
+    };
+
+    self.getTotalRaceTime = function getTotalRaceTime(runnerIndex) {
+        if (runnerIndex === 0) {
+            return self.firstRunnerSplits[self.numLaps - 1][self.splitsPerLap - 1].cumulativeTime;
+        } else {
+            return self.secondRunnerSplits[self.numLaps - 1][self.splitsPerLap - 1].cumulativeTime;
         }
     };
 
@@ -353,6 +469,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.timeToStringTime = function timeToStringTime(numTimeRaw) {
+        if (numTimeRaw === undefined) {
+            return '-';
+        }
+
         let isNegative = numTimeRaw < 0;
         let negativeSign = isNegative ? '-' : '';
         numTime = Math.abs(numTimeRaw);
@@ -415,10 +535,14 @@ var comparatorCtrl = function comparatorCtrl($http) {
 
     self.getRunnerSplit = function getRunnerSplit(runner) {
         if (runner === 0) {
-            return self.splitsList[parseInt(self.firstSplitSelect)];
+            let splitIndex = parseInt(self.firstSplitSelect);
+            let currentSplit = self.getLapAndSplitFromIndex(splitIndex);
+            return self.splitsList[currentSplit.lap][currentSplit.split];
         }
         if (runner === 1) {
-            return self.splitsList[parseInt(self.secondSplitSelect)];
+            let splitIndex = parseInt(self.secondSplitSelect);
+            let currentSplit = self.getLapAndSplitFromIndex(splitIndex);
+            return self.splitsList[currentSplit.lap][currentSplit.split];
         }
         return '-';
     }
@@ -429,18 +553,18 @@ var comparatorCtrl = function comparatorCtrl($http) {
         navigator.clipboard.writeText(input.innerText);
     };
 
-    self.selectGainText = function selectGainText(idx) {
-        const delta = self.deltas[idx];
+    self.selectGainText = function selectGainText(lapIdx, idx) {
+        const delta = self.deltas[lapIdx][idx];
         if (delta.gain === 0) {
             return;
         }
 
-        const textElement = document.getElementById('gainText' + idx);
+        const textElement = document.getElementById('gainText' + lapIdx + '_' + idx);
         window.getSelection().selectAllChildren(textElement);
 
         const gainText = `${self.getRunnerName(delta.gainingRunner)} ` +
                          `gains ${self.timeToStringTimeWithFullText(delta.gain)} ` +
-                         `in ${self.splitsList[idx]}`;
+                         `in ${self.splitsList[lapIdx][idx]}`;
         navigator.clipboard.writeText(gainText);
     };
 
@@ -466,56 +590,78 @@ var comparatorCtrl = function comparatorCtrl($http) {
         csvString += 'Leader,Difference,Gaining Runner,Gain,,';
         csvString += 'Split Name,IL Time,Adjustments,Cumulative Time\n';
 
-        for (let i = 0; i < self.splitsList.length; i++) {
-            let firstRunnerSplit = self.firstRunnerSplits[i];
-            let secondRunnerSplit = self.secondRunnerSplits[i];
-            let delta = self.deltas[i];
+        for (let lap = 0; lap < self.numLaps; lap++) {
+            for (let i = 0; i < self.splitsPerLap; i++) {
+                let firstRunnerSplit = self.firstRunnerSplits[lap][i];
+                let secondRunnerSplit = self.secondRunnerSplits[lap][i];
+                let delta = self.deltas[lap][i];
 
-            // First runner data.
-            csvString += `${self.splitsList[i]},`;
-            if (firstRunnerSplit.splitTime !== undefined) {
-                csvString += `${self.timeToStringTime(firstRunnerSplit.splitTime)},`;
-            } else {
-                csvString += '-,';
-            }
-            csvString += `${self.timeToStringTime(firstRunnerSplit.adjustment)},`;
-            if (firstRunnerSplit.cumulativeTime !== undefined) {
-                let totalTime = firstRunnerSplit.cumulativeTime + firstRunnerSplit.cumulativeAdjustment;
-                csvString += `${self.timeToStringTime(totalTime)},`;
-            } else {
-                csvString += '-,';
-            }
-            csvString += ',';
+                // First runner data.
+                csvString += `${self.splitsList[lap][i]},`;
+                if (firstRunnerSplit.splitTime !== undefined) {
+                    csvString += `${self.timeToStringTime(firstRunnerSplit.splitTime)},`;
+                } else {
+                    csvString += '-,';
+                }
+                csvString += `${self.timeToStringTime(firstRunnerSplit.adjustment)},`;
+                if (firstRunnerSplit.cumulativeTime !== undefined) {
+                    let totalTime = firstRunnerSplit.cumulativeTime + firstRunnerSplit.cumulativeAdjustment;
+                    csvString += `${self.timeToStringTime(totalTime)},`;
+                } else {
+                    csvString += '-,';
+                }
+                csvString += ',';
 
-            // Deltas.
-            csvString += `${self.getRunnerName(delta.leader)},`;
-            if (delta.timeDelta !== undefined) {
-                csvString += `${self.timeToStringTime(delta.timeDelta)},`;
-            } else {
-                csvString += '-,';
-            }
-            if (delta.gain) {
-                csvString += `${self.getRunnerName(delta.gainingRunner)},` +
-                             `${self.timeToStringTime(delta.gain)},`;
-            } else {
-                csvString += '-,-,';
-            }
-            csvString += ',';
+                // Deltas.
+                csvString += `${self.getRunnerName(delta.leader)},`;
+                if (delta.timeDelta !== undefined) {
+                    csvString += `${self.timeToStringTime(delta.timeDelta)},`;
+                } else {
+                    csvString += '-,';
+                }
+                if (delta.gain) {
+                    csvString += `${self.getRunnerName(delta.gainingRunner)},` +
+                                `${self.timeToStringTime(delta.gain)},`;
+                } else {
+                    csvString += '-,-,';
+                }
+                csvString += ',';
 
-            // Second runner data.
-            csvString += `${self.splitsList[i]},`;
-            if (secondRunnerSplit.splitTime !== undefined) {
-                csvString += `${self.timeToStringTime(secondRunnerSplit.splitTime)},`;
-            } else {
-                csvString += '-,';
+                // Second runner data.
+                csvString += `${self.splitsList[lap][i]},`;
+                if (secondRunnerSplit.splitTime !== undefined) {
+                    csvString += `${self.timeToStringTime(secondRunnerSplit.splitTime)},`;
+                } else {
+                    csvString += '-,';
+                }
+                csvString += `${self.timeToStringTime(secondRunnerSplit.adjustment)},`;
+                if (secondRunnerSplit.cumulativeTime !== undefined) {
+                    let totalTime = secondRunnerSplit.cumulativeTime + secondRunnerSplit.cumulativeAdjustment;
+                    csvString += `${self.timeToStringTime(totalTime)}`;
+                } else {
+                    csvString += '-';
+                }
+                csvString += '\n';
             }
-            csvString += `${self.timeToStringTime(secondRunnerSplit.adjustment)},`;
-            if (secondRunnerSplit.cumulativeTime !== undefined) {
-                let totalTime = secondRunnerSplit.cumulativeTime + secondRunnerSplit.cumulativeAdjustment;
-                csvString += `${self.timeToStringTime(totalTime)}`;
-            } else {
-                csvString += '-';
+            if (self.multilap) {
+                // Lap data, player 1.
+                csvString += `Lap ${lap+1} time,,,`;
+                csvString += `${self.timeToStringTime(self.firstRunnerLapTimes[lap])},`;
+                // Gap (to be filled in with lap deltas).
+                csvString += ',,,,,,';
+                // Lap data, player 2.
+                csvString += `Lap ${lap+1} time,,,`;
+                csvString += `${self.timeToStringTime(self.secondRunnerLapTimes[lap])}`;
+                csvString += '\n';
             }
+        }
+        if (self.multilap) {
+            // Total time, player 1.
+            csvString += 'Total time,,,';
+            csvString += `${self.timeToStringTime(self.getTotalRaceTime(0))},,,,,,,`;
+            // Total time, player 2.
+            csvString += 'Total time,,,';
+            csvString += `${self.timeToStringTime(self.getTotalRaceTime(1))}`;
             csvString += '\n';
         }
 
@@ -543,8 +689,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
     
     self.restart = function restart() {
         self.splitsList = [];
+        self.flatSplitsList = [];
+        self.splitsPerLap = -1;
         self.firstRunnerSplits = [];
         self.secondRunnerSplits = [];
+        self.firstRunnerLapTimes = [];
+        self.secondRunnerLapTimes = [];
         self.latestCommonSplit = -1;
         self.leadingRunner = -1;
         self.deltas = [];

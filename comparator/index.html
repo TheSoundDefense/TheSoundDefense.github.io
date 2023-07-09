@@ -27,6 +27,12 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 </option>
             </select>
         </p>
+        <p>Multi-lap race:
+            <input type="checkbox" ng-model="ctrl.multilap">
+        </p>
+        <p ng-if="ctrl.multilap">Number of laps:
+            <input type="number" min="1" value="1" ng-model="ctrl.numLaps">
+        </p>
         <p>Timing method:
             <select name="timingMethodSelect"
                     ng-model="ctrl.timingMethod">
@@ -50,57 +56,92 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
     <div class="tab data-entry-tab" ng-show="ctrl.displayedTab == 'data-entry'">
         <div class="displayTimes">
             <div class="runnerTimes">
-                <table>
+                <table ng-repeat="lap in ctrl.firstRunnerSplits track by $index" ng-init="lapIndex = $index">
                     <tr>
-                        <th colspan="4">
+                        <th ng-if="$index == 0" colspan="4">
                             {{ctrl.firstRunnerName}}
                         </th>
                     </tr>
-                    <tr ng-repeat="split in ctrl.firstRunnerSplits track by $index">
+                    <tr ng-repeat="split in lap track by $index">
                         <td>{{split.name}}</td>
                         <td>
-                            {{split.splitTime !== undefined ? ctrl.timeToStringTime(split.splitTime) : '-'}}
+                            {{ctrl.timeToStringTime(split.splitTime)}}
                         </td>
                         <td>{{ctrl.timeToStringTime(split.adjustment)}}</td>
                         <td>{{split.cumulativeTime !== undefined ? ctrl.timeToStringTime(split.cumulativeTime + split.cumulativeAdjustment) : '-'}}</td>
                     </tr>
+                    <tr ng-if="ctrl.multilap">
+                        <td colspan="3">
+                            Lap {{lapIndex + 1}} time
+                        </td>
+                        <td>
+                            {{ctrl.timeToStringTime(ctrl.firstRunnerLapTimes[lapIndex])}}
+                        </td>
+                    </tr>
+                    <tr ng-if="ctrl.multilap && $index == ctrl.numLaps - 1">
+                        <td colspan="3">
+                            Total time
+                        </td>
+                        <td>
+                            {{ctrl.timeToStringTime(ctrl.getTotalRaceTime(0))}}
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div class="runnerTimes">
-                <table>
-                    <tr>
+                <table ng-repeat="lap in ctrl.deltas track by $index" ng-init="lapIndex = $index">
+                    <tr ng-if="$index == 0">
                         <th>Leader</th>
                         <th>Difference</th>
                         <th>Gain</th>
                     </tr>
-                    <tr ng-repeat="delta in ctrl.deltas track by $index">
+                    <tr ng-repeat="delta in lap track by $index">
                         <td>{{ctrl.getRunnerName(delta.leader)}}</td>
-                        <td>{{delta.timeDelta !== undefined ? ctrl.timeToStringTime(delta.timeDelta) : '-'}}</td>
+                        <td>{{ctrl.timeToStringTime(delta.timeDelta)}}</td>
                         <td ng-show="!delta.gain">-</td>
                         <td ng-show="delta.gain"
-                            id="gainText{{$index}}"
-                            ng-click="ctrl.selectGainText($index)">
+                            id="gainText{{lapIndex}}_{{$index}}"
+                            ng-click="ctrl.selectGainText(lapIndex, $index)">
                             {{ctrl.getRunnerName(delta.gainingRunner)}}
                             gains
                             {{ctrl.timeToStringTime(delta.gain)}}
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="3">-</td>
+                    </tr>
                 </table>
             </div>
             <div class="runnerTimes">
-                <table>
+                <table ng-repeat="lap in ctrl.secondRunnerSplits track by $index" ng-init="lapIndex = $index">
                     <tr>
-                        <th colspan="4">
+                        <th ng-if="$index == 0" colspan="4">
                             {{ctrl.secondRunnerName}}
                         </th>
                     </tr>
-                    <tr ng-repeat="split in ctrl.secondRunnerSplits track by $index">
+                    <tr ng-repeat="split in lap track by $index">
                         <td>{{split.name}}</td>
                         <td>
-                            {{split.splitTime !== undefined ? ctrl.timeToStringTime(split.splitTime) : '-'}}
+                            {{ctrl.timeToStringTime(split.splitTime)}}
                         </td>
                         <td>{{ctrl.timeToStringTime(split.adjustment)}}</td>
                         <td>{{split.cumulativeTime !== undefined ? ctrl.timeToStringTime(split.cumulativeTime + split.cumulativeAdjustment) : '-'}}</td>
+                    </tr>
+                    <tr ng-if="ctrl.multilap">
+                        <td colspan="3">
+                            Lap {{lapIndex + 1}} time
+                        </td>
+                        <td>
+                            {{ctrl.timeToStringTime(ctrl.secondRunnerLapTimes[lapIndex])}}
+                        </td>
+                    </tr>
+                    <tr ng-if="ctrl.multilap && $index == ctrl.numLaps - 1">
+                        <td colspan="3">
+                            Total time
+                        </td>
+                        <td>
+                            {{ctrl.timeToStringTime(ctrl.getTotalRaceTime(1))}}
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -110,10 +151,10 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                 <div>Both runners are</div>
                 <div>
                     <span class="timeKeyInfo">tied</span>
-                    <span ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">as of</span>
+                    <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">as of</span>
                 </div>
-                <div ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">
-                    {{ctrl.splitsList[ctrl.latestCommonSplit]}}
+                <div ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
+                    {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
                 </div>
             </div>
             <div ng-show="ctrl.leadingRunner >= 0">
@@ -121,20 +162,20 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                     <span class="timeKeyInfo">
                         {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
                     </span>
-                    {{ctrl.raceComplete ? "wins by" : "leads by"}}
+                    {{ctrl.raceComplete() ? "wins by" : "leads by"}}
                 </div>
                 <div>
                     <span class="timeKeyInfo">
                         {{ctrl.timeDifferenceString}}
                     </span>
-                    <span ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">as of</span>
+                    <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">as of</span>
                 </div>
-                <div ng-show="!ctrl.raceComplete && ctrl.latestCommonSplit >= 0">
-                    {{ctrl.splitsList[ctrl.latestCommonSplit]}}
+                <div ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
+                    {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
                 </div>
             </div>
             <div ng-show="ctrl.showSplitCounter">
-                (Split {{ctrl.latestCommonSplit + 1}}/{{ctrl.splitsList.length}})
+                {{ctrl.getSplitCounter()}}
             </div>
         </div>
         <div class="infoText">
@@ -148,7 +189,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimeEntry">
                 <div class="addSplitText">Add split for {{ctrl.firstRunnerName}}</div>
                 <select name="firstSplitSelect" ng-model="ctrl.firstSplitSelect">
-                    <option ng-repeat="split in ctrl.splitsList" value="{{$index}}">{{split}}</option>
+                    <option ng-repeat="split in ctrl.flatSplitsList" value="{{$index}}">{{split}}</option>
                 </select>
                 <input placeholder="12:34.56" ng-model="ctrl.firstRunnerNewSplitTime">
                 <button ng-click="ctrl.addSplitTime(0)">Add split time</button>
@@ -156,7 +197,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimeEntry">
                 <div class="addSplitText">Add split for {{ctrl.secondRunnerName}}</div>
                 <select name="secondSplitSelect" ng-model="ctrl.secondSplitSelect">
-                    <option ng-repeat="split in ctrl.splitsList" value="{{$index}}">{{split}}</option>
+                    <option ng-repeat="split in ctrl.flatSplitsList" value="{{$index}}">{{split}}</option>
                 </select>
                 <input placeholder="12:34.56" ng-model="ctrl.secondRunnerNewSplitTime">
                 <button ng-click="ctrl.addSplitTime(1)">Add split time</button>
