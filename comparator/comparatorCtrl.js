@@ -86,8 +86,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
             return;
         }
 
-        self.splitsPerLap = parsedList.length;
-
         // Create a list of split names, and also initialize the splits arrays.
         // We'll do this once per lap.
         for (let lap = 0; lap < self.numLaps; lap++) {
@@ -120,6 +118,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
             self.secondRunnerLapTimes.push(undefined);
             self.deltas.push(lapDeltas);
         }
+
+        self.splitsPerLap = self.splitsList[0].length;
 
         self.displayedTab = 'data-entry';
     };
