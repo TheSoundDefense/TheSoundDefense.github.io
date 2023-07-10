@@ -107,7 +107,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
                             {{ctrl.timeToStringTime(delta.gain)}}
                         </td>
                     </tr>
-                    <tr>
+                    <tr ng-if="ctrl.multilap">
                         <td colspan="3">-</td>
                     </tr>
                 </table>
