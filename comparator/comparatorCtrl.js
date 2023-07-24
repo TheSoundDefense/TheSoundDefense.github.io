@@ -35,7 +35,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.deltas = [];
     self.timeDifference = -1;
     self.timeDifferenceString = '';
-    self.raceComplete = false;
 
     self.displayCalculator = false;
     self.operand1 = '';
@@ -716,7 +715,6 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.secondRunnerAdjustmentDirection = 'add';
         self.firstRunnerNewAdjustment = '';
         self.secondRunnerNewAdjustment = '';
-        self.raceComplete = false;
         self.displayedTab = 'splits';
     };
 };
