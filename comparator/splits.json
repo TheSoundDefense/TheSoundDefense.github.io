@@ -449,5 +449,28 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "Sonic the Hedgehog Pocket Adventure",
+        "categories": [
+            {
+                "name": "Any%",
+                "splits": [
+                    "Neo South Island Zone Act 1",
+                    "Neo South Island Zone Act 2",
+                    "Secret Plant Zone Act 1",
+                    "Secret Plant Zone Act 2",
+                    "Cosmic Casino Zone Act 1",
+                    "Cosmic Casino Zone Act 2",
+                    "Aquatic Relix Zone Act 1",
+                    "Aquatic Relix Zone Act 2",
+                    "Sky Chase Zone",
+                    "Aerobase Zone",
+                    "Gigantic Angel Zone Act 1",
+                    "Gigantic Angel Zone Act 2",
+                    "Last Utopia Zone"
+                ]
+            }
+        ]
     }
 ]
