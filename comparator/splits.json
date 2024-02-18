@@ -66,6 +66,19 @@
                     "Final Haunt",
                     "The Last Way"
                 ]
+            },
+            {
+                "name": "Neutral",
+                "splits": [
+                    "Westopolis",
+                    "Glyphic Canyon",
+                    "Prison Island",
+                    "The Doom",
+                    "Heavy Dog",
+                    "Air Fleet",
+                    "Lava Shelter",
+                    "Egg Dealer"
+                ]
             }
         ]
     },
