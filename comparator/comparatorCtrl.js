@@ -7,6 +7,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.timingMethod = 'cumulative';
     self.approximate = false;
     self.showSplitCounter = true;
+    self.displayLines = "3";
 
     self.multilap = false;
     self.numLaps = 1;

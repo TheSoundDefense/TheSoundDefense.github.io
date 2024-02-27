@@ -147,35 +147,72 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             </div>
         </div>
         <div id="timeText" class="timeResults infoText" ng-click="ctrl.selectTimeText()">
-            <div ng-show="ctrl.leadingRunner < 0">
-                <div>Both runners are</div>
-                <div>
-                    <span class="timeKeyInfo">tied</span>
-                    <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">as of</span>
+            <div ng-show="ctrl.displayLines == '3'">
+                <div ng-show="ctrl.leadingRunner < 0">
+                    <div>Both runners are</div>
+                    <div>
+                        <span class="timeKeyInfo">tied</span>
+                        <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">as of</span>
+                    </div>
+                    <div ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
+                        {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
+                    </div>
                 </div>
-                <div ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
-                    {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
+                <div ng-show="ctrl.leadingRunner >= 0">
+                    <div>
+                        <span class="timeKeyInfo">
+                            {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
+                        </span>
+                        {{ctrl.raceComplete() ? "wins by" : "leads by"}}
+                    </div>
+                    <div>
+                        <span class="timeKeyInfo">
+                            {{ctrl.timeDifferenceString}}
+                        </span>
+                        <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">as of</span>
+                    </div>
+                    <div ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
+                        {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
+                    </div>
+                </div>
+                <div ng-show="ctrl.showSplitCounter">
+                    {{ctrl.getSplitCounter()}}
                 </div>
             </div>
-            <div ng-show="ctrl.leadingRunner >= 0">
-                <div>
-                    <span class="timeKeyInfo">
-                        {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
-                    </span>
-                    {{ctrl.raceComplete() ? "wins by" : "leads by"}}
+            <div ng-show="ctrl.displayLines == '2'">
+                <div ng-show="ctrl.leadingRunner < 0">
+                    <div>
+                        Both runners are
+                        <span class="timeKeyInfo">tied</span>
+                    </div>
+                    <div>
+                        <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
+                            as of {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
+                        </span>
+                        <span ng-show="ctrl.showSplitCounter">
+                            {{ctrl.getSplitCounter()}}
+                        </span>
+                    </div>
                 </div>
-                <div>
-                    <span class="timeKeyInfo">
-                        {{ctrl.timeDifferenceString}}
-                    </span>
-                    <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">as of</span>
+                <div ng-show="ctrl.leadingRunner >= 0">
+                    <div>
+                        <span class="timeKeyInfo">
+                            {{ctrl.leadingRunner === 0 ? ctrl.firstRunnerName : ctrl.secondRunnerName}}
+                        </span>
+                        {{ctrl.raceComplete() ? "wins by" : "leads by"}}
+                        <span class="timeKeyInfo">
+                            {{ctrl.timeDifferenceString}}
+                        </span>
+                    </div>
+                    <div>
+                        <span ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
+                            as of {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
+                        </span>
+                        <span ng-show="ctrl.showSplitCounter">
+                            {{ctrl.getSplitCounter()}}
+                        </span>
+                    </div>
                 </div>
-                <div ng-show="!ctrl.raceComplete() && ctrl.commonSplitExists()">
-                    {{ctrl.splitsList[ctrl.latestCommonSplit.lap][ctrl.latestCommonSplit.split]}}
-                </div>
-            </div>
-            <div ng-show="ctrl.showSplitCounter">
-                {{ctrl.getSplitCounter()}}
             </div>
         </div>
         <div class="infoText">
@@ -184,6 +221,11 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
         <div class="infoText splitCounterText">
             Show split counter:
             <input type="checkbox" ng-model="ctrl.showSplitCounter">
+        </div>
+        <div class="infoText splitCounterText">
+            Number of lines:
+            <input type="radio" ng-model="ctrl.displayLines" value="2">2
+            <input type="radio" ng-model="ctrl.displayLines" value="3">3/4
         </div>
         <div class="timeEntries">
             <div class="runnerTimeEntry">
