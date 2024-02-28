@@ -528,7 +528,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
         }
 
         let secondsText = baseStringTime === '1' ? 'second' : 'seconds';
-        return baseStringTime.indexOf(':') >= 0 ? baseStringTime : `${baseStringTime} ${secondsText}`;
+        let displaySeconds = baseStringTime.indexOf(':') < 0 && self.displayLines == "3";
+        return displaySeconds ? `${baseStringTime} ${secondsText}` : baseStringTime;
     }
 
     self.getRunnerName = function getRunnerName(runner) {
