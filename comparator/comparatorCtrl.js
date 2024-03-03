@@ -466,12 +466,12 @@ var comparatorCtrl = function comparatorCtrl($http) {
         if (matches.groups?.hour !== undefined) {
             hours = parseInt(matches.groups.hour);
             minutes = parseInt(matches.groups.hmin);
-            seconds = parseFloat(matches.groups.hsec);
+            seconds = parseFloat(matches.groups.hsec.replace(",", "."));
         } else if (matches.groups?.min !== undefined) {
             minutes = parseInt(matches.groups.min);
-            seconds = parseFloat(matches.groups.msec);
+            seconds = parseFloat(matches.groups.msec.replace(",", "."));
         } else {
-            seconds = parseFloat(matches.groups.sec);
+            seconds = parseFloat(matches.groups.sec.replace(",", "."));
         }
         return (3600 * hours) + (60 * minutes) + seconds;
     };
