@@ -86,6 +86,19 @@
         "name": "Sonic Adventure DX",
         "categories": [
             {
+                "name": "Fast Tails",
+                "splits": [
+                    "Egg Hornet",
+                    "Windy Valley",
+                    "Casinopolis",
+                    "Ice Cap",
+                    "Sand Hill",
+                    "Sky Deck",
+                    "Speed Highway",
+                    "Egg Walker"
+                ]
+            },
+            {
                 "name": "Knuckles Centurion",
                 "splits": [
                     "Sky Deck (20)",
