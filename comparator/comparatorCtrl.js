@@ -60,6 +60,73 @@ var comparatorCtrl = function comparatorCtrl($http) {
     self.precision = 2;
     self.timeRegex = /^(?:(?<hour>\d+):(?<hmin>[0-5]\d):(?<hsec>[0-5]\d(?:[\.,]\d+)?)|(?<min>[0-5]?\d):(?<msec>[0-5]\d(?:[\.,]\d+)?)|(?<sec>[0-5]?\d(?:[\.,]\d+)?))$/;
 
+    self.saveState = function saveState() {
+        localStorage.setItem('splitTextContents', self.splitTextContents);
+        localStorage.setItem('splitsList', JSON.stringify(self.splitsList));
+        localStorage.setItem('timingMethod', self.timingMethod);
+        localStorage.setItem('approximate', JSON.stringify(self.approximate));
+        localStorage.setItem('showSplitCounter', JSON.stringify(self.showSplitCounter));
+        localStorage.setItem('displayLines', JSON.stringify(self.displayLines));
+        localStorage.setItem('multilap', JSON.stringify(self.multilap));
+        localStorage.setItem('numLaps', JSON.stringify(self.numLaps));
+        localStorage.setItem('flatSplitsList', JSON.stringify(self.flatSplitsList));
+        localStorage.setItem('splitsPerLap', JSON.stringify(self.splitsPerLap));
+        localStorage.setItem('firstRunnerName', self.firstRunnerName);
+        localStorage.setItem('secondRunnerName', self.secondRunnerName);
+        localStorage.setItem('firstRunnerSplits', JSON.stringify(self.firstRunnerSplits));
+        localStorage.setItem('secondRunnerSplits', JSON.stringify(self.secondRunnerSplits));
+        localStorage.setItem('firstRunnerLapTimes', JSON.stringify(self.firstRunnerLapTimes));
+        localStorage.setItem('secondRunnerLapTimes', JSON.stringify(self.secondRunnerLapTimes));
+        localStorage.setItem('firstSplitSelect', self.firstSplitSelect);
+        localStorage.setItem('secondSplitSelect', self.secondSplitSelect);
+    };
+
+    self.restoreState = function restoreState() {
+        if (localStorage.getItem('splitTextContents') === null) {
+            return;
+        }
+
+        self.splitTextContents = localStorage.getItem('splitTextContents');
+        self.splitsList = JSON.parse(localStorage.getItem('splitsList'));
+        self.timingMethod = localStorage.getItem('timingMethod');
+        self.approximate = JSON.parse(localStorage.getItem('approximate'));
+        self.showSplitCounter = JSON.parse(localStorage.getItem('showSplitCounter'));
+        self.displayLines = JSON.parse(localStorage.getItem('displayLines'));
+        self.multilap = JSON.parse(localStorage.getItem('multilap'));
+        self.numLaps = JSON.parse(localStorage.getItem('numLaps'));
+        self.flatSplitsList = JSON.parse(localStorage.getItem('flatSplitsList'));
+        self.splitsPerLap = JSON.parse(localStorage.getItem('splitsPerLap'));
+        self.firstRunnerName = localStorage.getItem('firstRunnerName');
+        self.secondRunnerName = localStorage.getItem('secondRunnerName');
+        self.firstRunnerSplits = JSON.parse(localStorage.getItem('firstRunnerSplits'));
+        self.secondRunnerSplits = JSON.parse(localStorage.getItem('secondRunnerSplits'));
+        self.firstRunnerLapTimes = JSON.parse(localStorage.getItem('firstRunnerLapTimes'));
+        self.secondRunnerLapTimes = JSON.parse(localStorage.getItem('secondRunnerLapTimes'));
+        self.firstSplitSelect = localStorage.getItem('firstSplitSelect');
+        self.secondSplitSelect = localStorage.getItem('secondSplitSelect');
+
+        // Recreate the deltas array.
+        for (let lap = 0; lap < self.numLaps; lap++) {
+            let lapDeltas = [];
+            for (let split = 0; split < self.splitsPerLap; split++) {
+                lapDeltas.push({
+                    leader: undefined,
+                    timeDelta: undefined,
+                    gain: undefined,
+                    gainingRunner: undefined
+                });
+            }
+            self.deltas.push(lapDeltas);
+        }
+
+        self.displayedTab = 'data-entry';
+        self.recalculateTimes();
+    };
+
+    self.deleteState = function deleteState() {
+        localStorage.clear();
+    };
+
     self.selectSplits = function selectSplits() {
         if (self.predefinedSplitSelect == '-1') {
             self.splitTextContents = '';
@@ -75,6 +142,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
     };
 
     self.begin = function begin() {
+        self.deleteState();
+
         // A quick failsafe.
         if (!self.multilap) {
             self.numLaps = 1;
@@ -122,6 +191,8 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.splitsPerLap = self.splitsList[0].length;
 
         self.displayedTab = 'data-entry';
+
+        self.saveState();
     };
 
     self.newSplitItem = function newSplitItem(splitName) {
@@ -338,6 +409,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
             }
         }
         self.recalculateLead();
+        self.saveState();
     };
 
     self.recalculateLead = function recalculateLead() {
@@ -543,6 +615,10 @@ var comparatorCtrl = function comparatorCtrl($http) {
     }
 
     self.getRunnerSplit = function getRunnerSplit(runner) {
+        if (self.splitsList.length === 0) {
+            return '-'
+        };
+
         if (runner === 0) {
             let splitIndex = parseInt(self.firstSplitSelect);
             let currentSplit = self.getLapAndSplitFromIndex(splitIndex);
@@ -719,4 +795,7 @@ var comparatorCtrl = function comparatorCtrl($http) {
         self.secondRunnerNewAdjustment = '';
         self.displayedTab = 'splits';
     };
+
+// If we have a stored state, restore it and recalculate.
+  self.restoreState();
 };
