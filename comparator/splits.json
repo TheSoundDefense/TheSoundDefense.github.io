@@ -79,6 +79,20 @@
                     "Lava Shelter",
                     "Egg Dealer"
                 ]
+            },
+            {
+                "name": "Sonic%",
+                "splits": [
+                    "Westopolis",
+                    "Lethal Highway",
+                    "Black Bull 1",
+                    "Circus Park",
+                    "Death Ruins",
+                    "Black Bull 2",
+                    "Space Gadget",
+                    "Final Haunt",
+                    "Black Doom"
+                ]
             }
         ]
     },
