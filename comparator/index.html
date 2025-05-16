@@ -231,7 +231,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimeEntry">
                 <div class="addSplitText">Add split for {{ctrl.firstRunnerName}}</div>
                 <select name="firstSplitSelect" ng-model="ctrl.firstSplitSelect">
-                    <option ng-repeat="split in ctrl.flatSplitsList" value="{{$index}}">{{split}}</option>
+                    <option ng-repeat="split in ctrl.flatSplitsList track by $index" value="{{$index}}">{{split}}</option>
                 </select>
                 <input placeholder="12:34.56" ng-model="ctrl.firstRunnerNewSplitTime">
                 <button ng-click="ctrl.addSplitTime(0)">Add split time</button>
@@ -239,7 +239,7 @@ Etc." ng-model="ctrl.splitTextContents"></textarea></p>
             <div class="runnerTimeEntry">
                 <div class="addSplitText">Add split for {{ctrl.secondRunnerName}}</div>
                 <select name="secondSplitSelect" ng-model="ctrl.secondSplitSelect">
-                    <option ng-repeat="split in ctrl.flatSplitsList" value="{{$index}}">{{split}}</option>
+                    <option ng-repeat="split in ctrl.flatSplitsList track by $index" value="{{$index}}">{{split}}</option>
                 </select>
                 <input placeholder="12:34.56" ng-model="ctrl.secondRunnerNewSplitTime">
                 <button ng-click="ctrl.addSplitTime(1)">Add split time</button>
