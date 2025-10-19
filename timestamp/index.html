@@ -1,0 +1,34 @@
+<html>
+<head>
+  <title>Discord Timestamp Converter</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="discordTimestampCtrl.js"></script>
+  <script src="index.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body class="body-class" ng-app="discordTimestampApp" ng-controller="discordTimestampCtrl as ctrl">
+  <div>
+    <h1 align="center">Discord Timestamp Converter</h1>
+    <hr />
+    <p align="center">A quick tool to turn a local time into a UNIX timestamp for posting on Discord.</p>
+  </div>
+
+  <div>
+    <p align="center">
+        Enter date:
+        <input type="datetime-local" id="timestamp_datetime" ng-model="ctrl.localtime">
+        (your local time zone will be used)
+    </p>
+    <p align="center">
+        <button id="convert_button" ng-click="ctrl.convert()">Convert</button>
+    </p>
+    <p align="center">
+        Discord Timestamp: <code>{{ctrl.timestampText}}</code>
+    </p>
+  </div>
+
+  <div>
+    <p>Created by <a href="https://github.com/thesounddefense" target="_blank">The Sound Defense</a>.</p>
+  </div>
+</body>
+</html>
